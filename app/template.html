@@ -377,6 +377,28 @@ footer p { max-width: none; margin: 0; }
   .tx { grid-template-columns: 40px 76px minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+:root { --rp-mono: var(--mono); --rp-accent: var(--signal-deep); --rp-dim: var(--dim); --rp-line: var(--line); --rp-link: var(--cobalt); --rp-codebg: #000; --rp-codefg: #E8EAF2; --rp-radius: 0;
+  --rp-hfont: 800 clamp(34px, 4.2vw, 58px)/1.02 var(--display); --rp-h2font: 800 24px/1.15 var(--display); }
+/* reproduce page: colours come from --rp-* set per site */
+.rp { padding: 48px 0 72px; }
+.rp-k { font: 600 12px var(--rp-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--rp-accent); }
+.rp-h { font: var(--rp-hfont); letter-spacing: -.02em; margin: 10px 0 12px; line-height: 1.04; }
+.rp-lede { color: var(--rp-dim); font-size: 17px; max-width: 46em; }
+.rp-cmd { position: relative; margin: 24px 0 26px; background: var(--rp-codebg); color: var(--rp-codefg); border-radius: var(--rp-radius); max-width: 760px; }
+.rp-cmd pre { margin: 0; padding: 18px 20px; overflow-x: auto; font: 500 14px/1.7 var(--rp-mono); }
+.rp-copy { position: absolute; top: 10px; right: 10px; font: 600 12px var(--rp-mono); padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.35); background: transparent; color: var(--rp-codefg); cursor: pointer; }
+.rp-list { display: grid; gap: 0; border-top: 1px solid var(--rp-line); margin: 0; }
+.rp-list div { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rp-line); }
+.rp-list dt { font-weight: 700; }
+.rp-list dd { margin: 0; color: var(--rp-dim); overflow-wrap: anywhere; }
+.rp-list a { color: var(--rp-link); }
+.rp-list code { font: 500 13px var(--rp-mono); }
+.rp-video { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 28px; align-items: start; margin-top: 44px; }
+.rp-video h2 { font: var(--rp-h2font); margin: 8px 0; }
+.rp-video p { color: var(--rp-dim); }
+.rp-video video { width: 100%; height: auto; border-radius: var(--rp-radius); background: #000; box-shadow: 0 20px 40px -24px rgba(0,0,0,.6); }
+.rp-foot a { color: inherit; }
+@media (max-width: 760px) { .rp-list div, .rp-video { grid-template-columns: minmax(0, 1fr); gap: 4px; } .rp-video { gap: 14px; } .rp-cmd pre { padding-top: 46px; } }
 </style>
 </head>
 <body>
@@ -387,6 +409,7 @@ footer p { max-width: none; margin: 0; }
       <a href="#/alerts" data-r="alerts">Alerts</a>
       <a href="#/evaluation" data-r="evaluation">Evaluation</a>
       <a href="#/how" data-r="how">How it works</a>
+      <a href="#/reproduce" data-r="reproduce">Reproduce</a>
     </nav>
     <div class="svc" id="svc" title="The live agent service"><i></i><span>Recorded runs</span></div>
   </div>
@@ -394,7 +417,7 @@ footer p { max-width: none; margin: 0; }
 <main id="view"></main>
 <div id="tip" role="tooltip"></div>
 <footer><div class="wrap">
-  <p>Data: OTRF Security-Datasets (MIT licence). MITRE ATT&amp;CK® v<span id="attv"></span>: © 2026 The MITRE Corporation. This work is reproduced and distributed with the permission of The MITRE Corporation. Built by Divya Sri with Google's Agent Development Kit and Claude Haiku 4.5.</p>
+  <p>Data: OTRF Security-Datasets (MIT licence). MITRE ATT&amp;CK® v<span id="attv"></span>: © 2026 The MITRE Corporation. This work is reproduced and distributed with the permission of The MITRE Corporation. Built by Divya Sri with Google's Agent Development Kit and Claude Haiku 4.5. <span class="rp-foot"><a href="#/reproduce">Reproduce these results</a> · <a href="https://github.com/mathukumillidivya/nightwatch" target="_blank" rel="noopener">Source code</a> · <a href="#/reproduce" onclick="setTimeout(() => document.getElementById('tour')?.scrollIntoView(), 50)">Demo video</a></span></p>
 </div></footer>
 <script>
 const DATA = /*DATA*/null;
@@ -449,10 +472,48 @@ function route() {
   else if (page === "alert" && QI[arg]) viewAlert(v, arg);
   else if (page === "evaluation") viewEval(v);
   else if (page === "how") viewHow(v);
+  else if (page === "reproduce") { v.innerHTML = reproHtml(REPRO); wireRepro(v); }
   else viewHome(v);
   document.title = page === "alert" ? `${arg} | Nightwatch` : "Nightwatch, an AI SOC copilot";
 }
 addEventListener("hashchange", route);
+
+const REPRO = {
+  repo: "https://github.com/mathukumillidivya/nightwatch", commit: "ca87443", time: "a few seconds", install: "pip install -r requirements.txt",
+  frozen: "The triage, prompts, decoding, verification and ranking were fixed here, from the 30 development recordings only, before the 64 held-out recordings were run once.",
+  dataset: 'OTRF Security-Datasets (MIT), 105 Windows attack recordings with author labels, reduced to <code>data/cases.jsonl</code>; MITRE ATT&CK v19.2 in <code>data/attack.json</code>. Both are rebuilt by scripts from the public sources.',
+  raw: [["results/runs/test-nightwatch/", "every investigation with its full trace, tokens and cost"], ["results/runs/test-single/", "the single AI call"], ["results/runs/", "the prompt-injection runs (rt-*)"]],
+  scoring: [["scripts/evaluate.py", "accuracy, grounding, paired bootstrap"], ["scripts/summarize_redteam.py", "prompt-injection summary"], ["reproduce.py", "re-scores the saved runs and compares"]],
+  rerun: "Run both systems on the test split and score them (about $2.70 of API use).",
+  videoTitle: "A 40-second tour", videoNote: "The live tail on the home page, then a replay of the DCSync investigation from hypotheses to verified findings. Recorded from this site.",
+};
+/* ---------- reproduce these results */
+function reproHtml(R) {
+  const gh = p => `${R.repo}/${p.endsWith("/") ? "tree" : "blob"}/main/${p.replace(/\/$/, "")}`;
+  const link = (href, text) => `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+  const cmd = `git clone ${R.repo}\ncd ${R.repo.split("/").pop()}\n${R.install ? R.install + "\n" : ""}python reproduce.py`;
+  const rows = [
+    ["Repository", link(R.repo, R.repo.replace("https://", ""))],
+    ["Frozen evaluation commit", `${link(`${R.repo}/tree/${R.commit}`, `<code>${R.commit}</code>`)}. ${R.frozen}`],
+    ["Dataset", R.dataset],
+    ["Raw results", R.raw.map(([p, t]) => `${link(gh(p), `<code>${p}</code>`)} ${t}`).join("<br>")],
+    ["Scoring code", R.scoring.map(([p, t]) => `${link(gh(p), `<code>${p}</code>`)} ${t}`).join("<br>")],
+    ["Re-run from scratch", `${R.rerun} Steps in ${link(gh("REPRODUCE.md"), "REPRODUCE.md")}.`],
+  ];
+  return `<section class="rp"><div class="wrap">
+    <span class="rp-k">Reproduce these results</span>
+    <h1 class="rp-h">Every number here can be checked.</h1>
+    <p class="rp-lede">The figures on this site come from saved runs in the repository. One command re-scores them with the same scoring code and checks each figure against what is published. No API key, ${R.time}.</p>
+    <div class="rp-cmd"><pre><code>${cmd}</code></pre><button class="rp-copy" type="button">Copy</button></div>
+    <dl class="rp-list">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+    <div class="rp-video" id="tour"><div><span class="rp-k">Demo video</span><h2>${R.videoTitle}</h2><p>${R.videoNote}</p></div>
+      <video controls preload="none" playsinline poster="demo-poster.jpg" width="1280" height="720"><source src="demo.mp4" type="video/mp4">Your browser cannot play this video. <a href="demo.mp4">Download it</a>.</video></div>
+  </div></section>`;
+}
+function wireRepro(root) {
+  const b = root.querySelector(".rp-copy"); if (!b) return;
+  b.onclick = async () => { try { await navigator.clipboard.writeText(root.querySelector(".rp-cmd code").textContent); b.textContent = "Copied"; } catch { b.textContent = "Select and copy"; } setTimeout(() => b.textContent = "Copy", 1600); };
+}
 
 /* ================================================================ home */
 function viewHome(v) {
@@ -465,7 +526,7 @@ function viewHome(v) {
       <div class="copy">
         <h1><span>AI agents that investigate cyberattacks.</span><span>And prove every word.</span></h1>
         <p class="lede">Nightwatch is a team of AI agents for a security operations centre. Give it ${f.events.toLocaleString()} Windows events and it names the MITRE ATT&amp;CK technique, quoting the log lines that prove it. Code checks every quote.</p>
-        <div class="acts"><a class="btn solid" href="#/alert/NW-002">Open this investigation</a><a class="btn" href="#/alerts">All ${Q.length} alerts</a></div>
+        <div class="acts"><a class="btn solid" href="#/alert/NW-002">Open this investigation</a><a class="btn" href="#/alerts">All ${Q.length} alerts</a><a class="btn" href="#/reproduce" onclick="setTimeout(() => document.getElementById('tour')?.scrollIntoView(), 50)">▶ 40-second tour</a></div>
       </div>
       <div class="console" aria-label="A recorded investigation, replayed">
         <div class="term" aria-hidden="true"><i></i><i></i><i></i><span>soc@nightwatch: ~/alerts/NW-002 $ nightwatch investigate --live-tail</span></div>

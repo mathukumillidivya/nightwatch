@@ -6,6 +6,8 @@ Every finding is quoted from the logs and checked by code.**
 **Live console:** https://nightwatch-app.onrender.com. It holds all 105 alerts with their recorded investigations. You can
 replay any run, run the agents live, and plant a prompt injection in the logs to see whether it changes the verdict.
 
+**Reproduce:** `python reproduce.py` re-scores every saved run and checks each published number (no API key). Full steps, the frozen commit and the data are in [REPRODUCE.md](REPRODUCE.md). A 40-second demo video is on the site's Reproduce page.
+
 A security analyst's day is alerts: a host did something odd, now work out what. One of these recordings holds up to
 80,000 Windows events (3,700 is typical), almost all of them normal. Nightwatch:
 
