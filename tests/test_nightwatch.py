@@ -140,3 +140,9 @@ def test_search_tool_budget(cid):
 def test_stringified_lists_are_repaired():
     r = run(investigate(CASES["NW-002"], "nightwatch", Claude(client=FakeClaude(stringify=True).client())))
     assert r["techniques"] == ["T1003.001", "T1053.005"]
+
+
+def test_unstring_handles_windows_paths():
+    from nightwatch.models import unstring
+    raw = '[{"event_id": "E1", "field": "Image", "quote": "C:\\Windows\\System32\\cmd.exe"}]'.replace("\\\\", "\\")
+    assert unstring({"evidence": raw})["evidence"][0]["quote"].endswith("cmd.exe")

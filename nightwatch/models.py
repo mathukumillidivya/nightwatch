@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from typing import Any, AsyncGenerator
 
 from anthropic import NOT_GIVEN
@@ -65,10 +66,12 @@ def unstring(args: dict) -> dict:
     out = {}
     for k, v in args.items():
         if isinstance(v, str) and v.strip()[:1] in ("[", "{"):
-            try:
-                v = json.loads(v)
-            except json.JSONDecodeError:
-                pass
+            for text in (v, re.sub(r'\\(?![\\/"bfnrtu])', r"\\\\", v)):  # Windows paths often arrive with bare backslashes
+                try:
+                    v = json.loads(text, strict=False)
+                    break
+                except json.JSONDecodeError:
+                    continue
         out[k] = v
     return out
 
