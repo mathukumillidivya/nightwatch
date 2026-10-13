@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import time
 from collections import Counter
@@ -104,8 +105,12 @@ class Judge:
             messages=[{"role": "user", "content": text}], extra_body={"temperature": 0})
         u = r.usage
         out = next(b.input for b in r.content if b.type == "tool_use").get("findings", [])
-        if isinstance(out, str):  # the model sometimes returns the nested array as a JSON string
-            out = json.loads(out)
+        if isinstance(out, str):  # the model sometimes returns the nested array as a JSON string,
+            # with Windows paths whose backslashes are not valid JSON escapes
+            try:
+                out = json.loads(out)
+            except json.JSONDecodeError:
+                out = json.loads(re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", out))
         out = [x for x in out if isinstance(x, dict)]
         return out, {"input": u.input_tokens, "output": u.output_tokens,
                      "cache_read": getattr(u, "cache_read_input_tokens", 0) or 0, "cache_write": getattr(u, "cache_creation_input_tokens", 0) or 0}
@@ -148,7 +153,8 @@ def main():
         rows, n_cases = [], 0
         for line in open(run / "results.jsonl"):
             r = json.loads(line)
-            findings = (r.get("verdict") or {}).get("findings") or []
+            # Nightwatch keeps verified findings in verdict; the single call's findings, with the same code check, in checked
+            findings = (r.get("verdict") or {}).get("findings") or r.get("checked") or []
             if not findings or r["case_id"] not in cases:
                 continue
             if args.limit and n_cases >= args.limit:
