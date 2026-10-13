@@ -1,10 +1,16 @@
 {
- "total": 0.0,
+ "total": 0.314,
  "runs": [
   {
    "run_id": "dev-probe-nightwatch",
    "model": "claude-haiku-4-5-20251001",
    "cost": 0.0,
+   "cases": 5
+  },
+  {
+   "run_id": "dev-probe2-nightwatch",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.314,
    "cases": 5
   }
  ]
