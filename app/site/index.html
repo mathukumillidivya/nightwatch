@@ -277,7 +277,22 @@ footer p { max-width: none; margin: 0; }
 /* AI console */
 .hero .wrap { grid-template-columns: repeat(12, minmax(0, 1fr)); }
 .hero .copy { grid-column: 1 / span 6; align-self: center; }
-.console { grid-column: 7 / span 6; position: relative; z-index: 2; background: #000; color: #E8EAF2; border: 2px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,.28); display: flex; flex-direction: column; height: 560px; }
+.console { grid-column: 7 / span 6; position: relative; z-index: 2; background: #000; color: #E8EAF2; border: 2px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,.28); display: flex; flex-direction: column; height: 640px; }
+.console .term { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #111318; border-bottom: 1px solid #23252C; font: 500 11.5px var(--mono); color: #8E93A1; }
+.console .term i { width: 10px; height: 10px; border-radius: 50%; background: #3A3D47; }
+.console .term i:first-child { background: var(--signal); }
+.console .term span { margin-left: 8px; }
+.tail { height: 200px; flex: none; overflow: hidden; padding: 8px 14px; border-bottom: 1px solid #23252C; font: 400 11.5px/1.55 var(--mono); color: #7C8293; background: #050608; display: flex; flex-direction: column; justify-content: flex-end; position: relative; }
+.tail::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 40px; background: linear-gradient(#050608, transparent); z-index: 1; pointer-events: none; }
+.tail .stat, .tail .ln { display: block; flex: none; border: 0; padding: 0 4px; margin: 0; min-height: 0; }
+.tail .stat { color: #E8EAF2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tail .stat b { color: var(--signal); font-weight: 700; }
+.tail .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .3s, background .3s; }
+.tail .ln em { font-style: normal; color: #4C5263; }
+.tail .ln.kept { color: #C9CCD6; }
+.tail .ln.hit { color: #fff; background: rgba(46,59,255,.35); }
+.tail .ln.proof { color: #000; background: var(--signal); }
+.tail .ln .mk { float: right; margin-left: 8px; font-weight: 700; }
 .console header { display: flex; align-items: center; gap: 14px; white-space: nowrap; padding: 12px 16px; border-bottom: 1px solid #23252C; font: 600 12px var(--mono); color: #9EA3B0; }
 .console header .live { display: inline-flex; align-items: center; gap: 6px; color: #fff; }
 .console header .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); animation: blink 1s infinite; }
@@ -322,7 +337,8 @@ footer p { max-width: none; margin: 0; }
 .thinking-c, .tx .b .thinking { background: linear-gradient(90deg, #2E3BFF 0%, #A9AFFF 45%, #2E3BFF 90%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
 @media (max-width: 1000px) {
   .hero .copy, .console { grid-column: 1 / -1; }
-  .console { height: 520px; margin-top: 12px; }
+  .console { height: 620px; margin-top: 12px; }
+  .tail { height: 160px; }
   .agents .meters { margin-left: 0; width: 100%; flex-wrap: wrap; }
   .console header { flex-wrap: wrap; white-space: normal; }
   .console header .model { margin-left: 0; }
@@ -452,6 +468,8 @@ function viewHome(v) {
         <div class="acts"><a class="btn solid" href="#/alert/NW-002">Open this investigation</a><a class="btn" href="#/alerts">All ${Q.length} alerts</a></div>
       </div>
       <div class="console" aria-label="A recorded investigation, replayed">
+        <div class="term" aria-hidden="true"><i></i><i></i><i></i><span>soc@nightwatch: ~/alerts/NW-002 $ nightwatch investigate --live-tail</span></div>
+        <div class="tail" id="tail" aria-hidden="true"></div>
         <header><span class="live"><i></i>Replay of a real run</span><span>NW-002</span><span class="model">Claude Haiku 4.5 + Google ADK</span></header>
         <div class="feed" id="feed"></div>
         <footer><div>agents<b id="m-ag">0</b></div><div>model calls<b id="m-calls">0</b></div><div>tokens<b id="m-tok">0</b></div><div>cost<b id="m-cost">$0.000</b></div></footer>
@@ -521,20 +539,36 @@ async function heroConsole() {
     feed.appendChild(d); trim(); return $(".txt", d); };
   const trim = () => { while (feed.children.length > 1 && feed.scrollHeight > feed.clientHeight + 2) feed.firstChild.remove(); };
   const ro = new ResizeObserver(trim); ro.observe(feed);
+  // the raw-log tail: the kept events as one-line log records, oldest first
+  const tail = $("#tail"), short = x => String(x).replace(/\s+/g, " ");
+  const lines = [...run.view].sort((a, b) => a.t - b.t).map(e => ({ id: e.id, txt: `${e.id} +${e.t.toFixed(1)}s ${e.host} ${e.channel}/${e.event_id} ${e.label} ` + Object.entries(e.fields || {}).slice(0, 3).map(([k, x]) => `${k}=${short(x).slice(0, 60)}`).join(" ") }));
+  const tailRow = (cls, html) => { if (!tail) return; const d = document.createElement("div"); d.className = cls; d.innerHTML = html; tail.appendChild(d); while (tail.children.length > 14) tail.firstChild.remove(); return d; };
+  const mark = (ids, cls, tag) => { if (!tail) return; for (const id of ids) { let el = tail.querySelector(`[data-id="${id}"]`);
+      if (!el) { const l = lines.find(x => x.id === id); if (!l) continue; el = tailRow("ln kept", esc(l.txt)); el.dataset.id = id; }
+      el.className = "ln " + cls; const mk = el.querySelector(".mk"); if (mk) mk.textContent = "◀ " + tag; else el.insertAdjacentHTML("afterbegin", `<span class="mk">◀ ${esc(tag)}</span>`); } };
+  async function triage() {
+    if (!tail) return; tail.innerHTML = ""; const stat = tailRow("stat", ""); const n = run.events, steps = reduced ? 1 : 40;
+    for (let i = 1; i <= steps && alive; i++) { stat.innerHTML = `read <b>${Math.round(n * i / steps).toLocaleString()}</b> / ${n.toLocaleString()} events · ${Math.round(run.templates * i / steps)} templates`; await sleep(35); }
+    stat.innerHTML = `triage: <b>${n.toLocaleString()}</b> events → ${run.templates} templates → <b>${lines.length}</b> kept, rarest across the fleet`;
+    for (const l of lines) { if (!alive) return; const d = tailRow("ln kept", esc(l.txt)); d.dataset.id = l.id; await sleep(45); }
+  }
   while (alive) {
     feed.innerHTML = ""; meter(0, 0);
     let t = row("{ }", "code", "Triage", "code");
+    await triage(); if (!alive) return;
     await stream(t, `Kept the 50 rarest of ${run.events.toLocaleString()} Windows events.`, 600); if (!alive) return; await sleep(500);
     t = row("H", "ai", "Hunter", "AI agent"); t.innerHTML = `<span class="thinking">Thinking…</span>`; meter(0.1, 1); await sleep(1300); if (!alive) return;
     t.innerHTML = `<span class="tool">search_events</span> searched the other ${run.index_size} events`; meter(0.25, 1); await sleep(1100); if (!alive) return;
     t = row("H", "ai", "Hunter", "AI agent");
     const h = v.hypotheses.slice(0, 3).map((x, i) => `${i + 1}. ${esc(x.behavior.split(" ").slice(0, 16).join(" "))}${x.behavior.split(" ").length > 16 ? "…" : ""}`).join("<br>");
+    v.hypotheses.slice(0, 3).forEach((x, i) => mark(x.event_ids || [], "hit", "H" + (i + 1)));
     await stream(t, h, 2200); meter(0.45, 1); if (!alive) return; await sleep(500);
     t = row("{ }", "code", "ATT&amp;CK lookup", "code");
     await stream(t, `Matched each hypothesis against 697 techniques.`, 600); if (!alive) return; await sleep(400);
     const mt = [0, 1, 2].map(i => { const x = row("M" + (i + 1), "ai", "Mapper " + (i + 1), "AI agent, in parallel"); x.innerHTML = `<span class="thinking">Thinking…</span>`; return x; });
     meter(0.6, 4); await sleep(1500); if (!alive) return;
     for (let i = 0; i < 3; i++) { const f = v.findings.find(x => x.slot === i) || v.findings[i]; if (!f) continue;
+      mark(f.evidence.filter(q => q.ok !== false).map(q => q.event_id), "proof", "quoted " + f.technique_id);
       await stream(mt[i], `<span class="tid">${esc(f.technique_id)}</span> ${esc(tshort(f.technique_id))}. Quote: “${esc(f.evidence[0].quote.slice(0, 40))}”`, 700); meter(0.7 + 0.1 * i, 4); if (!alive) return; }
     t = row("✓", "code", "Verify", "code");
     await stream(t, `Every quote found in the logs. ${v.findings.length} of ${v.hypotheses.length} findings proven.`, 600); meter(1, 4); if (!alive) return;
