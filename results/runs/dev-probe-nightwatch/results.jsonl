@@ -1,0 +1,5 @@
+{"case_id": "NW-001", "gold": ["T1222.001"], "dataset": "SDWIN-190301125905", "cost": 0.0, "seconds": 0.1, "error": "TypeError: AsyncMessages.create() got an unexpected keyword argument 'temperature'", "attack": null}
+{"case_id": "NW-003", "gold": ["T1069.001"], "dataset": "SDWIN-190319020147", "cost": 0.0, "seconds": 0.1, "error": "TypeError: AsyncMessages.create() got an unexpected keyword argument 'temperature'", "attack": null}
+{"case_id": "NW-015", "gold": ["T1021.002"], "dataset": "SDWIN-190518210125", "cost": 0.0, "seconds": 0.1, "error": "TypeError: AsyncMessages.create() got an unexpected keyword argument 'temperature'", "attack": null}
+{"case_id": "NW-002", "gold": ["T1003.006"], "dataset": "SDWIN-190301174830", "cost": 0.0, "seconds": 0.0, "error": "TypeError: AsyncMessages.create() got an unexpected keyword argument 'temperature'", "attack": null}
+{"case_id": "NW-011", "gold": ["T1546.003"], "dataset": "SDWIN-190518184306", "cost": 0.0, "seconds": 0.0, "error": "TypeError: AsyncMessages.create() got an unexpected keyword argument 'temperature'", "attack": null}

@@ -1,0 +1,20 @@
+{
+ "dev-probe-nightwatch": {
+  "cases": 5,
+  "errors": 5,
+  "top1": 0.0,
+  "top1_family": 0.0,
+  "top3": 0.0,
+  "tactic": 0.0,
+  "answered": 0.0,
+  "by_dataset": 0,
+  "invented": 0.0,
+  "grounded": 0.0,
+  "dropped_by_code": 0,
+  "sent_back": 0,
+  "cost_per_case": 0.0,
+  "cost_total": 0.0,
+  "median_seconds": 0.1,
+  "model_calls_per_case": 0
+ }
+}
