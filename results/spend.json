@@ -1,5 +1,5 @@
 {
- "total": 5.4539,
+ "total": 6.1389,
  "runs": [
   {
    "run_id": "dev-probe-nightwatch",
@@ -96,6 +96,18 @@
    "model": "claude-haiku-4-5-20251001",
    "cost": 0.1818,
    "cases": 20
+  },
+  {
+   "run_id": "rt-wide-nightwatch-guarded",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.5464,
+   "cases": 18
+  },
+  {
+   "run_id": "rt-wide-single-guarded",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.1386,
+   "cases": 18
   }
  ]
 }
