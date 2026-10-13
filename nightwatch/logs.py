@@ -129,7 +129,7 @@ TYPES: dict[tuple[str, int], tuple[str, list[str], float]] = {
 }
 DEFAULT_WEIGHT = 0.4  # known channel, unlisted event id: shown only if very rare
 LONG = {"CommandLine": 320, "ScriptBlockText": 400, "Payload": 240, "TaskContent": 320, "TaskContentNew": 200,
-        "Details": 200, "Query": 300, "Destination": 400, "AttributeValue": 300, "Contents": 200}
+        "Details": 200, "Properties": 400, "Query": 300, "Destination": 400, "AttributeValue": 300, "Contents": 200}
 
 GUID = re.compile(r"\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?", re.I)
 HEX = re.compile(r"\b0x[0-9a-f]+\b", re.I)
@@ -299,9 +299,12 @@ def condense(parsed: dict, df: Counter, n_recordings: int, view: int = 50, index
     return {"events": parsed["events"], "templates": len(groups), "hosts": parsed["hosts"], "view": view_rows, "index": index_rows}
 
 
-def line(r: dict) -> str:
-    """How one event appears to the agents."""
-    kv = " ".join(f'{k}="{v}"' if " " in v else f"{k}={v}" for k, v in r["fields"].items())
+def line(r: dict, decode: bool = True) -> str:
+    """How one event appears to the agents. Code-decoded meanings follow their value in ⟦ ⟧."""
+    from .enrich import annotate
+    ann = annotate(r["channel"], r["event_id"], r["fields"]) if decode else {}
+    kv = " ".join((f'{k}="{v}"' if " " in v else f"{k}={v}") + (f" ⟦{ann[k]}⟧" if k in ann else "")
+                  for k, v in r["fields"].items())
     rep = f" (x{r['count']})" if r["count"] > 1 else ""
     return f"[{r['id']}] +{r['t']:.0f}s {r['host']} {r['channel']} {r['event_id']} {r['label']}{rep}: {kv}"
 

@@ -4,7 +4,7 @@ on:
     inputs:
       run_id: {required: true}
       system: {description: "nightwatch or single_call", default: "nightwatch"}
-      split: {description: "dev, test or all", default: "dev"}
+      split: {description: "dev, test, test_variants or all", default: "dev"}
       ids: {description: "comma-separated case ids instead of a split", default: ""}
       cases: {description: "data/cases.jsonl or data/redteam.jsonl", default: "data/cases.jsonl"}
       limit: {default: "0"}

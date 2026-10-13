@@ -5,7 +5,8 @@ Usage: python scripts/build_cases.py --raw <folder with <dataset id>/<recording>
 Writes
   data/cases.jsonl   one case per recording: the triage view and the searchable index (no labels)
   data/labels.json   the answer key: ATT&CK technique ids and tactics from the dataset metadata
-  data/split.json    development / test split, by dataset so variants of one attack never straddle it
+  data/split.json    development / test split, by dataset so variants of one attack never straddle it; the test
+                     split takes one recording per dataset, the other variants are kept apart in test_variants
 """
 import argparse
 import json
@@ -77,11 +78,15 @@ def main():
             break
         dev_ds.add(d)
         picked += sum(1 for c in cases if c["dataset"] == d)
+    first = {}
+    for c in cases:  # one recording per dataset: several datasets hold near-identical variants of one attack
+        first.setdefault(c["dataset"], c["case_id"])
     split = {"dev": [c["case_id"] for c in cases if c["dataset"] in dev_ds],
-             "test": [c["case_id"] for c in cases if c["dataset"] not in dev_ds]}
+             "test": [c["case_id"] for c in cases if c["dataset"] not in dev_ds and first[c["dataset"]] == c["case_id"]],
+             "test_variants": [c["case_id"] for c in cases if c["dataset"] not in dev_ds and first[c["dataset"]] != c["case_id"]]}
     (out / "split.json").write_text(json.dumps(split, indent=1))
     view_chars = [sum(len(logs.line(r)) for r in c["view"]) for c in cases]
-    print(f"{len(cases)} cases, {len(split['dev'])} dev / {len(split['test'])} test; "
+    print(f"{len(cases)} cases, {len(split['dev'])} dev / {len(split['test'])} test (+{len(split['test_variants'])} variants); "
           f"view about {sum(view_chars) / len(view_chars) / 4:.0f} tokens on average (max {max(view_chars) / 4:.0f}); "
           f"index {sum(len(c['index']) for c in cases) / len(cases):.0f} rows on average")
 

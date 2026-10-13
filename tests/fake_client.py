@@ -102,7 +102,8 @@ class FakeClaude:
                 tid = "T1003.001" if "lsass" in task else "T1053.005"
                 if self.bad_quote_first and "rejected by the code check" not in task and tid == "T1053.005":
                     ev = [{"event_id": ev[0]["event_id"], "field": ev[0]["field"], "quote": "text that is not in the logs"}]
-                content = tool("set_model_response", {"technique_id": tid, "reasoning": "Fits the evidence.", "evidence": ev})
+                name = "submit_result" if "submit_result" in tools else "set_model_response"
+                content = tool(name, {"technique_id": tid, "reasoning": "Fits the evidence.", "evidence": ev})
         elif "incident responder" in system:
             ids = [e[0] for e in evs[:3]]
             content = tool("submit_result", {"headline": "Credential dumping on WORKSTATION5", "severity": "high",

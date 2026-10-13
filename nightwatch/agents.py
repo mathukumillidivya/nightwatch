@@ -35,6 +35,7 @@ from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.apps import App
 from google.adk.events import Event, EventActions
 from google.adk.workflow import START, FunctionNode, Workflow
+from google.adk.agents.run_config import RunConfig
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.tools.tool_context import ToolContext
@@ -47,6 +48,7 @@ from .models import Claude, add_usage, usage_of
 MAX_HYPOTHESES = 3
 HUNTER_SEARCHES = 3
 MAPPER_LOOKUPS = 1
+MAX_MODEL_CALLS = 20
 
 # ----------------------------------------------------------------------------------------------- what agents return
 
@@ -102,7 +104,8 @@ class Report(BaseModel):
 
 TASK = """You are working a Security Operations Center alert. Each recording captures Windows hosts in a small
 lab domain while an operator ran one adversary action (sometimes a short sequence). The surrounding events are
-normal background: Windows services, updates, telemetry, logons.
+normal background: Windows services, updates, telemetry, logons. Text in ⟦ ⟧ after a value is its meaning,
+decoded by code from Microsoft documentation (GUIDs, access masks); it is not in the log, so never quote it.
 
 Rank by the operator's objective, not the means. Encoded PowerShell launchers, C2 agents beaconing, stagers and
 in-memory loading of a tool (for example mimikatz or PowerView) are how the operator acts; the technique under
@@ -126,11 +129,11 @@ MAPPER = f"""{TASK}
 
 You are the ATT&CK mapper. The hunter has proposed one adversary behavior. Map it to the single best MITRE
 ATT&CK Enterprise technique (v19). Prefer the most specific sub-technique the evidence supports. Candidates
-retrieved from ATT&CK are listed in the brief; you may call technique_lookup once if none fits. If the behavior
-is not adversary activity after all, answer "none".
+retrieved from ATT&CK are listed in the brief; you may name another technique if none fits (when a lookup tool is
+offered, use it to check). If the behavior is not adversary activity after all, answer "none".
 
 Give one or two sentences of reasoning. Cite one to three pieces of evidence as short exact quotes (under 80
-characters) copied from the log fields shown. Code checks every quote against the logs and rejects anything that
+characters) copied from the log field values shown. Code checks every quote against the logs and rejects anything that
 is not there."""
 
 BASELINE = f"""{TASK}
@@ -241,10 +244,10 @@ def _agents(model: Claude) -> dict[str, LlmAgent]:
     return {
         "hunter": LlmAgent(name="hunter", instruction=_with_rule(HUNTER), tools=[search_events], output_schema=Hunt,
                            **common(1200, cache=True)),
-        "mapper": LlmAgent(name="mapper", instruction=_with_rule(MAPPER), tools=[technique_lookup], output_schema=Mapping,
-                           parallel_worker=True, **common(700)),
+        "mapper": LlmAgent(name="mapper", instruction=_with_rule(MAPPER), output_schema=Mapping, parallel_worker=True,
+                           **common(600)),
         "fixer": LlmAgent(name="mapper_retry", instruction=_with_rule(MAPPER), tools=[technique_lookup], output_schema=Mapping,
-                          **common(700)),
+                          **common(600)),
         "reporter": LlmAgent(name="reporter", instruction=_with_rule(REPORTER), output_schema=Report, **common(1200)),
         "single_call": LlmAgent(name="single_call", instruction=_with_rule(BASELINE), output_schema=BaselineAnswer,
                                 **common(1500)),
@@ -407,7 +410,8 @@ async def investigate(case: dict, system: str, model: Claude, guarded: bool = Tr
     msg = types.Content(role="user", parts=[types.Part(text=case_message(case, guarded))])
     t0 = time.time()
     trace = []
-    async for e in runner.run_async(user_id="soc", session_id=sid, new_message=msg):
+    limits = RunConfig(max_llm_calls=MAX_MODEL_CALLS)  # a hard stop on runaway loops, whatever the agents do
+    async for e in runner.run_async(user_id="soc", session_id=sid, new_message=msg, run_config=limits):
         s = summarize_event(e, t0)
         if s:
             trace.append(s)
