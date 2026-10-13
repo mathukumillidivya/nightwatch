@@ -86,10 +86,14 @@ def main():
         if x:
             techniques[t] = {"name": x["name"], "parent": x.get("parent_name"), "tactics": x["tactics"]}
     results = {}
-    for name in ("test-comparison.json", "dev-comparison.json", "redteam.json"):
+    for name in ("test-comparison.json", "dev-comparison.json", "redteam.json", "benign.json", "quote_support.json"):
         f = ROOT / "results" / name
         if f.exists():
             results[name.split(".")[0]] = json.loads(f.read_text())
+    wide = {s: json.loads((ROOT / f"results/runs/rt-wide-{s}-guarded/redteam_score.json").read_text())["summary"]
+            for s in ("single", "nightwatch") if (ROOT / f"results/runs/rt-wide-{s}-guarded/redteam_score.json").exists()}
+    if wide:
+        results["redteam_wide"] = wide
     spend = json.loads((ROOT / "results/spend.json").read_text()) if (ROOT / "results/spend.json").exists() else {}
     data = {"api": args.api, "queue": sorted(queue, key=lambda q: q["id"]), "featured": FEATURED, "techniques": techniques,
             "results": results, "attacks": PAYLOADS, "spend": spend.get("total"), "attack_version": attack.kb()["version"],

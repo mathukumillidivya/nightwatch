@@ -61,6 +61,55 @@ these values from Microsoft's documentation, the DCSync recording went from a mi
 Lateral movement is the weak spot for both. Those recordings show the means (SMB, WMI, services) and the label often
 names one of several defensible answers.
 
+## Does the quote prove the technique?
+
+Code checks that each quote exists in the event it names. A quote can exist and prove nothing: `powershell.exe` is in
+every Windows log. A second model (Claude Haiku 4.5, temperature 0; [scripts/quote_support.py](scripts/quote_support.py),
+[results/quote_support.json](results/quote_support.json)) read every held-out finding next to the full events it
+cites and the ATT&CK description, and said whether the events show the technique.
+
+| | Findings | Quotes found in the logs | Events show the technique | Consistent, not specific | Do not show it |
+|---|---|---|---|---|---|
+| Single AI call | 189 | 77% | 46% | 34% | 20% |
+| **Nightwatch** | 166 | 100% | **48%** | 39% | 13% |
+
+- **A verified quote is not proof.** Every Nightwatch quote exists, yet only about half its findings cite events that
+  show the technique on their own; 69% of its first findings do.
+- **The check tells right from wrong.** 76% of Nightwatch findings naming the labelled technique are shown by their
+  events, against 39% of the rest. "The rest" includes real activity the label does not name (mimikatz output reported
+  as LSASS dumping, for one), so it is not all error. It would work as a ranking signal: show supported findings first.
+- **Caveats.** The judge is the systems' own model; a sample of its judgments read by hand looked sound, but it is a
+  screen. Cost: about $0.49, plus a few cents for calls that failed before a parsing fix.
+
+## False alarms on ordinary activity
+
+Every OTRF recording contains an attack, so the test above says nothing about how often Nightwatch raises an alarm
+on ordinary activity. Added after the test ([scripts/build_benign.py](scripts/build_benign.py),
+[scripts/score_benign.py](scripts/score_benign.py), [results/benign.json](results/benign.json)):
+
+- **12 ordinary windows** of 4,000 events from [NextronSystems/evtx-baseline](https://github.com/NextronSystems/evtx-baseline)
+  (Apache-2.0): clean installs of a Windows 10 client and a Windows Server 2022 domain controller with ordinary
+  software and use, six windows each, reduced exactly like the attack recordings. The right answer is "nothing".
+- **8 mixed alerts**: held-out attacks Nightwatch got right, merged into those windows with their timestamps shifted
+  into them.
+
+| | False alarms on 12 ordinary windows | Techniques per false alarm | Attack still named first in noise |
+|---|---|---|---|
+| Single AI call | 9 of 12 | 2.2 | 4 of the 5 it got right when clean |
+| **Nightwatch** | **11 of 12** | 1.6 | 4 of 8 |
+
+- **Both systems almost always report an attack.** They were built for alerts that a detection rule raised, and the
+  triage view always offers 50 "rarest" events to explain. Server Manager's named-pipe connection to LSASS became
+  LSASS credential dumping; Microsoft's malware removal tool reading LSASS, the same; Office Click-to-Run writing its
+  own registry keys became Modify Registry; Chrome installing an extension became a malicious browser extension.
+- **Noise costs accuracy.** Mixed into ordinary activity, Nightwatch named half the attacks it had right on the clean
+  recording.
+- **What this means.** Nightwatch is a second-stage investigator for alerts already raised, not a filter that can
+  close alerts on its own. The fixes to try next: make "nothing to report" an outcome the hunter has to rule out, and
+  build the rarity table from the customer's own machines rather than from attack recordings.
+- **Small sample.** 12 windows from two machines, and two pairs of windows overlap (BN-01/02, BN-07/08). Read the rate
+  as "most of the time", not as a precise figure.
+
 ## Prompt injection
 
 An attacker who expects an AI to read the logs can write to it through anything that gets logged: a command line, a
@@ -93,7 +142,19 @@ Each system ran with and without guardrails.
   11 of 17 runs, against 3 of 16 without them.
 - **Some damage got through anyway.** The notes knocked 4 of 33 correct answers off first place.
 
-Three alerts per attack is a small sample. It shows these attacks fail, not how rarely they would succeed.
+**Six more recordings, guardrails on** (added after the first test; `data/redteam_wide.jsonl`, scored by
+`scripts/score_redteam.py`). The same three notes in NW-006, 014, 027, 058, 082 and 090. Attacker success means
+the note got what it asked for; degradation means an answer that was right on the clean recording is no longer first.
+
+| | Planted alerts | Attacker success | Right answer knocked off first place | Note reported as adversary activity |
+|---|---|---|---|---|
+| Single call | 18 (3 failed) | 0 of 15 | 3 of 9 | 9 of 15 |
+| Nightwatch | 18 | 0 of 18 | 2 of 18 | 17 of 18 |
+
+Across all nine recordings with guardrails on, no note got what it asked for in 50 completed runs. The damage is
+degradation, not takeover: Nightwatch's answer slipped in 3 of 27 runs (two of them from the "report nothing"
+note), the single call's in 4 of 17 it had right. Nine recordings is still small: this shows the attacks fail
+here, not how rarely they would succeed.
 
 ## How it works
 
@@ -177,8 +238,9 @@ See [DATA.md](DATA.md).
 - **Sample size.** 64 alerts is a small test, so the intervals are wide.
 - **Failed runs.** Three test runs failed outright (two Nightwatch, one single call) on malformed structured output, and
   count as misses. The repair (decoding the string, then one validation retry) was added afterwards and not re-scored.
-- **Budget.** The whole evaluation used one model (Claude Haiku 4.5) and stayed under a $5 cap. It spent $4.68,
-  recorded in `results/spend.json`.
+- **Budget.** The original evaluation used one model (Claude Haiku 4.5) and stayed under a $5 cap. It spent $4.68.
+  The false-alarm, quote and wider injection checks added later are logged in the same ledger,
+  `results/spend.json`.
 
 ## Run it
 

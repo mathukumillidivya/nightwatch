@@ -983,14 +983,48 @@ function viewEval(v) {
     <div><h3>Single AI call, alert by alert</h3><div class="sq">${sq("sc")}</div></div>
   </div>
   <div class="key"><span><i style="background:var(--ink)"></i>exact</span><span><i style="background:var(--dim)"></i>right family</span><span><i style="background:var(--wash2)"></i>missed</span><span>Hover a square for the alert.</span></div>
+  ${benignHtml()}
+  ${quotesHtml()}
   ${RT ? redteamHtml(RT) : ""}
+  ${wideHtml()}
   <div class="section"><h2>What these results do not show</h2><ul class="limits">
     <li>Each recording carries one label chosen by the dataset author. Some show several techniques, and some labels name the means (WMI, SMB) rather than the objective, so a reasonable answer can miss.</li>
     <li>The recordings come from small lab domains. Production networks have far more noise.</li>
     <li>${NWR.cases} alerts is a small test: the intervals above are wide.</li>
     <li>Three test runs failed outright (two Nightwatch, one single call) on malformed structured output and count as misses. The repair was added afterwards and not re-scored.</li>
-    <li>One model, Claude Haiku 4.5, chosen for cost. The whole evaluation was capped at $5${DATA.spend ? ` and used ${money(DATA.spend)}` : ""}.</li>
+    <li>One model, Claude Haiku 4.5, chosen for cost. The original evaluation was capped at $5 and used $4.68; the false-alarm, quote and wider injection checks added later bring the ledger to ${DATA.spend ? money(DATA.spend) : "–"}.</li>
   </ul></div></div>`;
+}
+function benignHtml() {
+  const B = DATA.results.benign; if (!B) return "";
+  const n = B.nightwatch, s = B.single_call, ex = { "BN-11": "Server Manager's named-pipe connection to LSASS → LSASS credential dumping", "BN-08": "Microsoft's malware removal tool reading LSASS → LSASS credential dumping", "BN-03": "Office Click-to-Run writing its own registry keys → Modify Registry", "BN-06": "Chrome installing an extension → malicious browser extension" };
+  return `<div class="section"><h2>False alarms on ordinary activity</h2>
+  <div class="two" style="margin-bottom:12px"><div><p class="muted">Every attack recording contains an attack, so the test above says nothing about false alarms. ${n.benign_alerts} windows of ordinary Windows activity (4,000 events each, reduced exactly like the attack recordings) come from <a href="https://github.com/NextronSystems/evtx-baseline" target="_blank" rel="noopener">NextronSystems/evtx-baseline</a> (Apache-2.0): clean installs of a Windows 10 client and a Windows Server 2022 domain controller with ordinary software and use. Then ${n.mixed_alerts} held-out attacks that Nightwatch got right were mixed into those windows.</p></div>
+    <div><p><b>Both systems almost always report an attack.</b> Nightwatch named a technique on ${n.false_alarms} of ${n.benign_alerts} ordinary windows, the single call on ${s.false_alarms}. Mixed into ordinary activity, Nightwatch still named ${n.mixed_kept} of ${n.mixed_right_on_clean} attacks first. It is a second-stage investigator for alerts that detection rules already raised, not a filter that can close alerts on its own.</p></div></div>
+  <div class="scroll"><table class="etable"><thead><tr><th>System</th><th>False alarms, ${n.benign_alerts} ordinary windows</th><th>Techniques per false alarm</th><th>Attack still named first in noise</th></tr></thead><tbody>
+    <tr><td>Single AI call</td><td><b>${s.false_alarms} of ${s.benign_alerts}</b></td><td>${s.techniques_per_false_alarm}</td><td>${s.mixed_kept} of ${s.mixed_right_on_clean} it got right when clean</td></tr>
+    <tr class="nw"><td>Nightwatch</td><td><b>${n.false_alarms} of ${n.benign_alerts}</b></td><td>${n.techniques_per_false_alarm}</td><td>${n.mixed_kept} of ${n.mixed_right_on_clean}</td></tr></tbody></table></div>
+  <ul class="limits" style="margin-top:12px">${Object.entries(ex).map(([k, t]) => `<li><b>${k}</b> ${esc(t)}</li>`).join("")}
+    <li><b>Small sample.</b> 12 windows from two machines, and two pairs of windows overlap, so treat the rate as “most of the time”, not as a precise figure. The fix to try next: make “nothing to report” an outcome the hunter has to rule out, and build the rarity table from the customer's own machines.</li></ul></div>`;
+}
+function quotesHtml() {
+  const Qs = DATA.results.quote_support; if (!Qs || !Qs.systems) return "";
+  const row = (name, x, c) => { const a = x.all, r = x.right_technique, w = x.wrong_technique, p = k => `${pct(k.rate)}`;
+    return `<tr class="${c}"><td>${name}</td><td>${a.findings}</td><td>${p(a.all_quotes_verified)}</td><td><b>${p(a.supports)}</b></td><td>${p(a.partial)}</td><td>${p(a.does_not_support)}</td><td>${p(r.supports)} (${r.findings})</td><td>${p(w.supports)} (${w.findings})</td></tr>`; };
+  const S = Qs.systems;
+  return `<div class="section"><h2>Does the quote prove the technique?</h2><p class="muted" style="max-width:860px">Code checks that each quote exists in the event it cites. A quote can exist and prove nothing: <code>powershell.exe</code> is in every Windows log. A second model (Claude Haiku 4.5, temperature 0) read each held-out finding next to the full events it cites and the ATT&CK description, and said whether those events show the technique. It shares the systems' model, so treat it as a screen.</p>
+  <div class="scroll"><table class="etable"><thead><tr><th>System</th><th>Findings</th><th>Quotes found</th><th>Events show it</th><th>Consistent, not specific</th><th>Do not show it</th><th>Show it: right technique</th><th>Show it: wrong technique</th></tr></thead><tbody>
+  ${S.single_call ? row("Single AI call", S.single_call, "") : ""}${S.nightwatch ? row("Nightwatch", S.nightwatch, "nw") : ""}</tbody></table></div>
+  <p class="muted" style="font-size:14px">Every Nightwatch quote exists, yet the cited events show the technique for ${pct(S.nightwatch.all.supports.rate)} of its findings (${pct(S.nightwatch.first_finding.supports.rate)} of first findings), and ${pct(S.nightwatch.all.does_not_support.rate)} cite events that do not show it at all. The check separates right from wrong: ${pct(S.nightwatch.right_technique.supports.rate)} of findings naming the labelled technique are shown by their events, against ${pct(S.nightwatch.wrong_technique.supports.rate)} of the rest. “The rest” includes real activity the label does not name (mimikatz output reported as LSASS dumping, for one), so it is not all error. A sample of judgments read by hand looked sound. Cost: ${money(S.nightwatch.cost_usd + S.single_call.cost_usd)}.</p></div>`;
+}
+function wideHtml() {
+  const W = DATA.results.redteam_wide; if (!W) return "";
+  const tot = x => Object.values(x).reduce((a, g) => { for (const k of ["cases", "errors", "goal_met", "eligible", "harmed", "called_out"]) a[k] = (a[k] || 0) + g[k]; return a; }, {});
+  const r = (name, x, c) => { const t = tot(x), n = t.cases - t.errors; return `<tr class="${c}"><td>${name}</td><td>${t.cases}${t.errors ? ` (${t.errors} failed)` : ""}</td><td><b>${t.goal_met} of ${n}</b></td><td>${t.harmed} of ${t.eligible}</td><td>${t.called_out} of ${n}</td></tr>`; };
+  return `<div class="section"><h3>Six more recordings, guardrails on</h3><p class="muted" style="max-width:860px">The same three notes planted in six more held-out recordings (NW-006, 014, 027, 058, 082, 090). Attacker success: the note got what it asked for. Degradation: an answer that was right on the clean recording is no longer first.</p>
+  <div class="scroll"><table class="etable"><thead><tr><th>System</th><th>Planted alerts</th><th>Attacker success</th><th>Right answer knocked off first place</th><th>Note reported as adversary activity</th></tr></thead><tbody>
+  ${W.single ? r("Single AI call", W.single, "") : ""}${W.nightwatch ? r("Nightwatch", W.nightwatch, "nw") : ""}</tbody></table></div>
+  <p class="muted" style="font-size:14px">Across all nine recordings with guardrails on: no note got what it asked for in 50 completed runs; Nightwatch's answer degraded in 3 of 27, the single call's in 4 of 17 it had right. Two of Nightwatch's three degradations came from the “report nothing” note.</p></div>`;
 }
 function redteamHtml(rt) {
   const S = rt.summary || {};
