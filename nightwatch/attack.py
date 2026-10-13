@@ -82,7 +82,7 @@ def search(query: str, k: int = 8, platform: str | None = "Windows") -> list[dic
     return out
 
 
-def card(tid: str, chars: int = 900) -> str:
+def card(tid: str, chars: int = 900, det_chars: int = 500) -> str:
     """A short reference card for one technique, as the mapper agent reads it."""
     x = get(tid)
     if not x:
@@ -90,6 +90,6 @@ def card(tid: str, chars: int = 900) -> str:
     name = x["name"] if not x.get("parent_name") else f"{x['parent_name']}: {x['name']}"
     desc = re.sub(r"\(Citation:[^)]*\)", "", x["description"])
     desc = re.sub(r"\s+", " ", desc).strip()
-    det = " ".join(x["detection"])[:500]
+    det = " ".join(x["detection"])[:det_chars]
     return (f"{current(tid)} {name} [{', '.join(x['tactics'])}]\n{desc[:chars]}{' …' if len(desc) > chars else ''}\n"
-            f"How ATT&CK detects it: {det}{' …' if len(' '.join(x['detection'])) > 500 else ''}")
+            f"How ATT&CK detects it: {det}{' …' if len(' '.join(x['detection'])) > det_chars else ''}")

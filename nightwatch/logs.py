@@ -128,7 +128,7 @@ TYPES: dict[tuple[str, int], tuple[str, list[str], float]] = {
     ("Firewall", 2006): ("firewall rule deleted", ["RuleName"], 2),
 }
 DEFAULT_WEIGHT = 0.4  # known channel, unlisted event id: shown only if very rare
-LONG = {"CommandLine": 500, "ScriptBlockText": 700, "Payload": 400, "TaskContent": 500, "TaskContentNew": 300,
+LONG = {"CommandLine": 320, "ScriptBlockText": 400, "Payload": 240, "TaskContent": 320, "TaskContentNew": 200,
         "Details": 200, "Query": 300, "Destination": 400, "AttributeValue": 300, "Contents": 200}
 
 GUID = re.compile(r"\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?", re.I)
@@ -259,10 +259,10 @@ def score(g: dict, df: Counter, n_recordings: int) -> float:
     return g["weight"] * max(idf, 0.0) * burst
 
 
-CAPS = {(S, 7): 5, (S, 10): 8, (S, 12): 6, (S, 13): 8, (PS, 4103): 8, ("PowerShell-classic", 800): 6}  # per-type caps in the view
+CAPS = {(S, 7): 4, (S, 10): 6, (S, 12): 5, (S, 13): 7, (PS, 4103): 5, ("PowerShell-classic", 800): 4}  # per-type caps in the view
 
 
-def condense(parsed: dict, df: Counter, n_recordings: int, view: int = 60, index: int = 1200,
+def condense(parsed: dict, df: Counter, n_recordings: int, view: int = 50, index: int = 1200,
              per_type: int = 14) -> dict:
     """Pick the triage view and the searchable index for one recording."""
     groups = list(parsed["groups"].values())

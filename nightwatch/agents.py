@@ -46,7 +46,7 @@ from .models import Claude, add_usage, usage_of
 
 MAX_HYPOTHESES = 3
 HUNTER_SEARCHES = 3
-MAPPER_LOOKUPS = 2
+MAPPER_LOOKUPS = 1
 
 # ----------------------------------------------------------------------------------------------- what agents return
 
@@ -102,38 +102,44 @@ class Report(BaseModel):
 
 TASK = """You are working a Security Operations Center alert. Each recording captures Windows hosts in a small
 lab domain while an operator ran one adversary action (sometimes a short sequence). The surrounding events are
-normal background: Windows services, updates, telemetry, logons. Where a command-and-control framework is
-involved (an encoded PowerShell launcher, an agent beaconing, a stager), that is how the operator got in, not the
-action under investigation: rank the action the operator performed through it first."""
+normal background: Windows services, updates, telemetry, logons.
+
+Rank by the operator's objective, not the means. Encoded PowerShell launchers, C2 agents beaconing, stagers and
+in-memory loading of a tool (for example mimikatz or PowerView) are how the operator acts; the technique under
+investigation is what that tool or command was used to do: whose credentials were taken and how, which object or
+setting was changed, what was enumerated, where the operator moved, what was made to persist. Delivery and
+execution belong first only when nothing else happened."""
 
 HUNTER = f"""{TASK}
 
 You are the threat hunter. You get a triage view: the most unusual event templates in the recording, rare across
-the fleet, each collapsed with a count. Each event has an id (E###). A wider index of about 600 more templates
-(ids X####) can be searched with the search_events tool, up to {HUNTER_SEARCHES} times. Search when the view
-hints at something you cannot see in full, for example the command that started a process, or what a suspicious
-process did next.
+the fleet, each collapsed with a count. Each event has an id (E###). A wider index of several hundred more
+templates (ids X####) can be searched with the search_events tool, up to {HUNTER_SEARCHES} times. Search when the
+view hints at something you cannot see in full: the command that started a process, what a suspicious process
+did next, activity on the domain controller.
 
-Return up to {MAX_HYPOTHESES} hypotheses, each a distinct adversary behavior, most important first. Be concrete
-(which process or account did what to what) and cite the events that show it. Background noise is not a
-hypothesis. Give ATT&CK-style keywords for each so it can be looked up."""
+Return up to {MAX_HYPOTHESES} hypotheses, each a distinct adversary behavior, most important first. Keep each
+behavior to one sentence naming the process or account, the action and the target. Cite at most five events.
+Background noise is not a hypothesis. Give a few ATT&CK-style keywords for each so it can be looked up."""
 
 MAPPER = f"""{TASK}
 
 You are the ATT&CK mapper. The hunter has proposed one adversary behavior. Map it to the single best MITRE
-ATT&CK Enterprise technique. Prefer the most specific sub-technique the evidence supports. Candidate techniques
-retrieved from ATT&CK v19 are listed below; you may use technique_lookup (up to {MAPPER_LOOKUPS} times) if none
-fits. If the behavior is not adversary activity after all, answer "none".
+ATT&CK Enterprise technique (v19). Prefer the most specific sub-technique the evidence supports. Candidates
+retrieved from ATT&CK are listed in the brief; you may call technique_lookup once if none fits. If the behavior
+is not adversary activity after all, answer "none".
 
-Cite evidence as exact quotes copied from the log fields shown (event id, field name, quoted text). Code will
-check every quote against the logs and reject anything that is not there."""
+Give one or two sentences of reasoning. Cite one to three pieces of evidence as short exact quotes (under 80
+characters) copied from the log fields shown. Code checks every quote against the logs and rejects anything that
+is not there."""
 
 BASELINE = f"""{TASK}
 
 Read the triage view: the most unusual event templates in the recording, rare across the fleet, each collapsed
 with a count. Identify up to {MAX_HYPOTHESES} adversary techniques as MITRE ATT&CK Enterprise technique ids
-(ATT&CK v19), most important first. Prefer the most specific sub-technique the evidence supports. For each, cite
-evidence as exact quotes copied from the log fields shown (event id, field name, quoted text)."""
+(ATT&CK v19), most important first. Prefer the most specific sub-technique the evidence supports. Keep each
+behavior to one sentence. For each, cite one to three short exact quotes (under 80 characters) copied from the
+log fields shown."""
 
 REPORTER = """You are the incident responder writing the ticket for this alert. Use only the verified findings and
 the events below; every timeline entry must name one of these event ids. Be specific and brief. Severity: critical
@@ -189,7 +195,7 @@ def search_events(query: str, tool_context: ToolContext) -> dict:
         if s:
             scored.append((s, -r["score"], r))
     scored.sort(key=lambda x: (-x[0], x[1]))
-    hits = [r for _, _, r in scored[:12]]
+    hits = [r for _, _, r in scored[:8]]
     guarded = tool_context.state.get("guarded", True)
     return {"matches": len(scored), "events": render(sorted(hits, key=lambda r: r["t"]), guarded) if hits else "no matches"}
 
@@ -207,7 +213,7 @@ def technique_lookup(query: str, tool_context: ToolContext) -> dict:
     q = query.strip()
     hits = [attack.get(q)] if re.fullmatch(r"T\d{4}(\.\d{3})?", q.upper()) and attack.get(q) else None
     found = [{"id": attack.current(q.upper())}] if hits else attack.search(q, 6)
-    return {"techniques": [attack.card(h["id"], 350) for h in found]}
+    return {"techniques": [attack.card(h["id"], 300, 200) for h in found[:4]]}
 
 
 # ------------------------------------------------------------------------------------------- the workflow
@@ -229,16 +235,19 @@ def _with_rule(text: str):
 
 
 def _agents(model: Claude) -> dict[str, LlmAgent]:
-    common = dict(model=model, after_model_callback=_usage_callback,
-                  generate_content_config=types.GenerateContentConfig(temperature=0))
+    def common(max_tokens: int, cache: bool = False):
+        return dict(model=model.variant(max_tokens=max_tokens, cache=cache), after_model_callback=_usage_callback,
+                    generate_content_config=types.GenerateContentConfig(temperature=0))
     return {
-        "hunter": LlmAgent(name="hunter", instruction=_with_rule(HUNTER), tools=[search_events], output_schema=Hunt, **common),
+        "hunter": LlmAgent(name="hunter", instruction=_with_rule(HUNTER), tools=[search_events], output_schema=Hunt,
+                           **common(1200, cache=True)),
         "mapper": LlmAgent(name="mapper", instruction=_with_rule(MAPPER), tools=[technique_lookup], output_schema=Mapping,
-                           parallel_worker=True, **common),
+                           parallel_worker=True, **common(700)),
         "fixer": LlmAgent(name="mapper_retry", instruction=_with_rule(MAPPER), tools=[technique_lookup], output_schema=Mapping,
-                          **common),
-        "reporter": LlmAgent(name="reporter", instruction=_with_rule(REPORTER), output_schema=Report, **common),
-        "single_call": LlmAgent(name="single_call", instruction=_with_rule(BASELINE), output_schema=BaselineAnswer, **common),
+                          **common(700)),
+        "reporter": LlmAgent(name="reporter", instruction=_with_rule(REPORTER), output_schema=Report, **common(1200)),
+        "single_call": LlmAgent(name="single_call", instruction=_with_rule(BASELINE), output_schema=BaselineAnswer,
+                                **common(1500)),
     }
 
 
@@ -256,11 +265,11 @@ def _plan(ctx: Context, node_input: Hunt) -> list[str]:
     tasks, cands = [], []
     for i, h in enumerate(hyps):
         cited = [events[x] for x in h["event_ids"] if x in events][:6]
-        found = [c["id"] for c in attack.search(" ".join([h["behavior"]] + h["keywords"] * 2), 6)]
+        found = [c["id"] for c in attack.search(" ".join([h["behavior"]] + h["keywords"] * 2), 5)]
         cands.append(found)
         tasks.append(f"Hypothesis {i + 1} from the hunter: {h['behavior']}\n\nEvents it cites:\n"
                      f"{render(cited, guarded) if cited else '(none of the cited ids exist)'}\n\n"
-                     "Candidate techniques from ATT&CK:\n\n" + "\n\n".join(attack.card(c, 450) for c in found))
+                     "Candidate techniques from ATT&CK:\n\n" + "\n\n".join(attack.card(c, 400, 250) for c in found))
     ctx.state["hunt"] = {"assessment": node_input.assessment, "hypotheses": hyps}
     ctx.state["tasks"] = tasks
     ctx.state["_step"] = {"kind": "retrieval", "candidates": cands}
@@ -289,7 +298,8 @@ def _make_check(fixer: LlmAgent):
             results[i] = {"mapping": m, "check": verify.check_mapping(case, m, events), "attempts": 2}
             yield step("reverify", slot=i, result=results[i]["check"])
         findings, seen = [], set()
-        for i, r in enumerate(results):  # the hunter's order, verified findings only
+        for i in verify.rank_slots([r["check"]["technique_id"] for r in results]):  # verified findings only
+            r = results[i]
             c = r["check"]
             if c["verified"] and c["technique_id"] not in seen:
                 seen.add(c["technique_id"])
@@ -422,9 +432,11 @@ async def investigate(case: dict, system: str, model: Claude, guarded: bool = Tr
         checked.append({"technique_id": tid or f.get("technique_id"), "valid_id": bool(tid), "behavior": f.get("behavior"),
                         "evidence": ev, "verified": bool(tid and any(e["ok"] for e in ev))})
     ranked, ranked_verified = [], []
-    for f in checked:  # as answered (valid ids, in order), and with the evidence check applied
+    for f in checked:  # as answered: valid ids, in order
         if f["valid_id"] and f["technique_id"] not in ranked:
             ranked.append(f["technique_id"])
+    for i in verify.rank_slots([f["technique_id"] if f["verified"] else None for f in checked]):
+        f = checked[i]  # with Nightwatch's code layer applied: evidence check and the same ranking policy
         if f["verified"] and f["technique_id"] not in ranked_verified:
             ranked_verified.append(f["technique_id"])
     return {"techniques": ranked, "techniques_verified": ranked_verified, "answer": answer, "checked": checked, "trace": trace,

@@ -65,6 +65,7 @@ class Claude(AnthropicLlm):
 
     model: str = MODEL
     max_tokens: int = 2048
+    cache: bool = True  # prompt caching pays only for agents that call the model several times on one prefix
 
     def _build_anthropic_kwargs(self, llm_request, messages, tools, tool_choice, thinking) -> dict[str, Any]:
         kwargs = super()._build_anthropic_kwargs(llm_request, messages, tools, tool_choice, thinking)
@@ -80,7 +81,13 @@ class Claude(AnthropicLlm):
             kwargs["extra_body"] = {**(kwargs.get("extra_body") or {}), **sampling}
         return kwargs
 
+    def variant(self, **changes) -> "Claude":
+        """The same model and client with different settings (max_tokens, cache) for one agent."""
+        return self.model_copy(update=changes)
+
     async def generate_content_async(self, llm_request: LlmRequest, stream: bool = False) -> AsyncGenerator[LlmResponse, None]:
+        if not self.cache:
+            llm_request.cache_config = None
         async for response in super().generate_content_async(llm_request, stream=False):
             parts = (response.content.parts if response.content else None) or []
             for i, part in enumerate(parts):

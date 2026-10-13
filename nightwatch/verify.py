@@ -70,3 +70,18 @@ def check_mapping(case: dict, mapping: dict, events: dict | None = None) -> dict
                         if evidence else "no evidence was cited")
     return {"technique_id": tid, "declined": problem == "none", "evidence": evidence, "verified": bool(tid and ok_ev),
             "problems": problems}
+
+
+# How the operator got in and ran things, rather than what they set out to do. A finding of this kind is still
+# reported, but ranked after any other verified finding (triage policy: name the objective, not the vehicle).
+DELIVERY = {"T1059.001", "T1059.003", "T1620", "T1027", "T1071", "T1071.001", "T1105", "T1140", "T1132", "T1132.001",
+            "T1106", "T1129", "T1204", "T1204.002"}
+
+
+def is_delivery(tid: str | None) -> bool:
+    return bool(tid) and (tid in DELIVERY or tid.split(".")[0] in {"T1027", "T1071", "T1132"})
+
+
+def rank_slots(tids: list[str | None]) -> list[int]:
+    """Slot order: the hunter's order, with delivery techniques moved behind the rest."""
+    return sorted(range(len(tids)), key=lambda i: (is_delivery(tids[i]), i))
