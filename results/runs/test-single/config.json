@@ -1,0 +1,17 @@
+{
+  "system": "single_call",
+  "split": "test",
+  "cases": 64,
+  "ids": "",
+  "limit": 0,
+  "concurrency": 4,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 0.9,
+  "project_cap": 5.0,
+  "run_id": "test-single",
+  "completed": 64,
+  "stopped_at_budget": false,
+  "cost": 0.6122
+}

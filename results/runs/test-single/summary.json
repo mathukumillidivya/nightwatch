@@ -1,0 +1,34 @@
+{
+ "test-single": {
+  "cases": 64,
+  "errors": 1,
+  "top1": 0.3906,
+  "top1_family": 0.4844,
+  "top3": 0.4688,
+  "tactic": 0.6562,
+  "answered": 0.9844,
+  "by_dataset": 0.3906,
+  "invented": 0.0,
+  "grounded": 0.9471,
+  "cost_per_case": 0.00957,
+  "cost_total": 0.6122,
+  "median_seconds": 6.8,
+  "model_calls_per_case": 0.98
+ },
+ "test-single+verify": {
+  "cases": 64,
+  "errors": 1,
+  "top1": 0.3906,
+  "top1_family": 0.4844,
+  "top3": 0.4688,
+  "tactic": 0.625,
+  "answered": 0.9688,
+  "by_dataset": 0.3906,
+  "invented": 0.0,
+  "grounded": 0.9471,
+  "cost_per_case": 0.00957,
+  "cost_total": 0.6122,
+  "median_seconds": 6.8,
+  "model_calls_per_case": 0.98
+ }
+}
