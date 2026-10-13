@@ -1,157 +1,145 @@
-retry NW-057 JSONDecodeError Invalid \escape: line 10 column 90 (char 393)
-retry NW-057 JSONDecodeError Invalid \escape: line 10 column 90 (char 393)
-retry NW-057 JSONDecodeError Invalid \escape: line 10 column 90 (char 393)
-retry NW-058 JSONDecodeError Invalid \escape: line 10 column 76 (char 355)
-retry NW-058 JSONDecodeError Invalid \escape: line 10 column 76 (char 355)
-retry NW-058 JSONDecodeError Invalid \escape: line 10 column 76 (char 355)
-retry NW-037 JSONDecodeError Invalid \escape: line 5 column 138 (char 186)
-retry NW-037 JSONDecodeError Invalid \escape: line 5 column 138 (char 186)
-retry NW-037 JSONDecodeError Invalid \escape: line 5 column 138 (char 186)
-retry NW-098 JSONDecodeError Invalid \escape: line 5 column 105 (char 152)
-retry NW-098 JSONDecodeError Invalid \escape: line 5 column 105 (char 152)
-retry NW-098 JSONDecodeError Invalid \escape: line 5 column 105 (char 152)
 {
  "nightwatch": {
   "all": {
-   "findings": 154,
+   "findings": 166,
    "supports": {
-    "count": 76,
-    "of": 154,
-    "rate": 0.4935
+    "count": 80,
+    "of": 166,
+    "rate": 0.4819
    },
    "partial": {
-    "count": 60,
-    "of": 154,
-    "rate": 0.3896
+    "count": 65,
+    "of": 166,
+    "rate": 0.3916
    },
    "does_not_support": {
-    "count": 18,
-    "of": 154,
-    "rate": 0.1169
+    "count": 21,
+    "of": 166,
+    "rate": 0.1265
    },
    "all_quotes_verified": {
-    "count": 154,
-    "of": 154,
+    "count": 166,
+    "of": 166,
     "rate": 1.0
    }
   },
   "right_technique": {
-   "findings": 39,
+   "findings": 42,
    "supports": {
-    "count": 29,
-    "of": 39,
-    "rate": 0.7436
+    "count": 32,
+    "of": 42,
+    "rate": 0.7619
    },
    "partial": {
     "count": 9,
-    "of": 39,
-    "rate": 0.2308
+    "of": 42,
+    "rate": 0.2143
    },
    "does_not_support": {
     "count": 1,
-    "of": 39,
-    "rate": 0.0256
+    "of": 42,
+    "rate": 0.0238
    },
    "all_quotes_verified": {
-    "count": 39,
-    "of": 39,
+    "count": 42,
+    "of": 42,
     "rate": 1.0
    }
   },
   "wrong_technique": {
-   "findings": 115,
+   "findings": 124,
    "supports": {
-    "count": 47,
-    "of": 115,
-    "rate": 0.4087
+    "count": 48,
+    "of": 124,
+    "rate": 0.3871
    },
    "partial": {
-    "count": 51,
-    "of": 115,
-    "rate": 0.4435
+    "count": 56,
+    "of": 124,
+    "rate": 0.4516
    },
    "does_not_support": {
-    "count": 17,
-    "of": 115,
-    "rate": 0.1478
+    "count": 20,
+    "of": 124,
+    "rate": 0.1613
    },
    "all_quotes_verified": {
-    "count": 115,
-    "of": 115,
+    "count": 124,
+    "of": 124,
     "rate": 1.0
    }
   }
  },
  "single_call": {
   "all": {
-   "findings": 0,
+   "findings": 189,
    "supports": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 87,
+    "of": 189,
+    "rate": 0.4603
    },
    "partial": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 65,
+    "of": 189,
+    "rate": 0.3439
    },
    "does_not_support": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 37,
+    "of": 189,
+    "rate": 0.1958
    },
    "all_quotes_verified": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 146,
+    "of": 189,
+    "rate": 0.7725
    }
   },
   "right_technique": {
-   "findings": 0,
+   "findings": 44,
    "supports": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 32,
+    "of": 44,
+    "rate": 0.7273
    },
    "partial": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 6,
+    "of": 44,
+    "rate": 0.1364
    },
    "does_not_support": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 6,
+    "of": 44,
+    "rate": 0.1364
    },
    "all_quotes_verified": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 36,
+    "of": 44,
+    "rate": 0.8182
    }
   },
   "wrong_technique": {
-   "findings": 0,
+   "findings": 145,
    "supports": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 55,
+    "of": 145,
+    "rate": 0.3793
    },
    "partial": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 59,
+    "of": 145,
+    "rate": 0.4069
    },
    "does_not_support": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 31,
+    "of": 145,
+    "rate": 0.2138
    },
    "all_quotes_verified": {
-    "count": 0,
-    "of": 0,
-    "rate": null
+    "count": 110,
+    "of": 145,
+    "rate": 0.7586
    }
   }
  }
 }
-spent $0.2127
+spent $0.2735

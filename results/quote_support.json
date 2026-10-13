@@ -3,100 +3,112 @@
   "systems": {
     "nightwatch": {
       "all": {
-        "findings": 154,
+        "findings": 166,
         "supports": {
-          "count": 76,
-          "of": 154,
-          "rate": 0.4935
+          "count": 80,
+          "of": 166,
+          "rate": 0.4819
         },
         "partial": {
-          "count": 60,
-          "of": 154,
-          "rate": 0.3896
+          "count": 65,
+          "of": 166,
+          "rate": 0.3916
         },
         "does_not_support": {
-          "count": 18,
-          "of": 154,
-          "rate": 0.1169
+          "count": 21,
+          "of": 166,
+          "rate": 0.1265
         },
         "all_quotes_verified": {
-          "count": 154,
-          "of": 154,
+          "count": 166,
+          "of": 166,
           "rate": 1.0
         }
       },
       "right_technique": {
-        "findings": 39,
+        "findings": 42,
         "supports": {
-          "count": 29,
-          "of": 39,
-          "rate": 0.7436
+          "count": 32,
+          "of": 42,
+          "rate": 0.7619
         },
         "partial": {
           "count": 9,
-          "of": 39,
-          "rate": 0.2308
+          "of": 42,
+          "rate": 0.2143
         },
         "does_not_support": {
           "count": 1,
-          "of": 39,
-          "rate": 0.0256
+          "of": 42,
+          "rate": 0.0238
         },
         "all_quotes_verified": {
-          "count": 39,
-          "of": 39,
+          "count": 42,
+          "of": 42,
           "rate": 1.0
         }
       },
       "wrong_technique": {
-        "findings": 115,
+        "findings": 124,
         "supports": {
-          "count": 47,
-          "of": 115,
-          "rate": 0.4087
+          "count": 48,
+          "of": 124,
+          "rate": 0.3871
         },
         "partial": {
-          "count": 51,
-          "of": 115,
-          "rate": 0.4435
+          "count": 56,
+          "of": 124,
+          "rate": 0.4516
         },
         "does_not_support": {
-          "count": 17,
-          "of": 115,
-          "rate": 0.1478
+          "count": 20,
+          "of": 124,
+          "rate": 0.1613
         },
         "all_quotes_verified": {
-          "count": 115,
-          "of": 115,
+          "count": 124,
+          "of": 124,
           "rate": 1.0
         }
       },
       "first_finding": {
-        "findings": 58,
+        "findings": 62,
         "supports": {
-          "count": 40,
-          "of": 58,
-          "rate": 0.6897
+          "count": 43,
+          "of": 62,
+          "rate": 0.6935
         },
         "partial": {
-          "count": 13,
-          "of": 58,
-          "rate": 0.2241
+          "count": 14,
+          "of": 62,
+          "rate": 0.2258
         },
         "does_not_support": {
           "count": 5,
-          "of": 58,
-          "rate": 0.0862
+          "of": 62,
+          "rate": 0.0806
         },
         "all_quotes_verified": {
-          "count": 58,
-          "of": 58,
+          "count": 62,
+          "of": 62,
           "rate": 1.0
         }
       },
-      "alerts": 58,
-      "cost_usd": 0.2127,
+      "alerts": 62,
+      "cost_usd": 0.2283,
       "examples_wrong_but_verified": [
+        {
+          "case_id": "NW-057",
+          "technique": "T1553.004",
+          "support": "partial",
+          "events_show": "PowerShell created registry keys under certificate store paths (Disallowed\\CTLs), which is consistent with certificate management but does not demonstrate installation of a root certificate or subversion of trust controls."
+        },
+        {
+          "case_id": "NW-057",
+          "technique": "T1556",
+          "support": "partial",
+          "events_show": "PowerShell accessed the Session Manager Environment registry key and obtained a handle to rundll32.exe with full access, but these actions are consistent with normal process interaction and do not specifically demonstrate modification of authentication mechanisms."
+        },
         {
           "case_id": "NW-040",
           "technique": "T1134.005",
@@ -132,117 +144,154 @@
           "technique": "T1071.001",
           "support": "does_not_support",
           "events_show": "No event data was provided; the cited event X0725 does not exist in the full events list."
-        },
-        {
-          "case_id": "NW-080",
-          "technique": "T1012",
-          "support": "partial",
-          "events_show": "SharpView.exe requested handles to registry keys including LSA, .NETFramework, and Winlogon, which are consistent with system configuration enumeration but could also result from normal application startup or legitimate administrative queries."
-        },
-        {
-          "case_id": "NW-080",
-          "technique": "T1057",
-          "support": "does_not_support",
-          "events_show": "Explorer.EXE accessed cmd.exe with limited access (0x1000), but the cited events do not include the PowerShell process access mentioned in the analyst's claim, and a single process access does not demonstrate process enumeration or reconnaissance."
         }
       ]
     },
     "single_call": {
       "all": {
-        "findings": 0,
+        "findings": 189,
         "supports": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 87,
+          "of": 189,
+          "rate": 0.4603
         },
         "partial": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 65,
+          "of": 189,
+          "rate": 0.3439
         },
         "does_not_support": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 37,
+          "of": 189,
+          "rate": 0.1958
         },
         "all_quotes_verified": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 146,
+          "of": 189,
+          "rate": 0.7725
         }
       },
       "right_technique": {
-        "findings": 0,
+        "findings": 44,
         "supports": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 32,
+          "of": 44,
+          "rate": 0.7273
         },
         "partial": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 6,
+          "of": 44,
+          "rate": 0.1364
         },
         "does_not_support": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 6,
+          "of": 44,
+          "rate": 0.1364
         },
         "all_quotes_verified": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 36,
+          "of": 44,
+          "rate": 0.8182
         }
       },
       "wrong_technique": {
-        "findings": 0,
+        "findings": 145,
         "supports": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 55,
+          "of": 145,
+          "rate": 0.3793
         },
         "partial": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 59,
+          "of": 145,
+          "rate": 0.4069
         },
         "does_not_support": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 31,
+          "of": 145,
+          "rate": 0.2138
         },
         "all_quotes_verified": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 110,
+          "of": 145,
+          "rate": 0.7586
         }
       },
       "first_finding": {
-        "findings": 0,
+        "findings": 63,
         "supports": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 45,
+          "of": 63,
+          "rate": 0.7143
         },
         "partial": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 8,
+          "of": 63,
+          "rate": 0.127
         },
         "does_not_support": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 10,
+          "of": 63,
+          "rate": 0.1587
         },
         "all_quotes_verified": {
-          "count": 0,
-          "of": 0,
-          "rate": null
+          "count": 45,
+          "of": 63,
+          "rate": 0.7143
         }
       },
-      "alerts": 0,
-      "cost_usd": 0,
-      "examples_wrong_but_verified": []
+      "alerts": 63,
+      "cost_usd": 0.2579,
+      "examples_wrong_but_verified": [
+        {
+          "case_id": "NW-040",
+          "technique": "T1547.012",
+          "support": "does_not_support",
+          "events_show": "A scheduled task was modified to execute compattelrunner.exe, which is a legitimate Windows compatibility telemetry tool, not evidence of print processor abuse for persistence."
+        },
+        {
+          "case_id": "NW-032",
+          "technique": "T1087.002",
+          "support": "partial",
+          "events_show": "The WEC$ account accessed SAM domain and group objects via lsass.exe and connected to the IPC$ share's samr pipe, which is consistent with domain account enumeration but could also represent normal domain controller operations or legitimate administrative queries."
+        },
+        {
+          "case_id": "NW-032",
+          "technique": "T1005",
+          "support": "partial",
+          "events_show": "LSASS performed a raw disk read on the system volume and accessed a SAM domain object, which is consistent with credential extraction but could also represent normal system operations or legitimate administrative access to the SAM database."
+        },
+        {
+          "case_id": "NW-057",
+          "technique": "T1012",
+          "support": "partial",
+          "events_show": "PowerShell and rundll32 accessed registry keys for system environment variables and LSA configuration, which is consistent with discovery but could also be normal administrative or security configuration queries."
+        },
+        {
+          "case_id": "NW-057",
+          "technique": "T1012",
+          "support": "does_not_support",
+          "events_show": "PowerShell created registry keys under SystemCertificates\\Disallowed, which shows registry key creation rather than querying/reading registry for discovery purposes."
+        },
+        {
+          "case_id": "NW-051",
+          "technique": "T1087.001",
+          "support": "partial",
+          "events_show": "WaAppAgent.exe queried membership of local groups (Administrators and Remote Desktop Users), which is consistent with account discovery but could also be routine Azure guest agent functionality."
+        },
+        {
+          "case_id": "NW-024",
+          "technique": "T1021.006",
+          "support": "does_not_support",
+          "events_show": "Kerberos service tickets were requested for MORDORDC$ and WEC$ by WORKSTATION5$ (a computer account), and a separate ticket was requested for krbtgt by pgustavo, but these events do not demonstrate WinRM lateral movement or the use of valid accounts to interact with remote systems."
+        },
+        {
+          "case_id": "NW-024",
+          "technique": "T1071.001",
+          "support": "partial",
+          "events_show": "SDXHelper.exe (a legitimate Microsoft Office process) made outbound HTTPS connections to Microsoft cloud infrastructure and queried a Microsoft Office-related domain, which is consistent with normal Office functionality rather than adversarial command and control."
+        }
+      ]
     }
   },
   "note": "Every quote here already exists word for word in its event. 'supports' means a second model (the same family as the systems) found the cited events show the technique; treat it as a screen."
