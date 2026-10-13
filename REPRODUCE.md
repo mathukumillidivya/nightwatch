@@ -35,3 +35,18 @@ python scripts/evaluate.py results/runs/my-single results/runs/my-nightwatch
 
 Model outputs vary slightly between runs at temperature 0, so a fresh run lands close to, not exactly on,
 the published figures. The GitHub workflow `run.yml` does the same in Actions.
+
+## Checks added after the test
+
+These came after the frozen evaluation and do not change its numbers. In GitHub: Actions > extra-evals. It downloads
+the benign recordings (NextronSystems/evtx-baseline, Apache-2.0), builds `data/benign.jsonl`, runs both systems on it
+and on `data/redteam_wide.jsonl`, and runs the quote-support check. To re-score the saved runs without a key:
+
+```bash
+python scripts/score_benign.py --run nightwatch=results/runs/benign-nightwatch single_call=results/runs/benign-single \
+  --clean nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single
+python scripts/score_redteam.py --clean results/runs/test-nightwatch --attacked results/runs/rt-wide-nightwatch-guarded \
+  --planted data/redteam_wide.jsonl
+```
+
+`results/quote_support.json` holds the quote-support results (`scripts/quote_support.py`, needs a key to re-run).
