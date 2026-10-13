@@ -1,0 +1,17 @@
+{
+  "system": "nightwatch",
+  "split": "dev",
+  "cases": 11,
+  "ids": "NW-002,NW-017,NW-022,NW-023,NW-025,NW-026,NW-033,NW-034,NW-039,NW-043,NW-045",
+  "limit": 0,
+  "concurrency": 4,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 0.45,
+  "project_cap": 5.0,
+  "run_id": "dev-r1-nightwatch",
+  "completed": 11,
+  "stopped_at_budget": false,
+  "cost": 0.3305
+}

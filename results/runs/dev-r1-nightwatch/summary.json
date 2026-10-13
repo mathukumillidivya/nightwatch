@@ -1,0 +1,20 @@
+{
+ "dev-r1-nightwatch": {
+  "cases": 11,
+  "errors": 1,
+  "top1": 0.3636,
+  "top1_family": 0.6364,
+  "top3": 0.6364,
+  "tactic": 0.7273,
+  "answered": 0.9091,
+  "by_dataset": 0.3636,
+  "invented": 0.0,
+  "grounded": 1.0,
+  "dropped_by_code": 0,
+  "sent_back": 3,
+  "cost_per_case": 0.03004,
+  "cost_total": 0.3305,
+  "median_seconds": 15.3,
+  "model_calls_per_case": 5.55
+ }
+}
