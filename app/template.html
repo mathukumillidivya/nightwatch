@@ -984,6 +984,7 @@ function viewEval(v) {
   </div>
   <div class="key"><span><i style="background:var(--ink)"></i>exact</span><span><i style="background:var(--dim)"></i>right family</span><span><i style="background:var(--wash2)"></i>missed</span><span>Hover a square for the alert.</span></div>
   ${benignHtml()}
+  ${v2Html()}
   ${quotesHtml()}
   ${RT ? redteamHtml(RT) : ""}
   ${wideHtml()}
@@ -1006,6 +1007,21 @@ function benignHtml() {
     <tr class="nw"><td>Nightwatch</td><td><b>${n.false_alarms} of ${n.benign_alerts}</b></td><td>${n.techniques_per_false_alarm}</td><td>${n.mixed_kept} of ${n.mixed_right_on_clean}</td></tr></tbody></table></div>
   <ul class="limits" style="margin-top:12px">${Object.entries(ex).map(([k, t]) => `<li><b>${k}</b> ${esc(t)}</li>`).join("")}
     <li><b>Small sample.</b> 12 windows from two machines, and two pairs of windows overlap, so treat the rate as “most of the time”, not as a precise figure. The fix to try next: make “nothing to report” an outcome the hunter has to rule out, and build the rarity table from the customer's own machines.</li></ul></div>`;
+}
+function v2Html() {
+  const V = DATA.results.nightwatch_v2; if (!V) return "";
+  const f = x => x ? `${x.count} of ${x.of}` : "–", A = V.attacks, Q = V.quote_support, Fo = V.fresh_ordinary;
+  const rows = [["False alarms, 10 fresh ordinary windows", f(Fo.v1.false_alarms), f(Fo.v2.false_alarms)],
+    ["Attack named first, 8 mixed alerts", f(V.mixed.v1.attack_named_first), f(V.mixed.v2.attack_named_first)],
+    ["First technique = label, 24 held-out attacks", f(A.v1.first_technique_right) + (A.v1.errors ? ` (${A.v1.errors} runs failed)` : ""), f(A.v2.first_technique_right)],
+    ["Right family, same 24", f(A.v1.right_family), f(A.v2.right_family)],
+    ["Attacks where it reported nothing", A.v1.nothing_reported, A.v2.nothing_reported],
+    ["Findings whose events show the technique (second model)", f(Q.v1 && Q.v1.supports), f(Q.v2 && Q.v2.supports)],
+    ["Findings whose events do not show it", f(Q.v1 && Q.v1.does_not_support), f(Q.v2 && Q.v2.does_not_support)]];
+  return `<div class="section"><h2>Version 2: “nothing to report” is an outcome</h2>
+  <div class="two" style="margin-bottom:12px"><div><p class="muted">Added after the test above and evaluated separately. The prompt no longer says every recording holds an attack; the hunter must first write the most likely ordinary explanation and choose an outcome (adversary activity, nothing to report, insufficient evidence); each mapper says whether its evidence is specific to the technique, and only specific findings are reported. Tested on 10 fresh ordinary windows from two machines never used before, the same 8 mixed alerts, and 24 held-out attacks drawn at random, one run each.</p></div>
+  <div><p><b>False alarms fell from ${f(Fo.v1.false_alarms)} to ${f(Fo.v2.false_alarms)}</b> on machines it had never seen, while the right-family count on attacks held. A new failure to fix: on NW-086 it reported nothing because the account was named “APT-Simulator” and it decided the activity was an authorized exercise. Authorization must never be read from the logs.</p></div></div>
+  <div class="scroll"><table class="etable"><thead><tr><th></th><th>Version 1</th><th>Version 2</th></tr></thead><tbody>${rows.map(([t, a, b]) => `<tr><td>${t}</td><td>${a}</td><td class="nwv"><b>${b}</b></td></tr>`).join("")}</tbody></table></div></div>`;
 }
 function quotesHtml() {
   const Qs = DATA.results.quote_support; if (!Qs || !Qs.systems) return "";

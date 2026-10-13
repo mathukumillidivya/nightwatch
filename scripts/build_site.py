@@ -86,7 +86,7 @@ def main():
         if x:
             techniques[t] = {"name": x["name"], "parent": x.get("parent_name"), "tactics": x["tactics"]}
     results = {}
-    for name in ("test-comparison.json", "dev-comparison.json", "redteam.json", "benign.json", "quote_support.json"):
+    for name in ("test-comparison.json", "dev-comparison.json", "redteam.json", "benign.json", "quote_support.json", "nightwatch_v2.json"):
         f = ROOT / "results" / name
         if f.exists():
             results[name.split(".")[0]] = json.loads(f.read_text())

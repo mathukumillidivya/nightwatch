@@ -111,6 +111,43 @@ on ordinary activity. Added after the test ([scripts/build_benign.py](scripts/bu
 - **Small sample.** 12 windows from two machines, and two pairs of windows overlap (BN-01/02, BN-07/08). Read the rate
   as "most of the time", not as a precise figure.
 
+### Version 2: "nothing to report" is an outcome
+
+Added after the test above, and evaluated separately; the original results are unchanged
+([scripts/compare_v2.py](scripts/compare_v2.py), [results/nightwatch_v2.json](results/nightwatch_v2.json)).
+
+**What changed** (`nightwatch_v2` in [nightwatch/agents.py](nightwatch/agents.py)):
+
+- The prompt no longer tells the agents that every recording contains an attack.
+- The hunter must first write the most likely ordinary explanation (installs, updates, administration, browsers), test
+  it against the events, and choose an outcome: adversary activity, nothing to report, or insufficient evidence.
+- Each mapper says whether its quoted events are specific to the technique or only consistent with it. Only specific
+  findings are reported as techniques; the rest are kept as leads.
+
+**How it was tested.** The design was informed by the 12 windows above, so they are not used to judge it. Instead:
+10 fresh ordinary windows from two machines not used before (a Windows 11 client and a Windows Server 2022 image,
+non-overlapping), the same 8 mixed alerts, and 24 held-out attack recordings drawn at random. One run each.
+
+| | Version 1 | Version 2 |
+|---|---|---|
+| False alarms, 10 fresh ordinary windows | 9 of 10 | **3 of 10** |
+| Attack named first, 8 mixed alerts | 4 of 8 | **6 of 8** |
+| First technique = label, 24 held-out attacks | 10 of 24 (2 runs failed) | 12 of 24 |
+| Right technique family, same 24 | 12 of 24 | 12 of 24 |
+| Attacks where it reported nothing | 0 | 1 |
+| Findings whose cited events show the technique (second model) | 25 of 60 (42%) | 23 of 42 (55%) |
+| Findings whose cited events do not show it | 9 of 60 (15%) | 0 of 42 |
+| Cost per attack alert | $0.032 | $0.036 |
+
+- **False alarms fell from 9 of 10 to 3 of 10** on machines it had never seen. Six windows were "nothing to
+  report" and one "insufficient evidence". The three left are installers (Ninite, Opera) running executables from temp
+  folders, and a local group lookup by a system service.
+- **Attack detection held.** Same right-family count on the 24 attacks; v2 gained 4 first-place answers and lost 2.
+- **A new failure to fix:** on NW-086 v2 reported nothing because the account was named "APT-Simulator" and it
+  concluded the activity was an authorized red-team exercise. Authorization must never be inferred from the logs
+  (that is exactly what the planted "report nothing" note tries); this is not fixed yet.
+- **Small samples, one run each.** Read these as the direction of the change, not precise rates.
+
 ## Prompt injection
 
 An attacker who expects an AI to read the logs can write to it through anything that gets logged: a command line, a
