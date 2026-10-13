@@ -1,7 +1,7 @@
 # Nightwatch
 
 **A SOC copilot: a team of AI agents that investigates real Windows attack recordings and maps them to MITRE ATT&CK.
-Every finding is quoted from the logs and checked by code.**
+Every quote it reports is verified in the source logs by code.**
 
 **Live console:** https://nightwatch-app.onrender.com. It holds all 105 alerts with their recorded investigations. You can
 replay any run, run the agents live, and plant a prompt injection in the logs to see whether it changes the verdict.
@@ -36,12 +36,13 @@ Built with Google's Agent Development Kit (ADK 2 Workflow graph), Claude Haiku 4
 
 A team of agents did not buy accuracy here, and the README says so.
 
-**What it did buy is a guarantee.**
-- Every finding Nightwatch shows is tied to a log quote that code found in the cited event.
+**What it did buy is a checked citation.**
+- 100% of the quotes Nightwatch reports were verified in the source logs: code found each one in the event it
+  cites. That is not proof the technique happened (see "Does the quote prove the technique?").
 - 5.3% of the single call's findings cited evidence that does not exist in the logs, and it would have shown them to an
   analyst as fact.
 - On Nightwatch, code rejected and sent back 15 claims and dropped 11 that still failed.
-- The guarantee costs 3.3× as much and takes 2.2× as long.
+- The quote check costs 3.3× as much and takes 2.2× as long.
 
 **What actually moved accuracy was better input, not more agents.** Windows logs facts as GUIDs and bit masks.
 `Properties={1131f6aa-…}` means nothing to a model; "directory replication right" does. When code began decoding

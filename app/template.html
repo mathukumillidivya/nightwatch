@@ -524,8 +524,8 @@ function viewHome(v) {
     <div class="dots-bg"></div>
     <div class="wrap">
       <div class="copy">
-        <h1><span>AI agents that investigate cyberattacks.</span><span>And prove every word.</span></h1>
-        <p class="lede">Nightwatch is a team of AI agents for a security operations centre. Give it ${f.events.toLocaleString()} Windows events and it names the MITRE ATT&amp;CK technique, quoting the log lines that prove it. Code checks every quote.</p>
+        <h1><span>AI agents that investigate cyberattacks.</span><span>And check every quote.</span></h1>
+        <p class="lede">Nightwatch is a team of AI agents for a security operations centre. Give it ${f.events.toLocaleString()} Windows events and it names the MITRE ATT&amp;CK technique, quoting the log lines it relies on. Code checks that every quote is in the logs.</p>
         <div class="acts"><a class="btn solid" href="#/alert/NW-002">Open this investigation</a><a class="btn" href="#/alerts">All ${Q.length} alerts</a><a class="btn" href="#/reproduce" onclick="setTimeout(() => document.getElementById('tour')?.scrollIntoView(), 50)">▶ 40-second tour</a></div>
       </div>
       <div class="console" aria-label="A recorded investigation, replayed">
@@ -544,8 +544,8 @@ function viewHome(v) {
       <li><div class="n">1</div><h3>Cut the noise</h3><p>Repeats collapse into templates; the 50 rarest across the fleet are kept.</p><span class="who code">Code</span></li>
       <li><div class="n">2</div><h3>Hunt</h3><p>The hunter reads them, searches the rest, and proposes what the attacker did.</p><span class="who ai">AI agent</span></li>
       <li><div class="n">3</div><h3>Look it up</h3><p>Each idea is searched against all 697 ATT&amp;CK techniques.</p><span class="who code">Code</span></li>
-      <li><div class="n">4</div><h3>Name it</h3><p>Mappers, one per idea in parallel, pick the technique and quote the proof.</p><span class="who ai">AI agents</span></li>
-      <li><div class="n">5</div><h3>Prove it</h3><p>Every quote must be in the logs, every id in ATT&amp;CK. Failures go back once, then are dropped.</p><span class="who code">Code</span></li>
+      <li><div class="n">4</div><h3>Name it</h3><p>Mappers, one per idea in parallel, pick the technique and quote the evidence.</p><span class="who ai">AI agents</span></li>
+      <li><div class="n">5</div><h3>Check it</h3><p>Every quote must be in the logs, every id in ATT&amp;CK. Failures go back once, then are dropped.</p><span class="who code">Code</span></li>
     </ol>
   </div></section>
 
@@ -555,7 +555,7 @@ function viewHome(v) {
       <div><div class="big">A tie<small> on accuracy</small></div>
         <div class="bars">${[["Nightwatch", NWR.top1, "nw"], ["Single AI call", SCR.top1, ""]].map(([n, x, c]) => `<div class="bar"><span>${n}</span><div class="track"><div class="fill ${c}" data-w="${x}"></div></div><span class="num">${pct(x)}</span></div>`).join("")}</div>
         <p class="muted">Right technique named first. The ${((NWR.top1 - SCR.top1) * 100).toFixed(1)}-point gap is within noise, and the evaluation says so.</p></div>
-      <div><div class="big">${pct(NWR.grounded)}<small> of findings proven</small></div>
+      <div><div class="big">${pct(NWR.grounded)}<small> of reported quotes verified in source logs</small></div>
         <div class="bars">${[["Nightwatch", NWR.grounded, "nw"], ["Single AI call", SCR.grounded, ""]].map(([n, x, c]) => `<div class="bar"><span>${n}</span><div class="track"><div class="fill ${c}" data-w="${x}"></div></div><span class="num">${pct(x)}</span></div>`).join("")}</div>
         <p class="muted">Findings backed by a log quote that code found. What the agents buy is not a higher score: an analyst never chases a claim the logs don't support. It costs ${(NWR.cost_per_case / SCR.cost_per_case).toFixed(1)}× as much.</p></div>
     </div>
@@ -632,7 +632,7 @@ async function heroConsole() {
       mark(f.evidence.filter(q => q.ok !== false).map(q => q.event_id), "proof", "quoted " + f.technique_id);
       await stream(mt[i], `<span class="tid">${esc(f.technique_id)}</span> ${esc(tshort(f.technique_id))}. Quote: “${esc(f.evidence[0].quote.slice(0, 40))}”`, 700); meter(0.7 + 0.1 * i, 4); if (!alive) return; }
     t = row("✓", "code", "Verify", "code");
-    await stream(t, `Every quote found in the logs. ${v.findings.length} of ${v.hypotheses.length} findings proven.`, 600); meter(1, 4); if (!alive) return;
+    await stream(t, `Every quote found in the logs. ${v.findings.length} of ${v.hypotheses.length} findings with every quote verified.`, 600); meter(1, 4); if (!alive) return;
     const vd = document.createElement("div"); vd.className = "verdict-line"; vd.innerHTML = `<small>Verdict, matches the dataset's label</small>${esc(v.findings[0].technique_id)} ${esc(tshort(v.findings[0].technique_id))}`;
     feed.appendChild(vd); trim();
     await sleep(7000);
@@ -709,7 +709,7 @@ function setVerdict(kind) {
   if (kind === "idle") { el.className = "verdict"; el.innerHTML = `<div class="k">Verdict</div><div class="t" style="font-size:26px">Not run yet</div><div class="lab">Label: <b>${esc(key.gold.join(", "))}</b> ${esc(tname(key.gold[0]))}</div>`; return; }
   if (kind === "work") { el.className = "verdict"; el.innerHTML = `<div class="k"><span class="dot"></span>Investigating</div><div class="t" style="font-size:26px">Agents at work</div><div class="lab">The label stays hidden until the verdict.</div>`; return; }
   const fs = (res && res.verdict && res.verdict.findings) || [];
-  if (!fs.length) { el.className = "verdict none"; el.innerHTML = `<div class="k">Verdict</div><div class="t" style="font-size:28px">No proven finding</div><div class="lab" style="border-color:rgba(255,255,255,.3)">Label: ${esc(key.gold.join(", "))} ${esc(tname(key.gold[0]))}</div>`; return; }
+  if (!fs.length) { el.className = "verdict none"; el.innerHTML = `<div class="k">Verdict</div><div class="t" style="font-size:28px">No verified finding</div><div class="lab" style="border-color:rgba(255,255,255,.3)">Label: ${esc(key.gold.join(", "))} ${esc(tname(key.gold[0]))}</div>`; return; }
   const o = outcome(fs.map(f => f.technique_id), key.gold), first = fs[0].technique_id;
   el.className = "verdict " + (o === "ok" ? "hit" : "miss");
   el.innerHTML = `<div class="k">Verdict, ${o === "ok" ? "matches the label" : o === "fam" ? "right family" : o === "top3" ? "label found, not first" : "missed the label"}</div>
@@ -756,10 +756,10 @@ function drawBoard(resize) {
   const notes = B.hyps.map((h, i) => `<div class="note" style="left:${slotX(i)}px;top:${nYi(i)}px;width:${boxW}px;height:${nH}px"><div class="h">Hypothesis ${i + 1}, from the hunter</div><div class="x">${esc(h.behavior)}</div></div>`).join("");
   const cards = B.hyps.map((h, i) => { const s = B.state[i], m = B.maps[i], tid = (s && s.technique_id) || (m && m.technique_id);
     const cls = s ? (s.verified ? "ok" + (B.primary === i ? " primary" : "") : "bad") : m ? "" : "work";
-    const status = s ? (s.verified ? (B.primary === i ? "primary finding" : "proven by code") : s.declined ? "not adversary activity" : "rejected by code") : m ? "waiting for the check" : "working";
+    const status = s ? (s.verified ? (B.primary === i ? "primary finding" : "quotes verified by code") : s.declined ? "not adversary activity" : "rejected by code") : m ? "waiting for the check" : "working";
     return `<div class="card ${cls}" style="left:${slotX(i)}px;top:${cYi(i)}px;width:${boxW}px;height:${cH}px"><div class="h">Mapper ${i + 1}, ${status}</div>
       ${tid ? `<div class="t">${esc(tid)}</div><div class="nm">${esc(tshort(tid))}</div>` : `<div class="nm" style="margin-top:8px">${AG["m" + i] === "work" ? `<span class="thinking-c">Weighing ${(B.cands[i] || []).slice(0, 3).join(", ")}…</span>` : (B.cands[i] || []).slice(0, 3).map(c => `<span class="tid" style="font-size:12px">${esc(c)}</span>`).join(" ") || "Waiting for candidates"}</div>`}</div>`; }).join("");
-  const empty = !B.hyps.length ? `<div class="rowlab" style="top:${nY + 36}px;left:${vert ? 14 : L}px;right:14px;font:600 16px var(--sans);color:var(--dim)">${AG.hunter === "work" ? `<span class="thinking-c">The hunter agent is reading ${cur.view.length} events and forming hypotheses…</span>` : "The hunter's hypotheses are pinned here, then the technique each one proves."}</div>` : "";
+  const empty = !B.hyps.length ? `<div class="rowlab" style="top:${nY + 36}px;left:${vert ? 14 : L}px;right:14px;font:600 16px var(--sans);color:var(--dim)">${AG.hunter === "work" ? `<span class="thinking-c">The hunter agent is reading ${cur.view.length} events and forming hypotheses…</span>` : "The hunter's hypotheses are pinned here, then the technique each one names."}</div>` : "";
   el.innerHTML = `<svg class="pins" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${grid}${lanes}${pins}</svg>${sv}
     ${vert ? "" : `<div class="rowlab" style="top:${nY - 24}px">Hypotheses</div><div class="rowlab" style="top:${cY - 24}px">Techniques</div>`}${notes}${cards}${empty}`;
   const m = evById();
@@ -876,7 +876,7 @@ function techCard(f, i, gold) {
     <div>${(f.tactics || (T[f.technique_id] || {}).tactics || []).map(t => `<span class="tac">${esc(t)}</span>`).join("")}</div>
     <p>${esc(f.behavior || "")}</p>${f.reasoning ? `<p class="muted">${esc(f.reasoning)}</p>` : ""}
     <div class="evid">${f.evidence.map(e => `<div><span class="ev" data-ev="${esc(e.event_id)}">${esc(e.event_id)}</span> <span class="muted">${esc(e.field || "")}</span> <span class="quote">${esc(e.quote)}</span></div>`).join("")}</div>
-    ${f.attempts > 1 ? `<p class="muted" style="margin-top:8px">Proven on the second try, after code rejected the first.</p>` : ""}</div>`;
+    ${f.attempts > 1 ? `<p class="muted" style="margin-top:8px">Quotes verified on the second try, after code rejected the first.</p>` : ""}</div>`;
 }
 function drawResult(final) {
   const el = $("#result"), res = cur.res, key = A.answer_key;
@@ -971,7 +971,7 @@ function viewEval(v) {
   </div>
   <div class="two">
     <div><h2>The honest reading</h2></div>
-    <div><p>On accuracy the agent team and one well-briefed call are level: ${P.top1 ? `${P.top1.b_only} alerts only Nightwatch got right, ${P.top1.a_only} only the single call did` : ""}. What the agents buy is a guarantee rather than a score: every finding is tied to a log quote that code checked. ${pct(1 - SCR.grounded)} of the single call's findings cited evidence that is not in the logs.</p>
+    <div><p>On accuracy the agent team and one well-briefed call are level: ${P.top1 ? `${P.top1.b_only} alerts only Nightwatch got right, ${P.top1.a_only} only the single call did` : ""}. What the agents buy is a checked citation rather than a better score: every quote a finding reports was verified in the source logs. That is not proof the technique happened; see “Does the quote prove the technique?” below. ${pct(1 - SCR.grounded)} of the single call's findings cited evidence that is not in the logs.</p>
     <p>What moved accuracy was better input, not more agents: decoding GUIDs and access masks in code turned the DCSync recording from a miss into a hit for both systems.</p></div>
   </div>
   <div class="section"><div class="scroll"><table class="etable"><thead><tr><th>System</th><th>Top-1</th><th>Family</th><th>Top-3</th><th>Tactic</th><th>Per dataset</th><th>Evidence found</th><th>Cost / alert</th><th>Median time</th><th>Model calls</th></tr></thead><tbody>
