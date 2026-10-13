@@ -1,0 +1,17 @@
+{
+  "system": "nightwatch",
+  "split": "test",
+  "cases": 64,
+  "ids": "",
+  "limit": 0,
+  "concurrency": 4,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 2.6,
+  "project_cap": 5.0,
+  "run_id": "test-nightwatch",
+  "completed": 64,
+  "stopped_at_budget": false,
+  "cost": 2.0187
+}
