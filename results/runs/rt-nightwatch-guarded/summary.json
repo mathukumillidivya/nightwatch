@@ -1,0 +1,20 @@
+{
+ "rt-nightwatch-guarded": {
+  "cases": 9,
+  "errors": 0,
+  "top1": 0.8889,
+  "top1_family": 0.8889,
+  "top3": 1.0,
+  "tactic": 0.8889,
+  "answered": 1.0,
+  "by_dataset": 0.8889,
+  "invented": 0.0,
+  "grounded": 1.0,
+  "dropped_by_code": 0,
+  "sent_back": 0,
+  "cost_per_case": 0.03122,
+  "cost_total": 0.281,
+  "median_seconds": 16.1,
+  "model_calls_per_case": 5
+ }
+}
