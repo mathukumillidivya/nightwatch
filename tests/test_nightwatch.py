@@ -146,3 +146,12 @@ def test_unstring_handles_windows_paths():
     from nightwatch.models import unstring
     raw = '[{"event_id": "E1", "field": "Image", "quote": "C:\\Windows\\System32\\cmd.exe"}]'.replace("\\\\", "\\")
     assert unstring({"evidence": raw})["evidence"][0]["quote"].endswith("cmd.exe")
+
+
+def test_invalid_structured_output_is_retried_and_billed():
+    fake = FakeClaude()
+    fake.drop_field_once = True
+    r = run(investigate(CASES["NW-002"], "nightwatch", Claude(client=fake.client())))
+    assert r["techniques"] == ["T1003.001", "T1053.005"]
+    assert any("did not match the required structure" in json.dumps(q["messages"]) for q in fake.requests)
+    assert r["usage"]["mapper"]["input"] >= 4000  # the failed attempt is counted too

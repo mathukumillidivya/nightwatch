@@ -18,6 +18,7 @@ from google.adk.models.anthropic_llm import AnthropicLlm
 from google.adk.models.llm_request import LlmRequest
 from google.adk.models.llm_response import LlmResponse
 from google.genai import types
+from pydantic import ValidationError
 
 MODEL = os.environ.get("NIGHTWATCH_MODEL", "claude-haiku-4-5-20251001")
 SUBMIT = "submit_result"
@@ -104,12 +105,48 @@ class Claude(AnthropicLlm):
     async def generate_content_async(self, llm_request: LlmRequest, stream: bool = False) -> AsyncGenerator[LlmResponse, None]:
         if not self.cache:
             llm_request.cache_config = None
-        async for response in super().generate_content_async(llm_request, stream=False):
-            parts = (response.content.parts if response.content else None) or []
+        cfg = llm_request.config
+        model_cls = getattr(cfg, "response_schema", None) if cfg else None
+        model_cls = model_cls if isinstance(model_cls, type) and hasattr(model_cls, "model_validate_json") else None
+        spent = None
+        for attempt in range(2):
+            response = None
+            async for response in super().generate_content_async(llm_request, stream=False):
+                pass
+            problem = None
+            parts = (response.content.parts if response and response.content else None) or []
             for i, part in enumerate(parts):
                 if part.function_call and part.function_call.name == SUBMIT:
-                    parts[i] = types.Part(text=json.dumps(unstring(part.function_call.args or {})))
-            yield response
+                    text = json.dumps(unstring(part.function_call.args or {}))
+                    parts[i] = types.Part(text=text)
+                    if model_cls:
+                        try:
+                            model_cls.model_validate_json(text)
+                        except ValidationError as e:
+                            problem = "; ".join(f"{'.'.join(map(str, x['loc']))}: {x['msg']}" for x in e.errors()[:3])
+            spent = _add_meta(spent, response.usage_metadata if response else None)
+            if not problem or attempt == 1:
+                if response is not None:
+                    response.usage_metadata = spent
+                    yield response
+                return
+            # one validation retry, as structured-output libraries do: say what was wrong and ask again
+            llm_request.contents = list(llm_request.contents or []) + [types.Content(role="user", parts=[types.Part(
+                text=f"Your answer did not match the required structure ({problem}). Answer again with the {SUBMIT} "
+                     "tool, giving every field, with lists as real JSON lists.")])]
+
+
+def _add_meta(a, b):
+    """Sum two usage records, so a validation retry is still billed in the ledger."""
+    if a is None or b is None:
+        return b if a is None else a
+    out = a.model_copy()
+    for k in ("prompt_token_count", "candidates_token_count", "total_token_count", "cached_content_token_count",
+              "thoughts_token_count"):
+        setattr(out, k, (getattr(a, k) or 0) + (getattr(b, k) or 0))
+    object.__setattr__(out, "cache_creation_input_tokens",
+                       (getattr(a, "cache_creation_input_tokens", 0) or 0) + (getattr(b, "cache_creation_input_tokens", 0) or 0))
+    return out
 
 
 def usage_of(llm_response: LlmResponse) -> dict:

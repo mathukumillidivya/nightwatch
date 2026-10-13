@@ -33,6 +33,7 @@ class FakeClaude:
 
     def __init__(self, bad_quote_first: bool = True, obey_injection: bool = False, stringify: bool = False):
         self.stringify = stringify  # send nested lists as JSON strings, as Claude occasionally does
+        self.drop_field_once = False  # leave out a required field on the first mapper answer
         self.requests: list[dict] = []
         self.bad_quote_first = bad_quote_first
         self.obey_injection = obey_injection
@@ -105,6 +106,11 @@ class FakeClaude:
                 if self.bad_quote_first and "rejected by the code check" not in task and tid == "T1053.005":
                     ev = [{"event_id": ev[0]["event_id"], "field": ev[0]["field"], "quote": "text that is not in the logs"}]
                 name = "submit_result" if "submit_result" in tools else "set_model_response"
+                if self.drop_field_once and name == "submit_result":
+                    self.drop_field_once = False
+                    content = tool(name, {"technique_id": tid, "reasoning": "Fits."})
+                    return Message(id="m", type="message", role="assistant", model=kw["model"], content=content, stop_reason="tool_use",
+                                   usage=Usage(input_tokens=1000, output_tokens=200, cache_read_input_tokens=0, cache_creation_input_tokens=0))
                 content = tool(name, {"technique_id": tid, "reasoning": "Fits the evidence.",
                                       "evidence": json.dumps(ev) if self.stringify else ev})
         elif "incident responder" in system:

@@ -58,7 +58,7 @@ code, .mono { font-family: var(--mono); font-size: .92em; }
 
 /* landing */
 .hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px; align-items: center; padding: 56px 0 40px; }
-.hero h1 { font-size: clamp(48px, 7vw, 92px); text-transform: none; }
+.hero h1 { font-size: clamp(44px, 5.6vw, 76px); }
 .hero h1 span { display: block; color: var(--dim); }
 .hero .lede { font-size: 18px; color: var(--text); margin: 22px 0 26px; max-width: 46ch; }
 .hero .acts { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -164,7 +164,7 @@ table { border-collapse: collapse; width: 100%; }
 .msg .body ol { margin: 4px 0 0; padding-left: 18px; }
 .msg .body li { margin: 3px 0; }
 .ev { font-family: var(--mono); font-size: 12px; color: var(--sodium); cursor: pointer; text-decoration: underline dotted; }
-.q-quote { font-family: var(--mono); font-size: 12px; background: rgba(110, 224, 192, .1); color: var(--mint); padding: 0 4px; border-radius: 3px; }
+.q-quote { overflow-wrap: anywhere; font-family: var(--mono); font-size: 12px; background: rgba(110, 224, 192, .1); color: var(--mint); padding: 0 4px; border-radius: 3px; }
 .q-quote.bad { background: rgba(255, 84, 112, .12); color: var(--flare); text-decoration: line-through; }
 
 .band { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
@@ -469,18 +469,18 @@ function viewQueue(v) {
 
 /* ---------------------------------------------------------------- alert */
 let A = null, cur = null, timers = [];
-const NODES = [["triage", "Triage", "code", 60, 130], ["hunter", "Hunter", "ai", 190, 130], ["retrieval", "ATT&CK lookup", "code", 320, 130],
-  ["m0", "Mapper 1", "ai", 455, 60], ["m1", "Mapper 2", "ai", 455, 130], ["m2", "Mapper 3", "ai", 455, 200], ["verify", "Verify", "code", 590, 130], ["verdict", "Verdict", "code", 700, 130]];
-const NOTE = { triage: "50 of the rarest events", hunter: "reads, searches", retrieval: "BM25, ATT&CK v19", m0: "", m1: "", m2: "", verify: "quotes and ids", verdict: "code ranks" };
+const NODES = [["triage", "Triage", "code", 62, 140], ["hunter", "Hunter", "ai", 192, 140], ["retrieval", "ATT&CK lookup", "code", 322, 140],
+  ["m0", "Mapper 1", "ai", 456, 52], ["m1", "Mapper 2", "ai", 456, 140], ["m2", "Mapper 3", "ai", 456, 228], ["verify", "Verify", "code", 590, 140], ["verdict", "Verdict", "code", 718, 140]];
+const NOTE = { triage: "50 rarest events", hunter: "reads, searches", retrieval: "BM25 over v19", m0: "", m1: "", m2: "", verify: "quotes and ids", verdict: "ranks findings" };
 function graphSvg() {
   const pos = Object.fromEntries(NODES.map(n => [n[0], [n[3], n[4]]]));
   const E = [["triage", "hunter"], ["hunter", "retrieval"], ["retrieval", "m0"], ["retrieval", "m1"], ["retrieval", "m2"], ["m0", "verify"], ["m1", "verify"], ["m2", "verify"], ["verify", "verdict"]];
-  const path = (a, b) => { const [x1, y1] = pos[a], [x2, y2] = pos[b]; const sx = x1 + 52, ex = x2 - 52, mx = (sx + ex) / 2; return `M${sx},${y1} C${mx},${y1} ${mx},${y2} ${ex},${y2}`; };
-  return `<svg viewBox="0 0 760 260" role="img" aria-label="Agent workflow">
+  const path = (a, b) => { const [x1, y1] = pos[a], [x2, y2] = pos[b]; const sx = x1 + 56, ex = x2 - 56, mx = (sx + ex) / 2; return `M${sx},${y1} C${mx},${y1} ${mx},${y2} ${ex},${y2}`; };
+  return `<svg viewBox="0 0 780 286" role="img" aria-label="Agent workflow">
     ${E.map(([a, b]) => `<path class="edge" id="e-${a}-${b}" d="${path(a, b)}"/>`).join("")}
-    <path class="edge" id="e-back" d="M590,158 C590,250 455,250 455,228" style="opacity:0"/>
-    ${NODES.map(([k, l, kind, x, y]) => `<g class="node ${kind} idle" id="n-${k}" transform="translate(${x - 52},${y - 24})"><rect width="104" height="48" rx="9"/>
-      <text x="10" y="19">${l}</text><text class="tag" x="10" y="36">${kind === "ai" ? "AI agent" : "code"}</text><text class="k" x="58" y="36" id="nk-${k}">${NOTE[k]}</text></g>`).join("")}
+    <path class="edge" id="e-back" d="M590,169 C590,276 456,286 456,257" style="opacity:0"/>
+    ${NODES.map(([k, l, kind, x, y]) => `<g class="node ${kind} idle" id="n-${k}" transform="translate(${x - 56},${y - 29})"><rect width="112" height="58" rx="9"/>
+      <text x="10" y="18">${l}</text><text class="tag" x="10" y="33">${kind === "ai" ? "AI agent" : "code"}</text><text class="k" x="10" y="49" id="nk-${k}">${NOTE[k]}</text></g>`).join("")}
   </svg>`;
 }
 function setNode(k, st, note) { const g = $(`#n-${k}`); if (!g) return; g.classList.remove("idle", "work", "done", "fail"); g.classList.add(st); if (note != null) $(`#nk-${k}`).textContent = note; }
@@ -561,13 +561,13 @@ function drawTimeline() {
   const res = cur.res, cited = citedIds(res);
   const rows = [...cur.view, ...cur.extra.filter(x => cited.has(x.id))];
   const hosts = [...new Set(rows.map(r => r.host))].sort((a, b) => rows.filter(r => r.host === b).length - rows.filter(r => r.host === a).length);
-  const W = 1000, L = 130, lh = 34, H = hosts.length * lh + 34;
+  const W = Math.max(320, ($("#tl").clientWidth || 1000)), L = W < 600 ? 96 : 130, lh = 34, H = hosts.length * lh + 34;
   const tmax = Math.max(1, ...rows.map(r => r.t)), x = t => L + (W - L - 20) * (t / tmax);
   const grid = [0, .25, .5, .75, 1].map(f => `<line class="grid" x1="${x(f * tmax)}" x2="${x(f * tmax)}" y1="4" y2="${H - 24}"/><text class="lane" x="${x(f * tmax)}" y="${H - 8}" text-anchor="middle">+${Math.round(f * tmax)}s</text>`).join("");
   const dots = rows.map(r => { const y = 18 + hosts.indexOf(r.host) * lh + ((parseInt(r.id.slice(1)) * 7) % 13) - 6;
     const ring = cur.planted === r.id ? "var(--flare)" : cited.has(r.id) ? "var(--mint)" : "none";
     return `<circle cx="${x(r.t).toFixed(1)}" cy="${y}" r="${cited.has(r.id) || cur.planted === r.id ? 6 : 4}" fill="${chColor(r.channel)}" stroke="${ring}" stroke-width="2.5" data-tl="${r.id}"/>`; }).join("");
-  $("#tl").innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px">${grid}${hosts.map((h, i) => `<text class="lane" x="0" y="${22 + i * lh}">${esc(h)}</text><line class="grid" x1="${L}" x2="${W - 10}" y1="${18 + i * lh}" y2="${18 + i * lh}" style="opacity:.4"/>`).join("")}${dots}</svg>
+  $("#tl").innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="height:${H}px">${grid}${hosts.map((h, i) => `<text class="lane" x="0" y="${22 + i * lh}">${esc(h)}</text><line class="grid" x1="${L}" x2="${W - 10}" y1="${18 + i * lh}" y2="${18 + i * lh}" style="opacity:.4"/>`).join("")}${dots}</svg>
    <div class="legend"><span><i style="background:var(--c-sysmon)"></i>Sysmon</span><span><i style="background:var(--c-security)"></i>Security</span><span><i style="background:var(--c-powershell)"></i>PowerShell</span><span><i style="background:var(--c-other)"></i>Other</span></div>`;
   const m = evById();
   $$("#tl circle").forEach(c => { const r = m[c.dataset.tl]; c.onmouseenter = e => showTip(`<b>${r.id}</b> ${esc(r.host)} ${esc(r.channel)} ${r.event_id}<br>${esc(r.label)}: ${esc(Object.values(r.fields).join(" ").slice(0, 200))}`, e); c.onmouseleave = hideTip; c.onclick = () => goEv(r.id); });
@@ -610,7 +610,7 @@ function reportHtml(r) {
 }
 
 /* the case thread */
-const WHO = { hunter: ["H", "Hunter", "ai"], mapper: ["M", "Mapper", "ai"], mapper_retry: ["M", "Mapper (second try)", "ai"], code: ["</>", "Code", "code"], reporter: ["R", "Reporter", "ai"], you: ["!", "Attacker", "bad"] };
+const WHO = { hunter: ["H", "Hunter", "ai"], mapper: ["M", "Mapper", "ai"], mapper_retry: ["M", "Mapper (second try)", "ai"], code: ["{ }", "Code", "code"], reporter: ["R", "Reporter", "ai"], you: ["!", "Attacker", "bad"] };
 let t0 = 0;
 function say(who, html, opts = {}) {
   const w = WHO[who] || WHO.code, m = $("#msgs"); if (!m) return;
