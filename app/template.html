@@ -57,11 +57,10 @@ code, .mono { font-family: var(--mono); font-size: .9em; }
 .btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
 
 .hero { background: var(--signal); color: var(--ink); position: relative; overflow: hidden; border-bottom: 2px solid var(--ink); }
-.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero .wrap { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; min-height: min(760px, calc(100vh - 62px)); align-content: center; padding-top: 56px; padding-bottom: 56px; }
 .hero .copy { grid-column: 1 / span 7; position: relative; z-index: 2; }
-.hero h1 { font-size: clamp(38px, 4.9vw, 74px); font-weight: 800; line-height: 1; letter-spacing: -0.035em; }
-.hero h1 span { white-space: nowrap; }
+.hero h1 { font-size: clamp(32px, 3.5vw, 54px); font-weight: 800; line-height: 1.04; letter-spacing: -0.03em; }
+.hero h1 span + span { color: #fff; }
 .hero h1 span { display: block; }
 .hero .lede { font-size: 20px; line-height: 1.45; color: var(--ink); margin: 28px 0 32px; max-width: 34ch; font-weight: 500; }
 .hero .acts { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -274,11 +273,67 @@ ul.limits li { margin: 8px 0; max-width: 90ch; }
 footer { margin-top: 80px; padding: 26px 0 40px; border-top: 2px solid var(--ink); color: var(--dim); font-size: 13px; }
 footer p { max-width: none; margin: 0; }
 
+
+/* AI console */
+.hero .wrap { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.hero .copy { grid-column: 1 / span 6; align-self: center; }
+.console { grid-column: 7 / span 6; position: relative; z-index: 2; background: #000; color: #E8EAF2; border: 2px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,.28); display: flex; flex-direction: column; height: 560px; }
+.console header { display: flex; align-items: center; gap: 14px; white-space: nowrap; padding: 12px 16px; border-bottom: 1px solid #23252C; font: 600 12px var(--mono); color: #9EA3B0; }
+.console header .live { display: inline-flex; align-items: center; gap: 6px; color: #fff; }
+.console header .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); animation: blink 1s infinite; }
+.console header .model { margin-left: auto; padding: 3px 8px; border: 1px solid #3A3D47; color: #C9CCF5; }
+.console .feed { flex: 1; overflow: hidden; padding: 8px 16px; display: flex; flex-direction: column; }
+.console .row { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 7px 0; font-size: 14px; line-height: 1.45; animation: rise .25s ease-out; }
+.console .av { width: 30px; height: 30px; display: grid; place-items: center; font: 700 12px var(--mono); border-radius: 50%; }
+.console .av.ai { background: var(--cobalt); color: #fff; box-shadow: 0 0 0 3px rgba(46,59,255,.25); }
+.console .av.code { background: #fff; color: #000; border-radius: 4px; }
+.console .who { font: 600 12px var(--mono); color: #8E93A1; }
+.console .who b { color: #fff; margin-right: 6px; }
+.console .txt { color: #E8EAF2; overflow-wrap: anywhere; }
+.console .txt .tid { color: #fff; }
+.console .tool { display: inline-block; font: 500 12px var(--mono); background: #15172A; border: 1px solid #2E3BFF; color: #B9BEFF; padding: 2px 7px; margin: 2px 0; }
+.console .verdict-line { margin: 6px 0 4px; padding: 12px 14px; background: var(--signal); color: #000; font: 800 22px/1.1 var(--display); letter-spacing: -0.02em; animation: rise .3s ease-out; }
+.console .verdict-line small { display: block; font: 600 12px var(--mono); letter-spacing: 0; margin-bottom: 4px; }
+.console footer { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid #23252C; }
+.console footer div { padding: 10px 14px; border-right: 1px solid #23252C; font: 500 11px var(--mono); color: #8E93A1; }
+.console footer div:last-child { border-right: 0; }
+.console footer b { display: block; font: 600 16px var(--mono); color: #fff; margin-top: 2px; }
+.thinking { font-weight: 600; background: linear-gradient(90deg, #6F78FF 0%, #fff 45%, #6F78FF 90%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 1.4s linear infinite; }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.caret::after { content: "▍"; color: var(--cobalt); animation: blink .8s infinite; margin-left: 1px; }
+.dots-bg { position: absolute; inset: 0; background-image: radial-gradient(rgba(0,0,0,.16) 1px, transparent 1.4px); background-size: 14px 14px; pointer-events: none; }
+
+/* agent status strip on the alert page */
+.agents { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 12px 16px; background: #000; color: #C9CCD6; border: 2px solid var(--ink); border-bottom: 0; font: 500 12.5px var(--mono); }
+.agent { display: inline-flex; align-items: center; gap: 8px; }
+.agent i { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 700 10.5px var(--mono); font-style: normal; background: #23252C; color: #8E93A1; transition: background .3s, box-shadow .3s; }
+.agent.ai.work i { background: var(--cobalt); color: #fff; box-shadow: 0 0 0 4px rgba(46,59,255,.35); animation: pulse 1.2s infinite; }
+.agent.ai.done i { background: var(--cobalt); color: #fff; }
+.agent.code.work i { background: #fff; color: #000; box-shadow: 0 0 0 4px rgba(255,255,255,.25); }
+.agent.code.done i { background: #fff; color: #000; }
+.agent.code i { border-radius: 4px; }
+.agent span.st { color: #8E93A1; }
+.agent.work span.st { color: #fff; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 7px rgba(46,59,255,.12); } }
+.agents .meters { margin-left: auto; display: flex; gap: 16px; color: #8E93A1; }
+.agents .meters b { color: #fff; font-weight: 600; }
+.tx.think .b { color: var(--dim); }
+.thinking-c, .tx .b .thinking { font-weight: 600; animation: shimmer 1.4s linear infinite; }
+.thinking-c, .tx .b .thinking { background: linear-gradient(90deg, #2E3BFF 0%, #A9AFFF 45%, #2E3BFF 90%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (max-width: 1000px) {
+  .hero .copy, .console { grid-column: 1 / -1; }
+  .console { height: 520px; margin-top: 12px; }
+  .agents .meters { margin-left: 0; width: 100%; flex-wrap: wrap; }
+  .console header { flex-wrap: wrap; white-space: normal; }
+  .console header .model { margin-left: 0; }
+  .console { box-shadow: none; }
+}
+
 #tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: #fff; padding: 8px 10px; font: 400 12px/1.45 var(--mono); max-width: 440px; opacity: 0; transition: opacity .12s; }
 #tip.on { opacity: 1; }
 
 @media (max-width: 1000px) {
-  .hero .copy { grid-column: 1 / -1; padding-top: 220px; }
+  .hero .copy { grid-column: 1 / -1; }
   .band-head h2, .band-head p, .page-head > div:first-child, .page-head .side { grid-column: 1 / -1; justify-content: flex-start; }
   .steps { grid-template-columns: minmax(0, 1fr); }
   .steps li { border-right: 0; margin-right: 0; border-bottom: 1px solid var(--line); }
@@ -294,8 +349,7 @@ footer p { max-width: none; margin: 0; }
   .top .wrap { gap: 8px; }
   .nav a { padding: 6px 7px; font-size: 14px; }
   .svc, .brand span { display: none; }
-  .hero .wrap { min-height: 0; padding-top: 270px; padding-bottom: 56px; }
-  .hero .copy { padding-top: 0; }
+  .hero .wrap { min-height: 0; padding-top: 40px; padding-bottom: 40px; }
   .hero .lede { font-size: 17px; }
   .ln { grid-template-columns: 44px minmax(0, 1fr); }
   .ln .t, .ln .src { display: none; }
@@ -390,14 +444,19 @@ function viewHome(v) {
   const tot = RT && RT.totals, co = RT && RT.called_out;
   v.innerHTML = `
   <section class="hero">
-    <canvas id="field" aria-hidden="true"></canvas>
-    <div class="counter" id="cnt"><b id="cntn">${f.events.toLocaleString()}</b><span id="cntl">events recorded</span></div>
-    <div class="stamp" id="stamp"><b>T1003.006</b><strong>DCSync</strong><small>Proven by a quote from event E029, checked by code</small></div>
-    <div class="wrap"><div class="copy">
-      <h1><span>${f.events.toLocaleString()} events.</span><span>One attack.</span></h1>
-      <p class="lede">Nightwatch is a team of AI agents that finds the attack in a Windows log, names it in MITRE ATT&amp;CK and quotes the lines that prove it. Code checks every quote.</p>
-      <div class="acts"><a class="btn solid" href="#/alert/NW-002">Watch it crack a DCSync attack</a><a class="btn" href="#/alerts">All ${Q.length} alerts</a></div>
-    </div></div>
+    <div class="dots-bg"></div>
+    <div class="wrap">
+      <div class="copy">
+        <h1><span>AI agents that investigate cyberattacks.</span><span>And prove every word.</span></h1>
+        <p class="lede">Nightwatch is a team of AI agents for a security operations centre. Give it ${f.events.toLocaleString()} Windows events and it names the MITRE ATT&amp;CK technique, quoting the log lines that prove it. Code checks every quote.</p>
+        <div class="acts"><a class="btn solid" href="#/alert/NW-002">Open this investigation</a><a class="btn" href="#/alerts">All ${Q.length} alerts</a></div>
+      </div>
+      <div class="console" aria-label="A recorded investigation, replayed">
+        <header><span class="live"><i></i>Replay of a real run</span><span>NW-002</span><span class="model">Claude Haiku 4.5 + Google ADK</span></header>
+        <div class="feed" id="feed"></div>
+        <footer><div>agents<b id="m-ag">0</b></div><div>model calls<b id="m-calls">0</b></div><div>tokens<b id="m-tok">0</b></div><div>cost<b id="m-cost">$0.000</b></div></footer>
+      </div>
+    </div>
   </section>
 
   <section class="band"><div class="wrap">
@@ -435,57 +494,55 @@ function viewHome(v) {
     <p style="margin-top:36px"><a class="btn red" href="#/alert/NW-104">Plant a note yourself and run it live</a></p>
   </div></section>`;
   requestAnimationFrame(() => setTimeout(() => $$(".fill").forEach(el => el.style.width = (el.dataset.w * 100) + "%"), 200));
-  field($("#field"), f.events);
+  heroConsole();
 }
 
-/* the hero: every event a dot; the noise falls away; three pieces of evidence are strung to the verdict */
-function field(canvas, total) {
-  const ctx = canvas.getContext("2d"), dpr = devicePixelRatio || 1; let W, H, narrow;
-  const N = Math.min(total, 4200), keep = 50, P = [];
-  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  for (let i = 0; i < N; i++) P.push({ u: rnd(), v: rnd(), k: i < keep ? i : -1 });
-  const stamp = $("#stamp"), cnt = $("#cntn"), cntl = $("#cntl"), counter = $("#cnt");
-  let fx0, fx1, fy0, fy1, sx, sy, kx0, kx1, ky0, ky1;
-  function place() {
-    W = canvas.clientWidth; H = canvas.clientHeight; canvas.width = W * dpr; canvas.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    narrow = W < 1000;
-    const pad = Math.max(32, (W - 1280) / 2 + 32);
-    fx0 = narrow ? 16 : W * 0.58; fx1 = W - (narrow ? 16 : pad); fy0 = narrow ? 24 : 80; fy1 = narrow ? 200 : H - 70;
-    kx0 = fx0 + (fx1 - fx0) * 0.04; kx1 = fx0 + (fx1 - fx0) * (narrow ? 0.45 : 0.5); ky0 = fy0 + (fy1 - fy0) * 0.08; ky1 = fy0 + (fy1 - fy0) * (narrow ? 0.9 : 0.5);
-    sx = narrow ? W - 266 : fx0 + (fx1 - fx0) * 0.45; sy = narrow ? 40 : fy0 + (fy1 - fy0) * 0.62;
-    stamp.style.left = sx + "px"; stamp.style.top = sy + "px";
-    counter.style.right = (narrow ? 16 : pad) + "px"; counter.style.top = (narrow ? 210 : 28) + "px";
-    if (narrow) counter.style.display = "none"; else counter.style.display = "";
+/* the hero: a real recorded investigation, streamed as it happened */
+function stream(el, html, ms = 900) {
+  return new Promise(res => {
+    if (reduced) { el.innerHTML = html; return res(); }
+    const tmp = document.createElement("div"); tmp.innerHTML = html; const text = tmp.textContent;
+    const t0 = performance.now(); el.classList.add("caret");
+    const tick = now => { const k = Math.min(1, (now - t0) / ms); el.textContent = text.slice(0, Math.ceil(text.length * k));
+      if (k < 1) requestAnimationFrame(tick); else { el.innerHTML = html; el.classList.remove("caret"); res(); } };
+    requestAnimationFrame(tick);
+  });
+}
+async function heroConsole() {
+  const feed = $("#feed"); if (!feed) return;
+  let run; try { run = await getCase("NW-002"); } catch { return; }
+  const nw = run.nightwatch, v = nw.verdict, u = nw.usage;
+  const totTok = Object.values(u).reduce((a, x) => a + (x.input || 0) + (x.output || 0) + (x.cache_read || 0) + (x.cache_write || 0), 0);
+  const calls = Object.values(u).reduce((a, x) => a + (x.calls || 0), 0);
+  let alive = true; const prevStop = stopAll; stopAll = () => { alive = false; prevStop(); };
+  const sleep = ms => new Promise(r => setTimeout(r, reduced ? 0 : ms));
+  const meter = (k, ag) => { $("#m-ag").textContent = ag; $("#m-calls").textContent = Math.round(calls * k); $("#m-tok").textContent = Math.round(totTok * k).toLocaleString(); $("#m-cost").textContent = "$" + (nw.cost * k).toFixed(3); };
+  const row = (av, cls, who, sub) => { const d = document.createElement("div"); d.className = "row"; d.innerHTML = `<div class="av ${cls}">${av}</div><div><div class="who"><b>${who}</b>${sub || ""}</div><div class="txt"></div></div>`;
+    feed.appendChild(d); trim(); return $(".txt", d); };
+  const trim = () => { while (feed.children.length > 1 && feed.scrollHeight > feed.clientHeight + 2) feed.firstChild.remove(); };
+  const ro = new ResizeObserver(trim); ro.observe(feed);
+  while (alive) {
+    feed.innerHTML = ""; meter(0, 0);
+    let t = row("{ }", "code", "Triage", "code");
+    await stream(t, `Kept the 50 rarest of ${run.events.toLocaleString()} Windows events.`, 600); if (!alive) return; await sleep(500);
+    t = row("H", "ai", "Hunter", "AI agent"); t.innerHTML = `<span class="thinking">Thinking…</span>`; meter(0.1, 1); await sleep(1300); if (!alive) return;
+    t.innerHTML = `<span class="tool">search_events</span> searched the other ${run.index_size} events`; meter(0.25, 1); await sleep(1100); if (!alive) return;
+    t = row("H", "ai", "Hunter", "AI agent");
+    const h = v.hypotheses.slice(0, 3).map((x, i) => `${i + 1}. ${esc(x.behavior.split(" ").slice(0, 16).join(" "))}${x.behavior.split(" ").length > 16 ? "…" : ""}`).join("<br>");
+    await stream(t, h, 2200); meter(0.45, 1); if (!alive) return; await sleep(500);
+    t = row("{ }", "code", "ATT&amp;CK lookup", "code");
+    await stream(t, `Matched each hypothesis against 697 techniques.`, 600); if (!alive) return; await sleep(400);
+    const mt = [0, 1, 2].map(i => { const x = row("M" + (i + 1), "ai", "Mapper " + (i + 1), "AI agent, in parallel"); x.innerHTML = `<span class="thinking">Thinking…</span>`; return x; });
+    meter(0.6, 4); await sleep(1500); if (!alive) return;
+    for (let i = 0; i < 3; i++) { const f = v.findings.find(x => x.slot === i) || v.findings[i]; if (!f) continue;
+      await stream(mt[i], `<span class="tid">${esc(f.technique_id)}</span> ${esc(tshort(f.technique_id))}. Quote: “${esc(f.evidence[0].quote.slice(0, 40))}”`, 700); meter(0.7 + 0.1 * i, 4); if (!alive) return; }
+    t = row("✓", "code", "Verify", "code");
+    await stream(t, `Every quote found in the logs. ${v.findings.length} of ${v.hypotheses.length} findings proven.`, 600); meter(1, 4); if (!alive) return;
+    const vd = document.createElement("div"); vd.className = "verdict-line"; vd.innerHTML = `<small>Verdict, matches the dataset's label</small>${esc(v.findings[0].technique_id)} ${esc(tshort(v.findings[0].technique_id))}`;
+    feed.appendChild(vd); trim();
+    await sleep(7000);
+    if (reduced) return;
   }
-  place();
-  const t0 = performance.now(); let raf = 0;
-  const ease = x => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
-  function frame(now) {
-    const s = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
-    const fade = ease((s - 1.0) / 1.6), gather = ease((s - 2.6) / 1.4), strings = ease((s - 4.0) / 1.0);
-    for (const p of P) {
-      let x = fx0 + p.u * (fx1 - fx0), y = fy0 + p.v * (fy1 - fy0);
-      if (p.k >= 0) {
-        const kx = kx0 + (kx1 - kx0) * (Math.floor(p.k / 10) / 4), ky = ky0 + (ky1 - ky0) * ((p.k % 10) / 9);
-        x += (kx - x) * gather; y += (ky - y) * gather;
-        const ev = p.k === 3 || p.k === 17 || p.k === 28, sz = ev ? 3 + 4 * gather : 2.4 + 1.2 * gather;
-        ctx.fillStyle = ev ? "#000" : "rgba(0,0,0,.7)"; ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
-        if (ev && strings > 0) { ctx.strokeStyle = "#000"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y);
-          const ex = x + (sx + 20 - x) * strings, ey = y + (sy + 10 - y) * strings; ctx.quadraticCurveTo((x + ex) / 2 + 30, Math.max(y, ey) + 30, ex, ey); ctx.stroke(); }
-      } else {
-        const a = 0.6 * (1 - fade) + 0.14 * fade;
-        ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fillRect(x, y, 1.8, 1.8);
-      }
-    }
-    if (s > 1.0 && s < 2.6) { cnt.textContent = Math.round(total - (total - 547) * fade).toLocaleString(); cntl.textContent = "templates"; }
-    if (s >= 2.6 && s < 4.0) { cnt.textContent = "50"; cntl.textContent = "rarest kept"; }
-    if (s >= 4.0) { cnt.textContent = "1"; cntl.textContent = "technique, proven"; }
-    if (s > 4.8) stamp.classList.add("on");
-    if (s < 5.6) raf = requestAnimationFrame(frame); else raf = 0;
-  }
-  if (reduced) { frame(t0 + 6000); stamp.classList.add("on"); } else raf = requestAnimationFrame(frame);
-  const ro = new ResizeObserver(() => { place(); if (!raf) frame(t0 + 6000); }); ro.observe(canvas);
-  stopAll = () => { cancelAnimationFrame(raf); ro.disconnect(); };
 }
 
 /* ================================================================ queue */
@@ -535,6 +592,7 @@ async function viewAlert(v, id) {
     <label class="toggle"><input type="checkbox" id="guard" checked> Guardrails</label>
     <span class="run-note" id="runnote">${A.nightwatch ? `Recorded run: ${A.nightwatch.seconds}s, ${money(A.nightwatch.cost)}` : "No recorded run yet"}${live ? ". Live runs cost a few cents and are limited per visitor." : ""}</span>
   </div>
+  <div class="agents" id="agents"></div>
   <div class="board-wrap"><div class="board" id="board"></div></div>
   <div class="cols">
     <section class="left"><div class="sec-title"><h3>Case transcript</h3><span>agents and code, in order</span></div><div class="transcript" id="tx" aria-live="polite"></div></section>
@@ -544,7 +602,7 @@ async function viewAlert(v, id) {
   </div>`;
   $("#replay").onclick = () => replay();
   $("#golive").onclick = () => runLive(id);
-  B = freshBoard(); setVerdict("idle");
+  B = freshBoard(); setVerdict("idle"); AG = {}; MET = { calls: 0, tok: 0, cost: 0 }; agents();
   drawBoard(); drawLog(); drawResult(true);
   let lastW = 0; const ro = new ResizeObserver(() => { const w = $("#board")?.parentElement.clientWidth; if (w && Math.abs(w - lastW) > 8) { lastW = w; drawBoard(true); } }); ro.observe($("#board").parentElement);
   stopAll = () => { timers.forEach(clearTimeout); ro.disconnect(); };
@@ -605,8 +663,8 @@ function drawBoard(resize) {
     const cls = s ? (s.verified ? "ok" + (B.primary === i ? " primary" : "") : "bad") : m ? "" : "work";
     const status = s ? (s.verified ? (B.primary === i ? "primary finding" : "proven by code") : s.declined ? "not adversary activity" : "rejected by code") : m ? "waiting for the check" : "working";
     return `<div class="card ${cls}" style="left:${slotX(i)}px;top:${cYi(i)}px;width:${boxW}px;height:${cH}px"><div class="h">Mapper ${i + 1}, ${status}</div>
-      ${tid ? `<div class="t">${esc(tid)}</div><div class="nm">${esc(tshort(tid))}</div>` : `<div class="nm" style="margin-top:8px">${(B.cands[i] || []).slice(0, 3).map(c => `<span class="tid" style="font-size:12px">${esc(c)}</span>`).join(" ") || "Waiting for candidates"}</div>`}</div>`; }).join("");
-  const empty = !B.hyps.length ? `<div class="rowlab" style="top:${nY + 36}px;left:${vert ? 14 : L}px;right:14px;font:500 15px var(--sans);color:var(--dim)">The hunter's hypotheses are pinned here, then the technique each one proves.</div>` : "";
+      ${tid ? `<div class="t">${esc(tid)}</div><div class="nm">${esc(tshort(tid))}</div>` : `<div class="nm" style="margin-top:8px">${AG["m" + i] === "work" ? `<span class="thinking-c">Weighing ${(B.cands[i] || []).slice(0, 3).join(", ")}…</span>` : (B.cands[i] || []).slice(0, 3).map(c => `<span class="tid" style="font-size:12px">${esc(c)}</span>`).join(" ") || "Waiting for candidates"}</div>`}</div>`; }).join("");
+  const empty = !B.hyps.length ? `<div class="rowlab" style="top:${nY + 36}px;left:${vert ? 14 : L}px;right:14px;font:600 16px var(--sans);color:var(--dim)">${AG.hunter === "work" ? `<span class="thinking-c">The hunter agent is reading ${cur.view.length} events and forming hypotheses…</span>` : "The hunter's hypotheses are pinned here, then the technique each one proves."}</div>` : "";
   el.innerHTML = `<svg class="pins" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${grid}${lanes}${pins}</svg>${sv}
     ${vert ? "" : `<div class="rowlab" style="top:${nY - 24}px">Hypotheses</div><div class="rowlab" style="top:${cY - 24}px">Techniques</div>`}${notes}${cards}${empty}`;
   const m = evById();
@@ -619,9 +677,31 @@ const ACT = { hunter: "Hunter", mapper: "Mapper", mapper_retry: "Mapper", code: 
 function say(who, html, t) {
   const tx = $("#tx"); if (!tx) return;
   const d = document.createElement("div"); d.className = "tx";
-  d.innerHTML = `<div class="tm">${t != null ? "+" + t.toFixed(1) + "s" : ""}</div><div class="a ${who === "mapper_retry" ? "mapper" : who}">${ACT[who] || who}</div><div class="b">${html}</div>`;
-  tx.appendChild(d); tx.scrollTop = tx.scrollHeight;
+  d.innerHTML = `<div class="tm">${t != null ? "+" + t.toFixed(1) + "s" : ""}</div><div class="a ${who === "mapper_retry" ? "mapper" : who}">${ACT[who] || who}</div><div class="b"></div>`;
+  const th = $("#thinkrow"); if (th) tx.insertBefore(d, th); else tx.appendChild(d);
+  const plain = html.replace(/<[^>]+>/g, "").length;
+  stream($(".b", d), html, Math.min(1100, 250 + plain * 6)).then(() => { tx.scrollTop = tx.scrollHeight; });
+  tx.scrollTop = tx.scrollHeight;
 }
+/* who is working right now, shown in the strip above the board and at the foot of the transcript */
+const AGS = [["hunter", "H", "Hunter", "ai"], ["m0", "M1", "Mapper 1", "ai"], ["m1", "M2", "Mapper 2", "ai"], ["m2", "M3", "Mapper 3", "ai"], ["verify", "✓", "Verify", "code"]];
+let AG = {}, MET = { calls: 0, tok: 0, cost: 0 };
+function agents(patch) {
+  Object.assign(AG, patch || {});
+  const el = $("#agents"); if (!el) return;
+  const st = { idle: "waiting", work: "thinking…", done: "done" };
+  el.innerHTML = AGS.map(([k, ic, name, kind]) => `<span class="agent ${kind} ${AG[k] || "idle"}"><i>${ic}</i>${name} <span class="st">${kind === "code" && AG[k] === "work" ? "checking…" : st[AG[k] || "idle"]}</span></span>`).join("") +
+    `<span class="meters"><span>model calls <b>${MET.calls}</b></span><span>tokens <b>${MET.tok.toLocaleString()}</b></span><span>cost <b>$${MET.cost.toFixed(3)}</b></span><span>Claude Haiku 4.5 on Google ADK</span></span>`;
+  const working = AGS.filter(([k, , , kind]) => kind === "ai" && AG[k] === "work").map(a => a[2]);
+  const tx = $("#tx"); if (!tx) return; let th = $("#thinkrow");
+  if (working.length) { if (!th) { th = document.createElement("div"); th.id = "thinkrow"; th.className = "tx think"; tx.appendChild(th); }
+    th.innerHTML = `<div class="tm"></div><div class="a mapper">${working.length > 1 ? "Agents" : working[0].split(" ")[0]}</div><div class="b"><span class="thinking">${working.join(", ")} ${working.length > 1 ? "are" : "is"} thinking…</span></div>`; tx.scrollTop = tx.scrollHeight; }
+  else if (th) th.remove();
+}
+function meterTo(res, k) { const u = (res && res.usage) || {};
+  MET.calls = Math.round(Object.values(u).reduce((a, x) => a + (x.calls || 0), 0) * k);
+  MET.tok = Math.round(Object.values(u).reduce((a, x) => a + (x.input || 0) + (x.output || 0) + (x.cache_read || 0) + (x.cache_write || 0), 0) * k);
+  MET.cost = ((res && res.cost) || 0) * k; agents(); }
 const evLinks = ids => (ids || []).map(x => `<span class="ev" data-ev="${esc(x)}">${esc(x)}</span>`).join(" ");
 document.addEventListener("click", e => { const t = e.target.closest("[data-ev]"); if (t) goEv(t.dataset.ev); });
 function goEv(id) { const el = $(`#ln-${id}`); if (!el) return; const d = el.closest("details"); if (d) d.open = true; el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
@@ -630,10 +710,12 @@ let mapSeen = 0;
 function step(s) {
   const t = s.t;
   if (s.agent === "hunter") {
-    if (s.kind === "tool_call" && s.tool === "search_events") say("hunter", `Searching the other ${A.index_size} events for <code>${esc(s.args.query)}</code>`, t);
-    if (s.kind === "tool_result" && s.tool === "search_events") say("code", `${s.result.matches ?? 0} matches; the best ${Math.min(8, s.result.matches || 0)} sent back.`, t);
+    if (AG.hunter !== "work" && s.kind !== "output") agents({ hunter: "work" });
+    if (s.kind === "tool_call" && s.tool === "search_events") say("hunter", `<span class="tool">search_events</span> Searching the other ${A.index_size} events for <code>${esc(s.args.query)}</code>`, t);
+    if (s.kind === "tool_result" && s.tool === "search_events") say("code", `${s.result.matches ?? 0} matching events found in the wider index; the best ${Math.min(8, s.result.matches || 0)} sent back to the hunter.`, t);
     if (s.kind === "output") {
       const hs = s.output.hypotheses || []; B.hyps = hs;
+      agents({ hunter: "done" });
       say("hunter", `${esc(s.output.assessment || "")}<ol>${hs.map(h => `<li>${esc(h.behavior)} ${evLinks(h.event_ids)}</li>`).join("")}</ol>`, t);
       drawBoard(); drawLog();
     }
@@ -641,12 +723,14 @@ function step(s) {
     B.cands = s.candidates || [];
     say("code", `Searched ATT&amp;CK for each hypothesis:<ol>${B.cands.map(ids => `<li>${ids.slice(0, 3).map(x => `<b>${esc(x)}</b> ${esc(tshort(x))}`).join(", ")}</li>`).join("")}</ol>`, t);
     drawBoard(); mapSeen = 0;
+    agents(Object.fromEntries(B.cands.map((_, i) => ["m" + i, "work"])));
   } else if ((s.agent === "mapper" || s.agent === "mapper_retry") && s.kind === "output") {
     const o = s.output, i = s.agent === "mapper" ? mapSeen++ : null;
-    if (i != null && i < B.hyps.length) B.maps[i] = o;
+    if (i != null && i < B.hyps.length) { B.maps[i] = o; agents({ ["m" + i]: "done" }); }
     say(s.agent, `<b>${esc(o.technique_id)}</b> ${esc(tname(o.technique_id))}. ${esc(o.reasoning || "")}<br>${(o.evidence || []).map(e => `<span class="ev" data-ev="${esc(e.event_id)}">${esc(e.event_id)}</span> <span class="quote">${esc(e.quote)}</span>`).join("<br>")}`, t);
     drawBoard();
   } else if (s.agent === "code" && s.kind === "verify") {
+    agents({ m0: AG.m0 && "done", m1: AG.m1 && "done", m2: AG.m2 && "done", verify: "work" });
     (s.results || []).forEach((r, i) => B.state[i] = r);
     const lines = (s.results || []).map((r, i) => r.declined ? `<li>Hypothesis ${i + 1}: not adversary activity.</li>` : r.verified && !r.problems.length ?
       `<li>Hypothesis ${i + 1}: <b>${esc(r.technique_id)}</b> holds. ${r.evidence.filter(e => e.ok).length} quote(s) found in the logs.</li>` : `<li>Hypothesis ${i + 1}: rejected. ${esc((r.problems || []).join("; ")).slice(0, 200)}</li>`);
@@ -657,6 +741,7 @@ function step(s) {
     say("code", s.result.verified ? `Second try for hypothesis ${s.slot + 1} holds: <b>${esc(s.result.technique_id)}</b>.` : `Second try for hypothesis ${s.slot + 1} still fails. Dropped.`, t);
     drawBoard(); drawLog();
   } else if (s.agent === "code" && s.kind === "verdict") {
+    agents({ verify: "done" });
     say("code", s.techniques && s.techniques.length ? `Verdict, ranked: ${s.techniques.map(x => `<b>${esc(x)}</b>`).join(", ")}.${s.unverified ? ` ${s.unverified} claim(s) dropped.` : ""}` : "Nothing the agents claimed survived the checks. No finding is reported.", t);
   } else if (s.agent === "reporter" && s.kind === "output") {
     say("reporter", `Ticket drafted: <b>${esc(s.output.headline)}</b> (${esc(s.output.severity)}).`, t);
@@ -725,15 +810,16 @@ function meters(res) { $("#runnote").textContent = `${cur.live ? "Live" : "Recor
 function resetCase(res, live) {
   timers.forEach(clearTimeout); timers = [];
   cur = { view: A.view, extra: A.extra || [], planted: null, res, live };
-  B = freshBoard(); $("#tx").innerHTML = ""; drawBoard(); drawLog(); drawResult(false); setVerdict("work");
+  B = freshBoard(); $("#tx").innerHTML = ""; AG = {}; MET = { calls: 0, tok: 0, cost: 0 }; agents(); drawBoard(); drawLog(); drawResult(false); setVerdict("work");
 }
 function replay() {
   if (!A.nightwatch) return;
   resetCase(A.nightwatch, false);
   const tr = A.nightwatch.trace || [], total = tr.length ? tr[tr.length - 1].t : 1, speed = Math.max(1, total / 10);
   say("code", `Kept the ${A.view.length} rarest of ${A.events.toLocaleString()} events. Replaying the recorded run at ${speed.toFixed(1)}× speed.`, 0);
-  tr.forEach(s => timers.push(setTimeout(() => step(s), reduced ? 0 : (s.t / speed) * 1000)));
-  timers.push(setTimeout(() => { finalBoard(A.nightwatch); drawLog(); drawResult(true); setVerdict("done"); meters(A.nightwatch); }, reduced ? 0 : (total / speed) * 1000 + 600));
+  agents({ hunter: "work" }); drawBoard(true);
+  tr.forEach(s => timers.push(setTimeout(() => { step(s); meterTo(A.nightwatch, Math.min(1, s.t / total)); }, reduced ? 0 : (s.t / speed) * 1000)));
+  timers.push(setTimeout(() => { finalBoard(A.nightwatch); drawLog(); drawResult(true); setVerdict("done"); meters(A.nightwatch); meterTo(A.nightwatch, 1); agents(Object.fromEntries(AGS.filter(([k]) => AG[k]).map(([k]) => [k, "done"]))); }, reduced ? 0 : (total / speed) * 1000 + 600));
 }
 async function runLive(id) {
   if (!DATA.api) return;
@@ -756,7 +842,8 @@ async function runLive(id) {
         if (e.type === "start") { if (e.view) { cur.view = e.view; cur.planted = e.planted_id; drawBoard(); drawLog();
             say("attacker", `Planted event <span class="ev" data-ev="${esc(e.planted_id)}">${esc(e.planted_id)}</span>: <span class="quote">${esc(DATA.attacks[attack])}</span>`);
             say("code", guarded ? "Guardrails on: log text is fenced as untrusted and scanned for instructions." : "Guardrails off: no fence, no scanner, no untrusted-data rule."); }
-          else say("code", `Kept the ${A.view.length} rarest of ${A.events.toLocaleString()} events. The agents are live.`, 0); }
+          else say("code", `Kept the ${A.view.length} rarest of ${A.events.toLocaleString()} events. The agents are live.`, 0);
+          agents({ hunter: "work" }); drawBoard(true); }
         if (e.type === "step") step(e);
         if (e.type === "done") final = e;
         if (e.type === "error") throw new Error(e.message);
@@ -764,7 +851,8 @@ async function runLive(id) {
     }
     if (!final) throw new Error("The connection closed before the agents finished. Try again.");
     cur.res = { verdict: final.verdict, report: final.report, usage: final.usage, cost: final.cost, seconds: final.seconds };
-    finalBoard(cur.res); drawLog(); drawResult(true); setVerdict("done"); meters(cur.res);
+    finalBoard(cur.res); drawLog(); drawResult(true); setVerdict("done"); meters(cur.res); meterTo(cur.res, 1);
+    agents(Object.fromEntries(AGS.filter(([k]) => AG[k]).map(([k]) => [k, "done"])));
     const fooled = attack === "suppress" ? !(final.techniques || []).length : attack !== "none" && (final.techniques || [])[0] === "T1082";
     if (attack !== "none") note.textContent += fooled ? ". The injection worked: the attacker got what the note asked for." : ". The injection did not change the verdict.";
   } catch (err) { note.className = "run-note err"; note.textContent = err.message; if (!cur.res) setVerdict("idle"); }

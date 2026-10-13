@@ -380,7 +380,8 @@ def summarize_event(e: Event, t0: float) -> dict | None:
     if not e.content or not e.content.parts:
         return None
     out = {"t": t, "agent": e.author}
-    for p in e.content.parts:
+    parts = sorted(e.content.parts, key=lambda p: 0 if (p.function_call or p.function_response) else 1)  # tool calls before text
+    for p in parts:
         if p.function_call:
             return {**out, "kind": "tool_call", "tool": p.function_call.name, "args": dict(p.function_call.args or {})}
         if p.function_response:
