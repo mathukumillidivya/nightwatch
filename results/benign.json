@@ -1,0 +1,248 @@
+{
+ "nightwatch": {
+  "benign_alerts": 12,
+  "benign_errors": 0,
+  "false_alarms": 11,
+  "false_alarm_rate": 0.917,
+  "techniques_per_false_alarm": 1.64,
+  "false_alarm_examples": [
+   {
+    "case": "BN-11",
+    "techniques": [
+     "T1003.001",
+     "T1059.001"
+    ]
+   },
+   {
+    "case": "BN-05",
+    "techniques": [
+     "T1053.005",
+     "T1546.001"
+    ]
+   },
+   {
+    "case": "BN-03",
+    "techniques": [
+     "T1112"
+    ]
+   },
+   {
+    "case": "BN-12",
+    "techniques": [
+     "T1003.001",
+     "T1059.001"
+    ]
+   },
+   {
+    "case": "BN-06",
+    "techniques": [
+     "T1547.015",
+     "T1176.001"
+    ]
+   },
+   {
+    "case": "BN-07",
+    "techniques": [
+     "T1559.001"
+    ]
+   }
+  ],
+  "mixed_alerts": 8,
+  "mixed_errors": 0,
+  "mixed_right": 4,
+  "mixed_right_on_clean": 8,
+  "mixed_kept": 4,
+  "mixed_cases": [
+   {
+    "case": "MX-05",
+    "attack": "NW-009",
+    "gold": [
+     "T1574.001"
+    ],
+    "first": "T1546.015"
+   },
+   {
+    "case": "MX-04",
+    "attack": "NW-059",
+    "gold": [
+     "T1003.002"
+    ],
+    "first": "T1003.002"
+   },
+   {
+    "case": "MX-06",
+    "attack": "NW-037",
+    "gold": [
+     "T1021.002"
+    ],
+    "first": "T1176.001"
+   },
+   {
+    "case": "MX-07",
+    "attack": "NW-075",
+    "gold": [
+     "T1197"
+    ],
+    "first": "T1197"
+   },
+   {
+    "case": "MX-01",
+    "attack": "NW-057",
+    "gold": [
+     "T1003.001"
+    ],
+    "first": "T1003.001"
+   },
+   {
+    "case": "MX-02",
+    "attack": "NW-069",
+    "gold": [
+     "T1218.003"
+    ],
+    "first": "T1548.002"
+   },
+   {
+    "case": "MX-08",
+    "attack": "NW-005",
+    "gold": [
+     "T1547.001"
+    ],
+    "first": "T1547.001"
+   },
+   {
+    "case": "MX-03",
+    "attack": "NW-088",
+    "gold": [
+     "T1685.001"
+    ],
+    "first": "T1548.002"
+   }
+  ],
+  "cost": 0.5968
+ },
+ "single_call": {
+  "benign_alerts": 12,
+  "benign_errors": 0,
+  "false_alarms": 9,
+  "false_alarm_rate": 0.75,
+  "techniques_per_false_alarm": 2.22,
+  "false_alarm_examples": [
+   {
+    "case": "BN-09",
+    "techniques": [
+     "T1018"
+    ]
+   },
+   {
+    "case": "BN-01",
+    "techniques": [
+     "T1112"
+    ]
+   },
+   {
+    "case": "BN-10",
+    "techniques": [
+     "T1018",
+     "T1134.003",
+     "T1685.002"
+    ]
+   },
+   {
+    "case": "BN-11",
+    "techniques": [
+     "T1218.009",
+     "T1059.001",
+     "T1557.002"
+    ]
+   },
+   {
+    "case": "BN-05",
+    "techniques": [
+     "T1547.014",
+     "T1053.005",
+     "T1546.015"
+    ]
+   },
+   {
+    "case": "BN-12",
+    "techniques": [
+     "T1218.009",
+     "T1559.002",
+     "T1059.001"
+    ]
+   }
+  ],
+  "mixed_alerts": 8,
+  "mixed_errors": 0,
+  "mixed_right": 4,
+  "mixed_right_on_clean": 5,
+  "mixed_kept": 4,
+  "mixed_cases": [
+   {
+    "case": "MX-08",
+    "attack": "NW-005",
+    "gold": [
+     "T1547.001"
+    ],
+    "first": "T1059.001"
+   },
+   {
+    "case": "MX-03",
+    "attack": "NW-088",
+    "gold": [
+     "T1685.001"
+    ],
+    "first": "T1548.002"
+   },
+   {
+    "case": "MX-04",
+    "attack": "NW-059",
+    "gold": [
+     "T1003.002"
+    ],
+    "first": "T1003.002"
+   },
+   {
+    "case": "MX-05",
+    "attack": "NW-009",
+    "gold": [
+     "T1574.001"
+    ],
+    "first": "T1546.015"
+   },
+   {
+    "case": "MX-06",
+    "attack": "NW-037",
+    "gold": [
+     "T1021.002"
+    ],
+    "first": "T1176"
+   },
+   {
+    "case": "MX-07",
+    "attack": "NW-075",
+    "gold": [
+     "T1197"
+    ],
+    "first": "T1197"
+   },
+   {
+    "case": "MX-01",
+    "attack": "NW-057",
+    "gold": [
+     "T1003.001"
+    ],
+    "first": "T1003.001"
+   },
+   {
+    "case": "MX-02",
+    "attack": "NW-069",
+    "gold": [
+     "T1218.003"
+    ],
+    "first": "T1218.003"
+   }
+  ],
+  "cost": 0.1818
+ }
+}
