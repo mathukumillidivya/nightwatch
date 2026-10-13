@@ -1,0 +1,17 @@
+{
+  "system": "single_call",
+  "split": "dev",
+  "cases": 5,
+  "ids": "",
+  "limit": 5,
+  "concurrency": 3,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 0.1,
+  "project_cap": 5.0,
+  "run_id": "dev-probe3-single",
+  "completed": 5,
+  "stopped_at_budget": false,
+  "cost": 0.0524
+}
