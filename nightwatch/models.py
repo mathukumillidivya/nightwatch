@@ -1,0 +1,102 @@
+"""The model behind every agent: Claude through Google ADK's native Anthropic adapter, plus two additions.
+
+1. Structured output without tools. ADK's Claude adapter only enforces an agent's output schema when the agent also
+   has tools (through ADK's set_model_response tool). For a tool-less agent this adapter offers Claude one tool whose
+   input schema is the output schema and forces Claude to call it, so the reply is always schema-valid JSON.
+2. Cost accounting. Every response's token usage is recorded per agent, split into fresh input, cache writes, cache
+   reads and output, and priced.
+"""
+from __future__ import annotations
+
+import json
+import os
+from typing import Any, AsyncGenerator
+
+from anthropic import NOT_GIVEN
+from google.adk.models.anthropic_llm import AnthropicLlm
+from google.adk.models.llm_request import LlmRequest
+from google.adk.models.llm_response import LlmResponse
+from google.genai import types
+
+MODEL = os.environ.get("NIGHTWATCH_MODEL", "claude-haiku-4-5-20251001")
+SUBMIT = "submit_result"
+
+# US$ per million tokens: fresh input, cache write, cache read, output
+PRICES = {
+    "claude-haiku-4-5": (1.0, 1.25, 0.10, 5.0),
+    "claude-sonnet-4-5": (3.0, 3.75, 0.30, 15.0),
+    "claude-sonnet-4-6": (3.0, 3.75, 0.30, 15.0),
+    "claude-3-5-haiku": (0.8, 1.0, 0.08, 4.0),
+    "claude-3-haiku": (0.25, 0.30, 0.03, 1.25),
+}
+
+
+def price(model: str) -> tuple[float, float, float, float]:
+    for k, v in PRICES.items():
+        if model.startswith(k):
+            return v
+    return PRICES["claude-haiku-4-5"]
+
+
+def cost(usage: dict, model: str = MODEL) -> float:
+    p = price(model)
+    return sum(u.get("input", 0) * p[0] + u.get("cache_write", 0) * p[1] + u.get("cache_read", 0) * p[2]
+               + u.get("output", 0) * p[3] for u in usage.values()) / 1e6
+
+
+def _schema(llm_request: LlmRequest) -> dict | None:
+    cfg = llm_request.config
+    if not cfg:
+        return None
+    s = getattr(cfg, "response_json_schema", None) or getattr(cfg, "response_schema", None)
+    if s is None:
+        return None
+    if isinstance(s, type) and hasattr(s, "model_json_schema"):
+        return s.model_json_schema()
+    if isinstance(s, dict):
+        return s
+    if hasattr(s, "model_dump"):
+        return s.model_dump(exclude_none=True)
+    return None
+
+
+class Claude(AnthropicLlm):
+    """Claude with schema-forced output for tool-less agents."""
+
+    model: str = MODEL
+    max_tokens: int = 2048
+
+    def _build_anthropic_kwargs(self, llm_request, messages, tools, tool_choice, thinking) -> dict[str, Any]:
+        kwargs = super()._build_anthropic_kwargs(llm_request, messages, tools, tool_choice, thinking)
+        schema = _schema(llm_request)
+        if schema is not None and kwargs.get("tools") in (None, NOT_GIVEN):
+            kwargs["tools"] = [{"name": SUBMIT, "description": "Return your result in this exact structure.",
+                                "input_schema": schema}]
+            kwargs["tool_choice"] = {"type": "tool", "name": SUBMIT}
+        kwargs["max_tokens"] = self.max_tokens
+        return kwargs
+
+    async def generate_content_async(self, llm_request: LlmRequest, stream: bool = False) -> AsyncGenerator[LlmResponse, None]:
+        async for response in super().generate_content_async(llm_request, stream=False):
+            parts = (response.content.parts if response.content else None) or []
+            for i, part in enumerate(parts):
+                if part.function_call and part.function_call.name == SUBMIT:
+                    parts[i] = types.Part(text=json.dumps(part.function_call.args or {}))
+            yield response
+
+
+def usage_of(llm_response: LlmResponse) -> dict:
+    u = llm_response.usage_metadata
+    if not u:
+        return {}
+    read = u.cached_content_token_count or 0
+    write = getattr(u, "cache_creation_input_tokens", None) or 0
+    prompt = u.prompt_token_count or 0
+    return {"input": max(prompt - read - write, 0), "cache_read": read, "cache_write": write,
+            "output": (u.candidates_token_count or 0) + (u.thoughts_token_count or 0), "calls": 1}
+
+
+def add_usage(total: dict, agent: str, u: dict) -> None:
+    t = total.setdefault(agent, {})
+    for k, v in u.items():
+        t[k] = t.get(k, 0) + v

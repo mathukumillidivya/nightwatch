@@ -1,0 +1,44 @@
+name: run
+on:
+  workflow_dispatch:
+    inputs:
+      run_id: {required: true}
+      system: {description: "nightwatch or single_call", default: "nightwatch"}
+      split: {description: "dev, test or all", default: "dev"}
+      ids: {description: "comma-separated case ids instead of a split", default: ""}
+      cases: {description: "data/cases.jsonl or data/redteam.jsonl", default: "data/cases.jsonl"}
+      limit: {default: "0"}
+      model: {default: "claude-haiku-4-5-20251001"}
+      concurrency: {default: "4"}
+      flags: {description: "--unguarded and/or --report", default: ""}
+      budget: {description: "stop this run at this many US$", default: "1.0"}
+permissions:
+  contents: write
+concurrency: {group: spend, cancel-in-progress: false}   # one run at a time, so the spending ledger stays exact
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - name: Check the API key is configured
+        env: {ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}"}
+        run: test -n "$ANTHROPIC_API_KEY" || { echo "ANTHROPIC_API_KEY secret is not set"; exit 1; }
+      - name: Run
+        env: {ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}"}
+        run: |
+          python scripts/run.py --system "${{ inputs.system }}" --split "${{ inputs.split }}" --ids "${{ inputs.ids }}" \
+            --cases "${{ inputs.cases }}" --limit "${{ inputs.limit }}" --model "${{ inputs.model }}" \
+            --concurrency "${{ inputs.concurrency }}" --budget "${{ inputs.budget }}" --run-id "${{ inputs.run_id }}" ${{ inputs.flags }}
+      - name: Score and save
+        if: always()
+        run: |
+          python scripts/evaluate.py "results/runs/${{ inputs.run_id }}" --out "results/runs/${{ inputs.run_id }}/summary.json" | head -40 || true
+          git config user.name "Divya Sri"
+          git config user.email "hellosweety789@gmail.com"
+          git add results/
+          git commit -m "Results: ${{ inputs.run_id }}"
+          for i in 1 2 3 4 5; do git pull --rebase && git push && break; sleep $((RANDOM % 20 + 5)); done

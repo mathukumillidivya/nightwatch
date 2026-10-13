@@ -1,0 +1,1612 @@
+{
+ "NW-001": {
+  "dataset": "SDWIN-190301125905",
+  "recording": "empire_powerview_ldap_ntsecuritydescriptor_2020-09-21130944",
+  "title": "Empire Powerview Add-DomainObjectAcl",
+  "techniques": [
+   "T1222.001"
+  ],
+  "gold": [
+   "T1222.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "These datasets represent adversaries with enough permissions (i.e. domain admin) adding an access control entry (ACE) to the discretionary access control list (DACL) of an Active Directory object (i.e"
+ },
+ "NW-002": {
+  "dataset": "SDWIN-190301174830",
+  "recording": "empire_dcsync_dcerpc_drsuapi_DsGetNCChanges_2020-09-21185829",
+  "title": "Empire DCSync",
+  "techniques": [
+   "T1003.006"
+  ],
+  "gold": [
+   "T1003.006"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries abusing Active Directory Replication services to retrieve secret domain data (i.e. NTLM hashes) from domain accounts."
+ },
+ "NW-003": {
+  "dataset": "SDWIN-190319020147",
+  "recording": "empire_shell_net_localgroup_administrators_2020-09-21191843",
+  "title": "Empire Net Local Administrators Group",
+  "techniques": [
+   "T1069.001"
+  ],
+  "gold": [
+   "T1069.001"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents adversaries enumerating members of the local Administratrors group via the net.exe utility"
+ },
+ "NW-004": {
+  "dataset": "SDWIN-190319020729",
+  "recording": "empire_shell_net_local_users_2020-09-21192606",
+  "title": "Empire Net Local Users",
+  "techniques": [
+   "T1087.001"
+  ],
+  "gold": [
+   "T1087.001"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents adversaries enumerating all local users on an endpoint"
+ },
+ "NW-005": {
+  "dataset": "SDWIN-190319023812",
+  "recording": "empire_persistence_registry_modification_run_keys_standard_user_2020-09-04030609",
+  "title": "Empire Userland Registry Run Keys",
+  "techniques": [
+   "T1547.001"
+  ],
+  "gold": [
+   "T1547.001"
+  ],
+  "gold_tactics": [
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries modifying local Run registry keys (i.e. HKLM:SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run) for persistence. It also captures the execution of the persistence mecha"
+ },
+ "NW-006": {
+  "dataset": "SDWIN-190319024742",
+  "recording": "empire_schtasks_creation_standard_user_2020-09-21031526",
+  "title": "Empire Userland Scheduled Tasks",
+  "techniques": [
+   "T1053.005"
+  ],
+  "gold": [
+   "T1053.005"
+  ],
+  "gold_tactics": [
+   "Execution",
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries creating and/or executing local scheduled tasks to maintain persistence in an environment."
+ },
+ "NW-007": {
+  "dataset": "SDWIN-190319131123",
+  "recording": "empire_over_pth_patch_lsass_2020-09-21221336",
+  "title": "Empire Over-Pass-The-Hash",
+  "techniques": [
+   "T1550.002"
+  ],
+  "gold": [
+   "T1550.002"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries taking a hash/key (rc4_hmac, aes256_cts_hmac_sha1, etc.) for a domain-joined user into a fully-fledged Kerberos TGT. In this case, an adversary can write the hash/k"
+ },
+ "NW-008": {
+  "dataset": "SDWIN-190319145126",
+  "recording": "empire_shell_rubeus_asktgt_ptt_2020-09-21223848",
+  "title": "Rubeus Userland ASKTGT PTT",
+  "techniques": [
+   "T1003.003"
+  ],
+  "gold": [
+   "T1003.003"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries crafting raw AS-REQ (TGT request) traffic for a specific user and encryption key (/rc4, /aes128, /aes256, or /des) to request TGTs without touching lsass."
+ },
+ "NW-009": {
+  "dataset": "SDWIN-190403133337",
+  "recording": "empire_shell_dcerpc_smb_service_dll_hijack_2020-09-21232839",
+  "title": "IKEEXT Remote Service DLL Hijack",
+  "techniques": [
+   "T1574.001"
+  ],
+  "gold": [
+   "T1574.001"
+  ],
+  "gold_tactics": [
+   "Execution",
+   "Stealth"
+  ],
+  "description": "This dataset represents adversaries copying a file remotely to replace a file which is executed by a service that is vulnerable to DLL hijack. This dataset includes"
+ },
+ "NW-010": {
+  "dataset": "SDWIN-190518182022",
+  "recording": "empire_launcher_vbs_2020-09-04160940",
+  "title": "Empire VBS Execution",
+  "techniques": [
+   "T1059.005"
+  ],
+  "gold": [
+   "T1059.005"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents adversaries executing a VBS script as a launcher for initial access."
+ },
+ "NW-011": {
+  "dataset": "SDWIN-190518184306",
+  "recording": "empire_wmi_local_event_subscriptions_elevated_user_2020-09-04164306",
+  "title": "Empire Elevated WMI Eventing",
+  "techniques": [
+   "T1546.003"
+  ],
+  "gold": [
+   "T1546.003"
+  ],
+  "gold_tactics": [
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries leveraging WMI subscriptions locally for persistence."
+ },
+ "NW-012": {
+  "dataset": "SDWIN-190518200432",
+  "recording": "empire_psinject_PEinjection_2020-08-07143205",
+  "title": "Empire PSInject",
+  "techniques": [
+   "T1055.003"
+  ],
+  "gold": [
+   "T1055.003"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation",
+   "Stealth"
+  ],
+  "description": "This dataset represents adversaries reflectively loading/intecting a portable executable (PE) (not on disk) into a process via WriteprocessMemory and executed via CreateRemoteThread APIs"
+ },
+ "NW-013": {
+  "dataset": "SDWIN-190518201207",
+  "recording": "empire_shell_rpc_samr_smb_group_domain_admins_standard_user_2020-09-21040850",
+  "title": "Empire Shell Net Domain Admins",
+  "techniques": [
+   "T1069.002"
+  ],
+  "gold": [
+   "T1069.002"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents adversaries enumerating members of domain groups (i.e. Domain Admins) via RPC SAMR interface over SMB. Some of the main RPC methods captured over the network are SamrLookupName"
+ },
+ "NW-014": {
+  "dataset": "SDWIN-190518202151",
+  "recording": "empire_mimikatz_logonpasswords_2020-08-07103224",
+  "title": "Empire Mimikatz LogonPasswords",
+  "techniques": [
+   "T1003.001"
+  ],
+  "gold": [
+   "T1003.001"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries reading credentials from the memory contents of lsass.exe. One popular tool performing this behavior is Mimikatz."
+ },
+ "NW-015": {
+  "dataset": "SDWIN-190518210125",
+  "recording": "empire_smbexec_dcerpc_smb_svcctl_2020-09-20025716",
+  "title": "Empire Invoke SMBExec",
+  "techniques": [
+   "T1021.002"
+  ],
+  "gold": [
+   "T1021.002"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries remotely creating and starting a service via RPC methods over SMB named pipes such as svcctl."
+ },
+ "NW-016": {
+  "dataset": "SDWIN-190518210652",
+  "recording": "empire_psexec_dcerpc_tcp_svcctl_2020-09-20121608",
+  "title": "Empire Invoke PsExec",
+  "techniques": [
+   "T1021"
+  ],
+  "gold": [
+   "T1021"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries remotely creating and starting a service via RPC methods over TCP."
+ },
+ "NW-017": {
+  "dataset": "SDWIN-190518211052",
+  "recording": "empire_dcom_shellwindows_stager_2020-09-18130751",
+  "title": "Empire Invoke DCOM ShellWindows",
+  "techniques": [
+   "T1021.003"
+  ],
+  "gold": [
+   "T1021.003"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries executing commands remotely via DCOM ShellWindows COM Method."
+ },
+ "NW-018": {
+  "dataset": "SDWIN-190518211456",
+  "recording": "empire_psremoting_stager_2020-09-20170827",
+  "title": "Empire Invoke PSRemoting",
+  "techniques": [
+   "T1021.006"
+  ],
+  "gold": [
+   "T1021.006"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries executing malicious code on remote hosts using PowerShell Remoting (WinRM)."
+ },
+ "NW-019": {
+  "dataset": "SDWIN-190518213907",
+  "recording": "empire_msbuild_dcerpc_wmi_smb_2020-09-20173857",
+  "title": "Empire Invoke Execute MSBuild",
+  "techniques": [
+   "T1047"
+  ],
+  "gold": [
+   "T1047"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents an adversary remotely creating a file (.xml) via SMB and executing it remotetly via WMI and msbuild. This dataset focuses on the use of the WMI Win32_Process class and method C"
+ },
+ "NW-020": {
+  "dataset": "SDWIN-190518221344",
+  "recording": "empire_dllinjection_LoadLibrary_CreateRemoteThread_2020-07-22000048",
+  "title": "Empire Invoke DLLInjection",
+  "techniques": [
+   "T1055.001"
+  ],
+  "gold": [
+   "T1055.001"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation",
+   "Stealth"
+  ],
+  "description": "This dataset represents a threat actor injecting a Dll (On Disk) into an arbitrary process via LoadLibrary and executd by CreateRemoteThread APIs"
+ },
+ "NW-021": {
+  "dataset": "SDWIN-190518224039",
+  "recording": "empire_find_localadmin_smb_svcctl_OpenSCManager_2020-09-22021559",
+  "title": "Empire Find Local Admin Access",
+  "techniques": [
+   "T1069.001"
+  ],
+  "gold": [
+   "T1069.001"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents adversaries using the OpenSCManagerW Win32API call to establish a handle to the remote host and verify if the current user context has local administrator acess to the target."
+ },
+ "NW-022": {
+  "dataset": "SDWIN-190518230752",
+  "recording": "empire_mimikatz_extract_keys_2020-09-22033608",
+  "title": "Empire Mimikatz Extract Kerberos Keys",
+  "techniques": [
+   "T1003.004"
+  ],
+  "gold": [
+   "T1003.004"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries extracting kerberos tickets from memory."
+ },
+ "NW-023": {
+  "dataset": "SDWIN-190518235535",
+  "recording": "empire_mimikatz_backupkeys_dcerpc_smb_lsarpc_2020-10-22143243",
+  "title": "Empire Mimikatz Backup Keys",
+  "techniques": [
+   "T1003"
+  ],
+  "gold": [
+   "T1003"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries retrieving the DPAPI Domain Backup Key from the DC via RPC LSARPC methods over SMB."
+ },
+ "NW-024": {
+  "dataset": "SDWIN-190519005224",
+  "recording": "empire_getsession_dcerpc_smb_srvsvc_NetSessEnum_2020-09-22034513",
+  "title": "Empire Remote Get Session",
+  "techniques": [
+   "T1049"
+  ],
+  "gold": [
+   "T1049"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents adversaries leveraging RPC SRVSVC and the method NetSessEnum over SMB to query remote hosts for active sessions"
+ },
+ "NW-025": {
+  "dataset": "SDWIN-190625103712",
+  "recording": "empire_mimikatz_sam_access_2020-09-22041117",
+  "title": "Empire Mimikatz SAM Extract Hashes",
+  "techniques": [
+   "T1003.002"
+  ],
+  "gold": [
+   "T1003.002"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries calculating the SysKey to decrypt Security Account Mannager (SAM) database entries (from registry or hive) and get NTLM, and sometimes LM hashes of local accounts p"
+ },
+ "NW-026": {
+  "dataset": "SDWIN-190625133822",
+  "recording": "empire_shell_reg_dump_sam_2020-09-22042823",
+  "title": "Empire Reg Dump SAM Hive",
+  "techniques": [
+   "T1003.002"
+  ],
+  "gold": [
+   "T1003.002"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries with administrator privileges using the windows reg utility to dump the SAM registry hive."
+ },
+ "NW-027": {
+  "dataset": "SDWIN-191027055035",
+  "recording": "rdp_interactive_taskmanager_lsass_dump_2020-09-22043748",
+  "title": "RDP TaskManager LSASS Dump",
+  "techniques": [
+   "T1003.001"
+  ],
+  "gold": [
+   "T1003.001"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries using RDP and task manager interactively and dump the memory space of lsass."
+ },
+ "NW-028": {
+  "dataset": "SDWIN-191027223020",
+  "recording": "covenant_installutil_2020-09-19211702",
+  "title": "Covenant ShellCmd InstallUtil",
+  "techniques": [
+   "T1218.004"
+  ],
+  "gold": [
+   "T1218.004"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents adversaries proxy executing code through InstallUtil, a trusted Windows utility."
+ },
+ "NW-029": {
+  "dataset": "SDWIN-191225045202",
+  "recording": "empire_monologue_netntlm_downgrade_2019-12-25045202",
+  "title": "Empire Invoke InternalMonologue",
+  "techniques": [
+   "T1112"
+  ],
+  "gold": [
+   "T1112"
+  ],
+  "gold_tactics": [
+   "Defense Impairment",
+   "Persistence"
+  ],
+  "description": "This dataset represents adversaries downgrading the challenge/response authentication protocol used for network logons, the minimum security negotiated for applications using NTLMSSP, and security set"
+ },
+ "NW-030": {
+  "dataset": "SDWIN-200609225055",
+  "recording": "msf_record_mic_2020-06-09225055",
+  "title": "MSF Record Mic",
+  "techniques": [
+   "T1123"
+  ],
+  "gold": [
+   "T1123"
+  ],
+  "gold_tactics": [
+   "Collection"
+  ],
+  "description": "This dataset represents adversaries accessing the microphone of an endpoint."
+ },
+ "NW-031": {
+  "dataset": "SDWIN-200721232741",
+  "recording": "empire_launcher_sct_regsvr32_2020-07-21232741",
+  "title": "Empire Regsvr32 Execution",
+  "techniques": [
+   "T1218.010"
+  ],
+  "gold": [
+   "T1218.010"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging regsvr32 to proxy the execution of an empire payload (.sct file) to create a reverse connection to the C2."
+ },
+ "NW-032": {
+  "dataset": "SDWIN-200722001847",
+  "recording": "empire_persistence_registry_modification_run_keys_elevated_user_2020-07-22001847",
+  "title": "Empire Elevated Registry Run Keys",
+  "techniques": [
+   "T1547.001"
+  ],
+  "gold": [
+   "T1547.001"
+  ],
+  "gold_tactics": [
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries modifying local Run registry keys (i.e. HKLM:SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run) for persistence. It also captures the execution of the persistence mecha"
+ },
+ "NW-033": {
+  "dataset": "SDWIN-200724174200",
+  "recording": "covenant_wmi_remote_event_subscription_ActiveScriptEventConsumers_2020-09-01214330",
+  "title": "Covenant Remote WMI Eventing ActiveScriptEventConsumers",
+  "techniques": [
+   "T1047"
+  ],
+  "gold": [
+   "T1047"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents adversaries using WMI event subscriptions (ActiveScriptEventConsumers) remotely to move laterally."
+ },
+ "NW-034": {
+  "dataset": "SDWIN-200805020926",
+  "recording": "covenant_dcsync_dcerpc_drsuapi_DsGetNCChanges_2020-08-05020926",
+  "title": "Covenant DCSync",
+  "techniques": [
+   "T1003.006"
+  ],
+  "gold": [
+   "T1003.006"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries abusing Active Directory Replication services to retrieve secret domain data (i.e. NTLM hashes) from domain accounts."
+ },
+ "NW-035": {
+  "dataset": "SDWIN-200805034820",
+  "recording": "covenant_sc_query_dcerpc_smb_svcctl_2020-08-05034820",
+  "title": "Covenant SC.exe Utility Query",
+  "techniques": [
+   "T1021.002"
+  ],
+  "gold": [
+   "T1021.002"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents an adversary leveraging the sc.exe utility to query (RPC QueryServiceStatus method) for the statu of a service on a remote endpoint."
+ },
+ "NW-036": {
+  "dataset": "SDWIN-200806012009",
+  "recording": "covenant_sharpsc_query_dcerpc_smb_svcctl_2020-08-06012009",
+  "title": "Covenant SharpSC Query",
+  "techniques": [
+   "T1021.002"
+  ],
+  "gold": [
+   "T1021.002"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents a threat actor leveraging the RPC method EnumServiceStatusW over SMB svcctl to query the status of a service on a remote endpoint.."
+ },
+ "NW-037": {
+  "dataset": "SDWIN-200806015757",
+  "recording": "covenant_copy_smb_CreateRequest_2020-09-22145302",
+  "title": "Covenant Remote File Copy",
+  "techniques": [
+   "T1021.002"
+  ],
+  "gold": [
+   "T1021.002"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents a threat actor remotely copying a file over SMB (CreateRequest)."
+ },
+ "NW-038": {
+  "dataset": "SDWIN-200806022635",
+  "recording": "covenant_sharpsc_create_dcerpc_smb_svcctl_2020-08-06022635",
+  "title": "Covenant SharpSC Create",
+  "techniques": [
+   "T1021.002"
+  ],
+  "gold": [
+   "T1021.002"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries remotely creating a service via RPC methods such as CreateService over SMB named pipes such as svcctl."
+ },
+ "NW-039": {
+  "dataset": "SDWIN-200806030120",
+  "recording": "covenant_sharpsc_start_dcerpc_smb_svcctl_2020-08-06030120",
+  "title": "Covenant SharpSC Start",
+  "techniques": [
+   "T1021.002"
+  ],
+  "gold": [
+   "T1021.002"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries remotely starting a service via RPC methods such as StartService over SMB named pipes such as svcctl."
+ },
+ "NW-040": {
+  "dataset": "SDWIN-200806035621",
+  "recording": "covenant_sharpwmi_create_dcerpc_wmi_2020-08-06035621",
+  "title": "Covenant SharpWMI Exec",
+  "techniques": [
+   "T1047"
+  ],
+  "gold": [
+   "T1047"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents an adversary remotely executing code via WMI. This dataset focuses on the use of the WMI Win32_Process class and method Create to execute code remotely."
+ },
+ "NW-041": {
+  "dataset": "SDWIN-200806115603",
+  "recording": "covenant_psremoting_command_2020-08-06115603",
+  "title": "Covenant PowerShell Remoting Command",
+  "techniques": [
+   "T1021.006"
+  ],
+  "gold": [
+   "T1021.006"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries executing malicious code on remote hosts using PowerShell Remoting (WinRM)."
+ },
+ "NW-042": {
+  "dataset": "SDWIN-200806130039",
+  "recording": "covenant_getdomaingroup_ldap_searchrequest_domain_admins_2020-09-22141005",
+  "title": "Covenant GetDomainGroup Domain Admins",
+  "techniques": [
+   "T1069.002"
+  ],
+  "gold": [
+   "T1069.002"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents a threat actor enumerating the domain groups via LDAP (i.e. SearchRequest Method) in an environment."
+ },
+ "NW-043": {
+  "dataset": "SDWIN-200807103913",
+  "recording": "empire_mimikatz_lsadump_patch_2020-08-07103913",
+  "title": "Empire Mimikatz Lsadump LSA Patch",
+  "techniques": [
+   "T1003.001"
+  ],
+  "gold": [
+   "T1003.001"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries reading credentials from the memory contents of lsass.exe. One popular tool performing this behavior is Mimikatz."
+ },
+ "NW-044": {
+  "dataset": "SDWIN-200904032946",
+  "recording": "empire_uac_shellapi_fodhelper_2020-09-04032946",
+  "title": "Invoke BypassUAC FodHelper",
+  "techniques": [
+   "T1548.002"
+  ],
+  "gold": [
+   "T1548.002"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries elevating privileges (bypassing uac) by performing an registry modification for FodHelper."
+ },
+ "NW-045": {
+  "dataset": "SDWIN-200914080546",
+  "recording": "empire_wmic_add_user_backdoor_2020-09-14080546",
+  "title": "Empire Remote WMIC Add User",
+  "techniques": [
+   "T1047"
+  ],
+  "gold": [
+   "T1047"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents an adversary remotely executing code via WMI to ad a backdoor user on the target system. This dataset focuses on the use of the WMI Win32_Process class and method Create to exe"
+ },
+ "NW-046": {
+  "dataset": "SDWIN-200916232559",
+  "recording": "mimikatz_CVE-2020-1472_Unauthenticated_NetrServerAuthenticate2_2020-09-16233923",
+  "title": "Mimikatz Netlogon Unauthenticated NetrServerAuthenticate2",
+  "techniques": [
+   "T1210"
+  ],
+  "gold": [
+   "T1210"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries leveraging a vulnerability (CVE-2020-1472) in a cryptographic authentication scheme used by the Netlogon Remote Protocol, which among other things can be used to up"
+ },
+ "NW-047": {
+  "dataset": "SDWIN-200917174542",
+  "recording": "covenant_dcom_executeexcel4macro_allowed_2020-09-17174542",
+  "title": "DCOM ExecuteExcel4macro",
+  "techniques": [
+   "T1021.003"
+  ],
+  "gold": [
+   "T1021.003"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries leveraging the COM Method ExecuteExcel4Macro over DCOM to execute Excel4 macros remotely"
+ },
+ "NW-048": {
+  "dataset": "SDWIN-200918145959",
+  "recording": "covenant_dcom_registerxll_2020-09-18145959",
+  "title": "DCOM RegisterXLL",
+  "techniques": [
+   "T1021.003"
+  ],
+  "gold": [
+   "T1021.003"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries leveraging the COM Method RegisterXLL over DCOM to execute an XLL file remotely. The XLL file can exist on the target or externally in an UNC path such as \\\\SERVER\\"
+ },
+ "NW-049": {
+  "dataset": "SDWIN-200921001437",
+  "recording": "empire_wmi_dcerpc_wmi_IWbemServices_ExecMethod_2020-09-21001437",
+  "title": "Empire Invoke WMI",
+  "techniques": [
+   "T1047"
+  ],
+  "gold": [
+   "T1047"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents an adversary remotely executing code via WMI. This dataset focuses on the use of the WMI Win32_Process class and method Create to execute code remotely."
+ },
+ "NW-050": {
+  "dataset": "SDWIN-200921175806",
+  "recording": "empire_schtasks_creation_execution_elevated_user_2020-09-21175806",
+  "title": "Empire Elevated Scheduled Tasks",
+  "techniques": [
+   "T1053.005"
+  ],
+  "gold": [
+   "T1053.005"
+  ],
+  "gold_tactics": [
+   "Execution",
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries creating and/or executing local scheduled tasks to maintain persistence in an environment."
+ },
+ "NW-051": {
+  "dataset": "SDWIN-200921230246",
+  "recording": "empire_shell_rubeus_asktgt_createnetonly_2020-09-21230246",
+  "title": "Rubeus Elevated ASKTGT CreateNetOnly",
+  "techniques": [
+   "T1003.003"
+  ],
+  "gold": [
+   "T1003.003"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries crafting raw AS-REQ (TGT request) traffic for a specific user and encryption key (/rc4, /aes128, /aes256, or /des) to request TGTs without touching lsass."
+ },
+ "NW-052": {
+  "dataset": "SDWIN-200922042230",
+  "recording": "empire_powerdump_sam_access_2020-09-22042230",
+  "title": "Empire Powerdump Extract Hashes",
+  "techniques": [
+   "T1003.002"
+  ],
+  "gold": [
+   "T1003.002"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries calculating the SysKey to decrypt Security Account Mannager (SAM) database entries (from registry or hive) and get NTLM, and sometimes LM hashes of local accounts p"
+ },
+ "NW-053": {
+  "dataset": "SDWIN-201009173318",
+  "recording": "covenant_wmi_wbemcomn_dll_hijack_2020-10-09173318",
+  "title": "Covenant Remote WMI Wbemcomn DLL Hijacking",
+  "techniques": [
+   "T1047"
+  ],
+  "gold": [
+   "T1047"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents adversaries abusing a DLL hijack vulnerability found in the execution of the WMI provider host (wmiprvse.exe) for lateral movement."
+ },
+ "NW-054": {
+  "dataset": "SDWIN-201009183000",
+  "recording": "covenant_dcom_iertutil_dll_hijack_2020-10-09183000",
+  "title": "Covenant Remote DCOM Iertutil DLL Hijacking",
+  "techniques": [
+   "T1021.003"
+  ],
+  "gold": [
+   "T1021.003"
+  ],
+  "gold_tactics": [
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents adversaries abusing a DLL hijack vulnerability found in the execution of the DCOM InternetExplorer.Application class for lateral movement."
+ },
+ "NW-055": {
+  "dataset": "SDWIN-201012183248",
+  "recording": "covenant_lolbin_wuauclt_createremotethread_2020-10-12183248",
+  "title": "Covenant Wuauclt CreateRemoteThread Execution",
+  "techniques": [
+   "T1218"
+  ],
+  "gold": [
+   "T1218"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents adversaries proxy executing code via the Windows Update client utility. In order to bypass rules looking for the binary reaching out directly to the Internet, this dataset show"
+ },
+ "NW-056": {
+  "dataset": "SDWIN-201017061100",
+  "recording": "wmic_remote_xsl_jscript_2020-10-1802171958",
+  "title": "WMIC Remote XSL Jscript Execution",
+  "techniques": [
+   "T1220"
+  ],
+  "gold": [
+   "T1220"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents adversaries proxy executing code and bypassing application controls by leveraging wmic and the `/FORMAT` argument switch to download and execute an XSL file (jscript)."
+ },
+ "NW-057": {
+  "dataset": "SDWIN-201018195009",
+  "recording": "psh_lsass_memory_dump_comsvcs_2020-10-18T19500924",
+  "title": "Lsass Memory Dump via Comsvcs.dll",
+  "techniques": [
+   "T1003.001"
+  ],
+  "gold": [
+   "T1003.001"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries leveraging the MiniDump export function from comsvcs.dll via rundll32 to perform a memory dump from lsass."
+ },
+ "NW-058": {
+  "dataset": "SDWIN-201018225619",
+  "recording": "cmd_lsass_memory_dumpert_syscalls_2020-10-1822561997",
+  "title": "Lsass Memory Dump via Syscalls",
+  "techniques": [
+   "T1003.001"
+  ],
+  "gold": [
+   "T1003.001"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries using system calls (syscalls) and API unhooking to dump the memoty contents of lsass."
+ },
+ "NW-059": {
+  "dataset": "SDWIN-201019002900",
+  "recording": "cmd_sam_copy_esentutl_2020-10-1900290001",
+  "title": "SAM Copy via Esentutl VSS",
+  "techniques": [
+   "T1003.002"
+  ],
+  "gold": [
+   "T1003.002"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries copying the SAM hive using the esentutl.exe utility and volume shadow copy services."
+ },
+ "NW-060": {
+  "dataset": "SDWIN-201019033054",
+  "recording": "cmd_psexec_lsa_secrets_dump_2020-10-1903305471",
+  "title": "Psexec Reg LSA Secrets Dump",
+  "techniques": [
+   "T1003.004"
+  ],
+  "gold": [
+   "T1003.004"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries using psexec to run reg.exe as system and dump LSA secrets. Location HKLM\\security\\policy\\secrets."
+ },
+ "NW-061": {
+  "dataset": "SDWIN-201019224718",
+  "recording": "cmd_userinitmprlogonscript_batch_2020-10-1922471810",
+  "title": "Logon Scripts via UserInitMprLogonScript",
+  "techniques": [
+   "T1037.001"
+  ],
+  "gold": [
+   "T1037.001"
+  ],
+  "gold_tactics": [
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries leveraging logon initialization scripts to achieve persistence via the UserInitMprLogonScript user environment."
+ },
+ "NW-062": {
+  "dataset": "SDWIN-201019232515",
+  "recording": "psh_mavinject_dll_notepad_2020-10-2121410529",
+  "title": "Mavinject Process DLL Injection",
+  "techniques": [
+   "T1055"
+  ],
+  "gold": [
+   "T1055"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation",
+   "Stealth"
+  ],
+  "description": "This dataset represents adversaries leveraging"
+ },
+ "NW-063": {
+  "dataset": "SDWIN-201020013208",
+  "recording": "psh_input_capture_promptforcreds_2020-10-2001320841",
+  "title": "UI Prompt For Credentials Function",
+  "techniques": [
+   "T1056.002"
+  ],
+  "gold": [
+   "T1056.002"
+  ],
+  "gold_tactics": [
+   "Collection",
+   "Credential Access"
+  ],
+  "description": "This dataset represents adversaries leveraging functions such as CredUIPromptForCredentials to create and display a configurable dialog box that accepts credentials information from a user."
+ },
+ "NW-064": {
+  "dataset": "SDWIN-201021001911",
+  "recording": "cmd_netsh_fw_mod_open_ports_2020-10-2100191105",
+  "title": "Netsh Open FW Proxy Ports",
+  "techniques": [
+   "T1562.004"
+  ],
+  "gold": [
+   "T1686"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "This dataset represents adversaries modifying the local FW by opening port for proxy."
+ },
+ "NW-065": {
+  "dataset": "SDWIN-201021204544",
+  "recording": "cmd_service_mod_fax_2020-10-2120454410",
+  "title": "Service Modification Fax",
+  "techniques": [
+   "T1543.003"
+  ],
+  "gold": [
+   "T1543.003"
+  ],
+  "gold_tactics": [
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents adversaries modifying a local service to execute powershell."
+ },
+ "NW-066": {
+  "dataset": "SDWIN-201021232814",
+  "recording": "cmd_discover_iexplorer_version_registry_2020-10-2123281491",
+  "title": "Internet Explorer Version Discovery",
+  "techniques": [
+   "T1518"
+  ],
+  "gold": [
+   "T1518"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents threat actors querying HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Internet Explorer to get the version of internet explorer installed on the system."
+ },
+ "NW-067": {
+  "dataset": "SDWIN-201022002145",
+  "recording": "psh_hh_local_html_payload_2020-10-2200214526",
+  "title": "HH Execution of Local Compiled HTML Payload",
+  "techniques": [
+   "T1218.001"
+  ],
+  "gold": [
+   "T1218.001"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors executing local compiled HTML Help payloads via hh.exe."
+ },
+ "NW-068": {
+  "dataset": "SDWIN-201022013121",
+  "recording": "psh_control_panel_execution_2020-10-2201312134",
+  "title": "Control Panel Execution",
+  "techniques": [
+   "T1218.002"
+  ],
+  "gold": [
+   "T1218.002"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging control.exe to execute a .cpl file to proxy execute another payload (i.e. calc)."
+ },
+ "NW-069": {
+  "dataset": "SDWIN-201022015432",
+  "recording": "psh_cmstp_execution_bypassuac_2020-10-2201543213",
+  "title": "CMSTP Proxy Execution",
+  "techniques": [
+   "T1218.003"
+  ],
+  "gold": [
+   "T1218.003"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging CMSTP to execute an Inf file to proxy execute other malicious commands (i.e. cmd.exe). (Embedding commands in the RunPreSetupCommandsSection of the INF"
+ },
+ "NW-070": {
+  "dataset": "SDWIN-201022022144",
+  "recording": "cmd_mshta_javascript_getobject_sct_2020-10-2202214475",
+  "title": "Mshta Javascript GetObject Sct",
+  "techniques": [
+   "T1218.005"
+  ],
+  "gold": [
+   "T1218.005"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging mshta.exe to proxy execute malicious .sct files via Javascript."
+ },
+ "NW-071": {
+  "dataset": "SDWIN-201022025808",
+  "recording": "cmd_mshta_vbscript_execute_psh_2020-10-2202580804",
+  "title": "Mshta VBScript Execute PowerShell",
+  "techniques": [
+   "T1218.005"
+  ],
+  "gold": [
+   "T1218.005"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging mshta.exe to proxy execute malicious powershell commands via vbscript."
+ },
+ "NW-072": {
+  "dataset": "SDWIN-201022035214",
+  "recording": "psh_mshta_html_application_execution_2020-10-2203521411",
+  "title": "Mshta HTML Application (HTA) Execution",
+  "techniques": [
+   "T1218.005"
+  ],
+  "gold": [
+   "T1218.005"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging mshta.exe to proxy execute malicious commands via an .hta file."
+ },
+ "NW-073": {
+  "dataset": "SDWIN-201022042947",
+  "recording": "purplesharp_ad_playbook_I_2020-10-22042947",
+  "title": "PurpleSharp Active Directory Playbook I",
+  "techniques": [
+   "T1021.006",
+   "T1110.003",
+   "T1135",
+   "T1558.003"
+  ],
+  "gold": [
+   "T1021.006",
+   "T1110.003",
+   "T1135",
+   "T1558.003"
+  ],
+  "gold_tactics": [
+   "Credential Access",
+   "Discovery",
+   "Lateral Movement"
+  ],
+  "description": "This dataset represents threat actors performing a few techniques in Active Directory to brute force passwords, request Kerberos ticket-granting service (TGS) service tickets from all SPNs, test acces"
+ },
+ "NW-074": {
+  "dataset": "SDWIN-201023020513",
+  "recording": "psh_register_cimprovider_execute_dll_2020-10-2302051393",
+  "title": "Register-CimProvider Execute Dll",
+  "techniques": [
+   "T1218"
+  ],
+  "gold": [
+   "T1218"
+  ],
+  "gold_tactics": [
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging Register-Cimprovider to execute a malicious Dll."
+ },
+ "NW-075": {
+  "dataset": "SDWIN-201023023651",
+  "recording": "cmd_bitsadmin_download_psh_script_2020-10-2302365189",
+  "title": "Bitsadmin Download Malicious File",
+  "techniques": [
+   "T1197"
+  ],
+  "gold": [
+   "T1197"
+  ],
+  "gold_tactics": [
+   "Execution",
+   "Persistence",
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors leveraging bitsadmin.exe to download a file."
+ },
+ "NW-076": {
+  "dataset": "SDWIN-201023031210",
+  "recording": "purplesharp_pe_injection_createremotethread_2020-10-2303121085",
+  "title": "PurpleSharp PE Injection CreateRemoteThread",
+  "techniques": [
+   "T1055.002"
+  ],
+  "gold": [
+   "T1055.002"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation",
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors injecting portable executables (PE) into processes via APIs such asVirtualAllocEx and WriteProcessMemory and running it on the virtual address space of another pr"
+ },
+ "NW-077": {
+  "dataset": "SDWIN-201026235835",
+  "recording": "cmd_process_herpaderping_snippingtool_2020-10-2708290130",
+  "title": "Process Herpaderping Mimikatz",
+  "techniques": [
+   "T1055"
+  ],
+  "gold": [
+   "T1055"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation",
+   "Stealth"
+  ],
+  "description": "This dataset represents the execution of a Process Herpaderping to obscure the intentions of a process by modifying the content on disk after the image has been mapped."
+ },
+ "NW-078": {
+  "dataset": "SDWIN-201028191914",
+  "recording": "psh_windows_vault_web_credentials_2020-10-2819191483",
+  "title": "Windows Vault Web Credentials",
+  "techniques": [
+   "T1055"
+  ],
+  "gold": [
+   "T1055"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation",
+   "Stealth"
+  ],
+  "description": "This dataset represents threat actors accessing the Windows Vault and reading web credentials saved."
+ },
+ "NW-079": {
+  "dataset": "SDWIN-201029001615",
+  "recording": "psh_python_webserver_2020-10-2900161507",
+  "title": "Python HTTP Server",
+  "techniques": [
+   "T1059"
+  ],
+  "gold": [
+   "T1059"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents threat actors adding a FW inbound rule and starting a Python HTTP Server."
+ },
+ "NW-080": {
+  "dataset": "SDWIN-201029202324",
+  "recording": "cmd_sharpview_pcre_net_2020-10-2920232423",
+  "title": "SharpView PCRE.NET",
+  "techniques": [
+   "T1059"
+  ],
+  "gold": [
+   "T1059"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents a threat actor leveraging SharpView and specific functions such as Get-ObjectAcl creating files and loading dlls related to PCRE.NET use."
+ },
+ "NW-081": {
+  "dataset": "SDWIN-201102041306",
+  "recording": "psh_powershell_httplistener_2020-11-0204130683",
+  "title": "PowerShell HTTP Listener",
+  "techniques": [
+   "T1059.001"
+  ],
+  "gold": [
+   "T1059.001"
+  ],
+  "gold_tactics": [
+   "Execution"
+  ],
+  "description": "This dataset represents a threat actor using PowerShell to start an HTTP Listener on a compromised endpoint"
+ },
+ "NW-082": {
+  "dataset": "SDWIN-201102163918",
+  "recording": "cmd_seatbelt_group_user_2020-11-0216391814",
+  "title": "Seatbelt Group User Discovery",
+  "techniques": [
+   "T1012"
+  ],
+  "gold": [
+   "T1012"
+  ],
+  "gold_tactics": [
+   "Discovery"
+  ],
+  "description": "This dataset represents a threat actor using Seatbelt profiling an endpoint. This specifically uses the -group=user command."
+ },
+ "NW-083": {
+  "dataset": "SDWIN-201219070027",
+  "recording": "schtask_create_2020-12-1907003032",
+  "title": "Remote Scheduled Task Creation",
+  "techniques": [
+   "T1053.005"
+  ],
+  "gold": [
+   "T1053.005"
+  ],
+  "gold_tactics": [
+   "Execution",
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents a threat actor creating a scheduled task remotely using schtasks."
+ },
+ "NW-084": {
+  "dataset": "SDWIN-201219075059",
+  "recording": "schtask_modification_2020-12-1907505969",
+  "title": "Remote Scheduled Task Modification",
+  "techniques": [
+   "T1053.005"
+  ],
+  "gold": [
+   "T1053.005"
+  ],
+  "gold_tactics": [
+   "Execution",
+   "Persistence",
+   "Privilege Escalation"
+  ],
+  "description": "This dataset represents a threat actor modifying a scheduled task remotely."
+ },
+ "NW-085": {
+  "dataset": "SDWIN-210314014019",
+  "recording": "proxylogon_ssrf_rce_poc_2021-03-14T01401970",
+  "title": "Exchange ProxyLogon SSRF RCE Vuln POC",
+  "techniques": [
+   "T1505.003"
+  ],
+  "gold": [
+   "T1505.003"
+  ],
+  "gold_tactics": [
+   "Persistence"
+  ],
+  "description": "This dataset represents the execution of a public POC to abuse Exchange vulnerabilities (CVE-2021-26855 server-side request forgery (SSRF) vulnerability)"
+ },
+ "NW-086": {
+  "dataset": "SDWIN-210611210814",
+  "recording": "aptsimulator_cobaltstrike_2021-06-11T21081492",
+  "title": "APT Simulator Cobalt Strike",
+  "techniques": [
+   "T1134.001",
+   "T1134.002"
+  ],
+  "gold": [
+   "T1134.001",
+   "T1134.002"
+  ],
+  "gold_tactics": [
+   "Privilege Escalation",
+   "Stealth"
+  ],
+  "description": "This dataset was created after running the Cobalt Strike module from the APT Simulator tool (https://github.com/NextronSystems/APTSimulator)."
+ },
+ "NW-087": {
+  "dataset": "SDWIN-220630130349",
+  "recording": "auditpol_system_user_auditpolicy_modification",
+  "title": "Disabling Windows Event Logging via Audit Policy Modification",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting a shell with elevated privileges on the target, we used auditpol.exe to modify the current system and user audit policies. Success and failure events were disabled using the /set /remove"
+ },
+ "NW-088": {
+  "dataset": "SDWIN-220703123711",
+  "recording": "reg_cmd_process_commandline_logging_disabled",
+  "title": "Disabling Process Command Line Logging via Registry Modification",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting a shell with elevated privileges on the target, we used reg.exe to modify the HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit registry key. Logging of "
+ },
+ "NW-089": {
+  "dataset": "SDWIN-220703123711",
+  "recording": "reg_meterpreter_process_commandline_logging_disabled",
+  "title": "Disabling Process Command Line Logging via Registry Modification",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting a shell with elevated privileges on the target, we used reg.exe to modify the HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit registry key. Logging of "
+ },
+ "NW-090": {
+  "dataset": "SDWIN-220705170038",
+  "recording": "cmd_wevtutil_modify_security_eventlog_path",
+  "title": "Modifying Security Event Log File Path via Modification of Log Configuration",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting a shell with elevated privileges on the target, we used wevtutil.exe to modify the configuration of the Security event log. Event logs for Microsoft Windows Security Auditing are stored "
+ },
+ "NW-091": {
+  "dataset": "SDWIN-220708104215",
+  "recording": "cmd_disable_eventlog_service_startuptype_modification_via_registry",
+  "title": "Stopping Event Log Service via Modification of Start Up Type",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting a shell with elevated privileges on the target, we modified the start up type for the EventLog service to `Disabled`. After the modification, we need to restart our system to make the Ev"
+ },
+ "NW-092": {
+  "dataset": "SDWIN-220708104215",
+  "recording": "psh_disable_eventlog_service_startuptype_modification",
+  "title": "Stopping Event Log Service via Modification of Start Up Type",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting a shell with elevated privileges on the target, we modified the start up type for the EventLog service to `Disabled`. After the modification, we need to restart our system to make the Ev"
+ },
+ "NW-093": {
+  "dataset": "SDWIN-220708104215",
+  "recording": "reg_disable_eventlog_service_startuptype_modification_via_registry",
+  "title": "Stopping Event Log Service via Modification of Start Up Type",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting a shell with elevated privileges on the target, we modified the start up type for the EventLog service to `Disabled`. After the modification, we need to restart our system to make the Ev"
+ },
+ "NW-094": {
+  "dataset": "SDWIN-220708104300",
+  "recording": "cmd_psh_stop_netprofm_eventlog_after_reboot",
+  "title": "Stopping Event Log Service after Stopping Depending Services",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "The simulation of this technique cosniders 2 steps Disabling the netprofm service (Before reboot) and stopping the Event Log service (After reboot). Therefore, 2 datasets were generated, before-reboot"
+ },
+ "NW-095": {
+  "dataset": "SDWIN-220708104300",
+  "recording": "cmd_psh_stop_netprofm_eventlog_before_reboot",
+  "title": "Stopping Event Log Service after Stopping Depending Services",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "The simulation of this technique cosniders 2 steps Disabling the netprofm service (Before reboot) and stopping the Event Log service (After reboot). Therefore, 2 datasets were generated, before-reboot"
+ },
+ "NW-096": {
+  "dataset": "SDWIN-220708104300",
+  "recording": "psh_metasploit_stop_netprofm_eventlog_after_reboot",
+  "title": "Stopping Event Log Service after Stopping Depending Services",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "The simulation of this technique cosniders 2 steps Disabling the netprofm service (Before reboot) and stopping the Event Log service (After reboot). Therefore, 2 datasets were generated, before-reboot"
+ },
+ "NW-097": {
+  "dataset": "SDWIN-220708104300",
+  "recording": "psh_metasploit_stop_netprofm_eventlog_before_reboot",
+  "title": "Stopping Event Log Service after Stopping Depending Services",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "The simulation of this technique cosniders 2 steps Disabling the netprofm service (Before reboot) and stopping the Event Log service (After reboot). Therefore, 2 datasets were generated, before-reboot"
+ },
+ "NW-098": {
+  "dataset": "SDWIN-220803205800",
+  "recording": "cmd_stop_event_logging_controlset001_minint_key",
+  "title": "Stopping Event Logging via Creation of MiniNt Registry Key",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting an elevated meterpreter session, we added the MiniNt registry key in the following hives HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control and HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\C"
+ },
+ "NW-099": {
+  "dataset": "SDWIN-220803205800",
+  "recording": "cmd_stop_event_logging_controlset_minint_key",
+  "title": "Stopping Event Logging via Creation of MiniNt Registry Key",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting an elevated meterpreter session, we added the MiniNt registry key in the following hives HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control and HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\C"
+ },
+ "NW-100": {
+  "dataset": "SDWIN-220803205800",
+  "recording": "psh_stop_event_logging_controlset001_minint_key",
+  "title": "Stopping Event Logging via Creation of MiniNt Registry Key",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting an elevated meterpreter session, we added the MiniNt registry key in the following hives HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control and HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\C"
+ },
+ "NW-101": {
+  "dataset": "SDWIN-220803205800",
+  "recording": "psh_stop_event_logging_controlset_minint_key",
+  "title": "Stopping Event Logging via Creation of MiniNt Registry Key",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting an elevated meterpreter session, we added the MiniNt registry key in the following hives HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control and HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\C"
+ },
+ "NW-102": {
+  "dataset": "SDWIN-220803205800",
+  "recording": "reg_stop_event_logging_controlset001_minint_key",
+  "title": "Stopping Event Logging via Creation of MiniNt Registry Key",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting an elevated meterpreter session, we added the MiniNt registry key in the following hives HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control and HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\C"
+ },
+ "NW-103": {
+  "dataset": "SDWIN-220803205800",
+  "recording": "reg_stop_event_logging_controlset_minint_key",
+  "title": "Stopping Event Logging via Creation of MiniNt Registry Key",
+  "techniques": [
+   "T1562.002"
+  ],
+  "gold": [
+   "T1685.001"
+  ],
+  "gold_tactics": [
+   "Defense Impairment"
+  ],
+  "description": "After getting an elevated meterpreter session, we added the MiniNt registry key in the following hives HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control and HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\C"
+ },
+ "NW-104": {
+  "dataset": "SDWIN-230718151900",
+  "recording": "cmd_dumping_ntds_dit_file_ntdsutil",
+  "title": "Dumping NTDS.dit using NTDSutil",
+  "techniques": [
+   "T1003.003"
+  ],
+  "gold": [
+   "T1003.003"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "Active Directory database NTDS.dit is dumped by using the NTDSutil Windows utility. Dataset generated using atomic test 3 for T1003.003. See references to Atomic Read Team project."
+ },
+ "NW-105": {
+  "dataset": "SDWIN-230720004300",
+  "recording": "empire_ninjacopy_dumping_ntds_dit_file",
+  "title": "Dumping NTDS.dit using NinjaCopy",
+  "techniques": [
+   "T1003.003"
+  ],
+  "gold": [
+   "T1003.003"
+  ],
+  "gold_tactics": [
+   "Credential Access"
+  ],
+  "description": "Active Directory database NTDS.dit is dumped by using Empire's NinjaCopy module."
+ }
+}
