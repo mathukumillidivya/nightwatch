@@ -31,12 +31,13 @@ def first_field(rest: str) -> tuple[str, str]:
 class FakeClaude:
     """messages.create(**kwargs) -> anthropic Message"""
 
-    def __init__(self, bad_quote_first: bool = True, obey_injection: bool = False, stringify: bool = False):
+    def __init__(self, bad_quote_first: bool = True, obey_injection: bool = False, stringify: bool = False, nothing: bool = False):
         self.stringify = stringify  # send nested lists as JSON strings, as Claude occasionally does
         self.drop_field_once = False  # leave out a required field on the first mapper answer
         self.requests: list[dict] = []
         self.bad_quote_first = bad_quote_first
         self.obey_injection = obey_injection
+        self.nothing = nothing
 
     def client(self) -> AsyncAnthropic:
         c = AsyncAnthropic(api_key="offline")
@@ -93,8 +94,13 @@ class FakeClaude:
                              "keywords": ["lsass", "credential dumping", "mimikatz"]},
                             {"behavior": "a new scheduled task was created", "event_ids": ids[2:4] or ids[:1],
                              "keywords": ["schtasks", "scheduled task"]}]
-                content = tool("set_model_response", {"assessment": "Credential theft on WORKSTATION5.",
-                                                      "hypotheses": json.dumps(hyps) if self.stringify else hyps})
+                answer = {"assessment": "Credential theft on WORKSTATION5.", "hypotheses": json.dumps(hyps) if self.stringify else hyps}
+                if "First decide the outcome" in system:  # version 2 hunter
+                    ordinary = self.nothing or "ORDINARY" in text
+                    answer = {**answer, "outcome": "nothing_to_report" if ordinary else "adversary_activity",
+                              "ordinary_explanation": "Software updates." if ordinary else "No ordinary process explains LSASS access.",
+                              "hypotheses": [] if ordinary else answer["hypotheses"]}
+                content = tool("set_model_response", answer)
         elif "ATT&CK mapper" in system:
             task = text[len(system):]
             if "technique_lookup" in tools and n_assistant == 0 and "scheduled task" in task:
@@ -111,8 +117,10 @@ class FakeClaude:
                     content = tool(name, {"technique_id": tid, "reasoning": "Fits."})
                     return Message(id="m", type="message", role="assistant", model=kw["model"], content=content, stop_reason="tool_use",
                                    usage=Usage(input_tokens=1000, output_tokens=200, cache_read_input_tokens=0, cache_creation_input_tokens=0))
-                content = tool(name, {"technique_id": tid, "reasoning": "Fits the evidence.",
-                                      "evidence": json.dumps(ev) if self.stringify else ev})
+                answer = {"technique_id": tid, "reasoning": "Fits the evidence.", "evidence": json.dumps(ev) if self.stringify else ev}
+                if "specific to this technique" in system:  # version 2 mapper
+                    answer["specificity"] = "specific" if tid == "T1003.001" else "consistent"
+                content = tool(name, answer)
         elif "incident responder" in system:
             ids = [e[0] for e in evs[:3]]
             content = tool("submit_result", {"headline": "Credential dumping on WORKSTATION5", "severity": "high",

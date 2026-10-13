@@ -155,3 +155,17 @@ def test_invalid_structured_output_is_retried_and_billed():
     assert r["techniques"] == ["T1003.001", "T1053.005"]
     assert any("did not match the required structure" in json.dumps(q["messages"]) for q in fake.requests)
     assert r["usage"]["mapper"]["input"] >= 4000  # the failed attempt is counted too
+
+
+def test_v2_keeps_consistent_mappings_as_leads():
+    r = run(investigate(CASES["NW-002"], "nightwatch_v2", Claude(client=FakeClaude().client())))
+    v = r["verdict"]
+    assert v["outcome"] == "adversary_activity"
+    assert r["techniques"] == ["T1003.001"]                     # specific evidence: reported
+    assert [x["technique_id"] for x in v["leads"]] == ["T1053.005"]  # only consistent: kept as a lead
+
+
+def test_v2_can_report_nothing():
+    r = run(investigate(CASES["NW-002"], "nightwatch_v2", Claude(client=FakeClaude(nothing=True).client())))
+    assert r["techniques"] == [] and r["verdict"]["outcome"] == "nothing_to_report"
+    assert r["verdict"]["ordinary_explanation"]

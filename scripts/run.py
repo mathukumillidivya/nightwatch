@@ -48,7 +48,7 @@ def record(run_id: str, model: str, amount: float, cases: int):
 
 async def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--system", choices=["nightwatch", "single_call"], default="nightwatch")
+    ap.add_argument("--system", choices=["nightwatch", "nightwatch_v2", "single_call"], default="nightwatch")
     ap.add_argument("--split", choices=["dev", "test", "test_variants", "all"], default="dev")
     ap.add_argument("--cases", default="data/cases.jsonl")
     ap.add_argument("--ids", default="", help="comma-separated case ids to run instead of a split")

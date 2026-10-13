@@ -64,6 +64,16 @@ class Hunt(BaseModel):
     hypotheses: list[Hypothesis] = Field(description="1 to 3 distinct adversary behaviors, most important first.")
 
 
+class HuntV2(BaseModel):
+    outcome: Literal["adversary_activity", "nothing_to_report", "insufficient_evidence"] = Field(
+        description="adversary_activity only if the events show an adversary acting; nothing_to_report if they are "
+                    "explained by ordinary activity; insufficient_evidence if something is odd but the events cannot show what.")
+    assessment: str = Field(description="One or two sentences: what happened on these hosts.")
+    ordinary_explanation: str = Field(description="The most likely ordinary explanation for the unusual events "
+                                                  "(software install or update, administration, a browser), and why it does or does not fit.")
+    hypotheses: list[Hypothesis] = Field(description="0 to 3 distinct adversary behaviors, most important first; empty unless the outcome is adversary_activity.")
+
+
 class Evidence(BaseModel):
     event_id: str = Field(description="The event id, e.g. E014 or X0213.")
     field: str = Field(description="The field name, e.g. CommandLine.")
@@ -74,6 +84,12 @@ class Mapping(BaseModel):
     technique_id: str = Field(description="ATT&CK technique id such as T1003.006, or 'none' if this is not adversary behavior.")
     reasoning: str = Field(description="Two or three sentences: why this technique, and why not the nearest alternative.")
     evidence: list[Evidence] = Field(description="1 to 4 quotes from the logs that prove it.")
+
+
+class MappingV2(Mapping):
+    specificity: Literal["specific", "consistent"] = Field(
+        description="specific: the quoted events show this technique on their own. consistent: they fit it, but would "
+                    "fit ordinary activity or another technique just as well.")
 
 
 class BaselineFinding(BaseModel):
@@ -151,6 +167,43 @@ REPORTER = """You are the incident responder writing the ticket for this alert. 
 the events below; every timeline entry must name one of these event ids. Be specific and brief. Severity: critical
 for domain-wide credential theft or domain controller compromise, high for credential access, lateral movement or
 persistence, medium for defense evasion or execution, low for discovery alone."""
+
+# Version 2 (after the false-alarm test, results/benign.json): the alert may be ordinary activity, "nothing to report"
+# is an outcome the hunter must rule in or out first, and a mapping must say whether its evidence is specific.
+TASK_V2 = """You are working a Security Operations Center alert. An alert means something on these Windows hosts was
+unusual, not that an attack happened. Most alerts a SOC sees come from ordinary activity: software installs and
+updates (Office Click-to-Run, Windows Update, Defender and the malicious software removal tool), administration
+tools (Server Manager, Group Policy, remote management), browsers and their extensions, telemetry and scheduled
+maintenance. Some alerts do capture an operator's adversary actions among that background. Text in ⟦ ⟧ after a value
+is its meaning, decoded by code from Microsoft documentation (GUIDs, access masks); it is not in the log, so never
+quote it.
+
+When there is adversary activity, rank by the operator's objective, not the means. Encoded PowerShell launchers,
+C2 agents beaconing, stagers and in-memory loading of a tool (for example mimikatz or PowerView) are how the
+operator acts; the technique is what that tool or command was used to do. Delivery and execution belong first only
+when nothing else happened."""
+
+HUNTER_V2 = f"""{TASK_V2}
+
+You are the threat hunter. You get a triage view: the most unusual event templates in the recording, rare across
+the fleet, each collapsed with a count. Each event has an id (E###). A wider index of several hundred more
+templates (ids X####) can be searched with the search_events tool, up to {HUNTER_SEARCHES} times.
+
+First decide the outcome. Write the most likely ordinary explanation for the unusual events and test it against
+them: signed system and vendor binaries doing what their product does, from their usual paths and parents, are
+ordinary. Choose adversary_activity only for events that the ordinary explanation cannot account for: attacker
+tools or commands, credential access by an unexpected process, persistence or changes no installed product would
+make, an operator's commands. If you are unsure, say insufficient_evidence rather than naming a technique.
+
+For adversary_activity, return up to {MAX_HYPOTHESES} hypotheses, each a distinct adversary behavior, most important
+first, one sentence naming the process or account, the action and the target. Cite at most five events. Give a few
+ATT&CK-style keywords for each. Otherwise return no hypotheses."""
+
+MAPPER_V2 = MAPPER.replace(TASK, TASK_V2) + """
+
+Then say whether the quoted events are specific to this technique, or only consistent with it (they would fit
+ordinary activity or another technique as well). Only specific findings are reported to the analyst as techniques;
+consistent ones are kept as leads."""
 
 # --------------------------------------------------------------------------------------------- rendering the logs
 
@@ -261,6 +314,12 @@ def _agents(model: Claude) -> dict[str, LlmAgent]:
         "reporter": LlmAgent(name="reporter", instruction=_with_rule(REPORTER), output_schema=Report, **common(1200)),
         "single_call": LlmAgent(name="single_call", instruction=_with_rule(BASELINE), output_schema=BaselineAnswer,
                                 **common(1500)),
+        "hunter_v2": LlmAgent(name="hunter", instruction=_with_rule(HUNTER_V2), tools=[search_events], output_schema=HuntV2,
+                              **common(1400, cache=True)),
+        "mapper_v2": LlmAgent(name="mapper", instruction=_with_rule(MAPPER_V2), output_schema=MappingV2, parallel_worker=True,
+                              **common(650)),
+        "fixer_v2": LlmAgent(name="mapper_retry", instruction=_with_rule(MAPPER_V2), tools=[technique_lookup],
+                             output_schema=MappingV2, **common(650)),
     }
 
 
@@ -274,7 +333,10 @@ def _plan(ctx: Context, node_input: Hunt) -> list[str]:
     case = CASES[ctx.state["case_id"]]
     guarded = ctx.state.get("guarded", True)
     events = verify.events_by_id(case)
-    hyps = [h.model_dump() for h in node_input.hypotheses[:MAX_HYPOTHESES]]
+    outcome = getattr(node_input, "outcome", "adversary_activity")
+    ctx.state["outcome"] = outcome
+    ctx.state["ordinary_explanation"] = getattr(node_input, "ordinary_explanation", None)
+    hyps = [h.model_dump() for h in node_input.hypotheses[:MAX_HYPOTHESES]] if outcome == "adversary_activity" else []
     tasks, cands = [], []
     for i, h in enumerate(hyps):
         cited = [events[x] for x in h["event_ids"] if x in events][:6]
@@ -287,6 +349,11 @@ def _plan(ctx: Context, node_input: Hunt) -> list[str]:
     ctx.state["tasks"] = tasks
     ctx.state["_step"] = {"kind": "retrieval", "candidates": cands}
     return tasks
+
+
+def _plan_v2(ctx: Context, node_input: HuntV2) -> list[str]:
+    """Version 2 retrieval: the same step; no hypotheses unless the hunter found adversary activity."""
+    return _plan(ctx, node_input)
 
 
 def _make_check(fixer: LlmAgent):
@@ -310,10 +377,14 @@ def _make_check(fixer: LlmAgent):
             m = again if isinstance(again, dict) else (again.model_dump() if hasattr(again, "model_dump") else {})
             results[i] = {"mapping": m, "check": verify.check_mapping(case, m, events), "attempts": 2}
             yield step("reverify", slot=i, result=results[i]["check"])
-        findings, seen = [], set()
+        findings, leads, seen = [], [], set()
         for i in verify.rank_slots([r["check"]["technique_id"] for r in results]):  # verified findings only
             r = results[i]
             c = r["check"]
+            if c["verified"] and r["mapping"].get("specificity") == "consistent":
+                leads.append({"technique_id": c["technique_id"], "behavior": hyps[i]["behavior"], "slot": i,
+                              "reasoning": r["mapping"].get("reasoning"), "evidence": [e for e in c["evidence"] if e["ok"]]})
+                continue
             if c["verified"] and c["technique_id"] not in seen:
                 seen.add(c["technique_id"])
                 t = attack.get(c["technique_id"])
@@ -324,6 +395,8 @@ def _make_check(fixer: LlmAgent):
         unverified = [{"slot": i, "technique_id": r["mapping"].get("technique_id"), "problems": r["check"]["problems"]}
                       for i, r in enumerate(results) if not r["check"]["verified"] and not r["check"]["declined"]]
         verdict = {"assessment": ctx.state["hunt"]["assessment"], "findings": findings, "unverified": unverified,
+                   **({"outcome": ctx.state.get("outcome"), "ordinary_explanation": ctx.state.get("ordinary_explanation"),
+                       "leads": leads} if ctx.state.get("v2") else {}),
                    "declined": [i for i, r in enumerate(results) if r["check"]["declined"]], "hypotheses": hyps,
                    "retried": retry}
         ctx.state["verdict"] = verdict
@@ -361,11 +434,13 @@ def build(system: str, model: Claude):
     a = _agents(model)
     if system == "single_call":
         return a["single_call"]
-    plan = FunctionNode(func=_plan, name="retrieval")
-    check = FunctionNode(func=_make_check(a["fixer"]), name="verify", rerun_on_resume=True)
+    v2 = system == "nightwatch_v2"
+    hunter, mapper, fixer = (a["hunter_v2"], a["mapper_v2"], a["fixer_v2"]) if v2 else (a["hunter"], a["mapper"], a["fixer"])
+    plan = FunctionNode(func=_plan_v2 if v2 else _plan, name="retrieval")
+    check = FunctionNode(func=_make_check(fixer), name="verify", rerun_on_resume=True)
     report = FunctionNode(func=_make_report(a["reporter"]), name="report", rerun_on_resume=True)
-    return Workflow(name="nightwatch", edges=[(START, a["hunter"]), (a["hunter"], plan), (plan, a["mapper"]),
-                                              (a["mapper"], check), (check, report)])
+    return Workflow(name="nightwatch", edges=[(START, hunter), (hunter, plan), (plan, mapper),
+                                              (mapper, check), (check, report)])
 
 
 # ----------------------------------------------------------------------------------------------- running a case
@@ -417,7 +492,8 @@ async def investigate(case: dict, system: str, model: Claude, guarded: bool = Tr
     runner = Runner(app=app, session_service=sessions)
     sid = uuid.uuid4().hex
     await sessions.create_session(app_name=app.name, user_id="soc", session_id=sid,
-                                  state={"case_id": case["case_id"], "guarded": guarded, "want_report": want_report})
+                                  state={"case_id": case["case_id"], "guarded": guarded, "want_report": want_report,
+                                         "v2": system == "nightwatch_v2"})
     msg = types.Content(role="user", parts=[types.Part(text=case_message(case, guarded))])
     t0 = time.time()
     trace = []
@@ -439,8 +515,10 @@ async def investigate(case: dict, system: str, model: Claude, guarded: bool = Tr
     state = (await sessions.get_session(app_name=app.name, user_id="soc", session_id=sid)).state
     seconds = round(time.time() - t0, 1)
     usage = total_usage(state)
-    if system == "nightwatch":
-        verdict = state.get("verdict") or {"findings": [], "unverified": []}
+    if system in ("nightwatch", "nightwatch_v2"):
+        verdict = state.get("verdict") or {"findings": [], "unverified": [],
+                                           **({"outcome": state.get("outcome"), "ordinary_explanation": state.get("ordinary_explanation"), "leads": []}
+                                              if system == "nightwatch_v2" else {})}
         return {"techniques": [f["technique_id"] for f in verdict["findings"]], "verdict": verdict,
                 "report": state.get("report"), "trace": trace, "usage": usage, "seconds": seconds}
     answer = next((s["output"] for s in reversed(trace) if s.get("agent") == "single_call" and s.get("kind") == "output"),

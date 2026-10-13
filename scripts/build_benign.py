@@ -131,36 +131,39 @@ def merge(benign: dict, attack: dict) -> dict:
     return {"events": benign["events"] + attack["events"], "groups": groups, "hosts": hosts}
 
 
-def build(folder: str, per_image: int = PER_IMAGE):
+def build(folder: str, per_image: int = PER_IMAGE, prefix: str = "BN", out: str = "data/benign.jsonl",
+          meta_out: str = "data/benign_meta.json", mix: bool = True, seed: int = 11):
     fleet = json.loads(gzip.decompress(FLEET.read_bytes()))
     df, n = Counter(fleet["templates"]), fleet["recordings"]
     sources = json.loads(gzip.decompress(SOURCES.read_bytes()))
     images = read_evtx(folder)
-    rnd = random.Random(11)
+    rnd = random.Random(seed)
     windows = []
     for image, events in sorted(images.items()):
         if len(events) < WINDOW:
             continue
-        starts = sorted(rnd.sample(range(0, len(events) - WINDOW), per_image))
+        # the original set (prefix BN) sampled any start, so two pairs of windows overlap; later sets use a grid
+        step = 1 if prefix == "BN" else WINDOW
+        starts = sorted(rnd.sample(range(0, len(events) - WINDOW, step), per_image))
         for s in starts:
             windows.append((image, s, parse_events(events[s:s + WINDOW])))
         print(f"{image}: {len(events)} events, {per_image} windows")
     cases, meta = [], {}
     for i, (image, s, p) in enumerate(windows, 1):
-        cid = f"BN-{i:02d}"
+        cid = f"{prefix}-{i:02d}"
         cases.append({"case_id": cid, "dataset": f"benign:{image}", **logs.condense(p, df, n)})
         meta[cid] = {"kind": "benign", "image": image, "first_event": s}
-    for i, cid in enumerate(MIX):
+    for i, cid in enumerate(MIX if mix else []):
         image, s, p = windows[i % len(windows)]
         mixed = merge(p, sources[cid])
         mid = f"MX-{i + 1:02d}"
         cases.append({"case_id": mid, "dataset": f"mixed:{image}", "source_case": cid, **logs.condense(mixed, df, n)})
         meta[mid] = {"kind": "mixed", "image": image, "first_event": s, "attack": cid}
-    with open(ROOT / "data/benign.jsonl", "w") as f:
+    with open(ROOT / out, "w") as f:
         for c in cases:
             f.write(json.dumps(c, separators=(",", ":"), default=sorted) + "\n")
-    (ROOT / "data/benign_meta.json").write_text(json.dumps(meta, indent=1))
-    print(f"{sum(1 for c in cases if c['case_id'].startswith('BN'))} benign and {len(MIX)} mixed alerts -> data/benign.jsonl")
+    (ROOT / meta_out).write_text(json.dumps(meta, indent=1))
+    print(f"{sum(1 for c in cases if c['case_id'].startswith(prefix))} benign and {len(MIX) if mix else 0} mixed alerts -> {out}")
 
 
 if __name__ == "__main__":
@@ -169,5 +172,10 @@ if __name__ == "__main__":
     ap.add_argument("--parsed", default="")
     ap.add_argument("--evtx", default="")
     ap.add_argument("--per-image", type=int, default=PER_IMAGE)
+    ap.add_argument("--prefix", default="BN")
+    ap.add_argument("--out", default="data/benign.jsonl")
+    ap.add_argument("--meta", default="data/benign_meta.json")
+    ap.add_argument("--no-mix", action="store_true")
+    ap.add_argument("--seed", type=int, default=11)
     a = ap.parse_args()
-    prepare(a.parsed) if a.prepare else build(a.evtx, a.per_image)
+    prepare(a.parsed) if a.prepare else build(a.evtx, a.per_image, a.prefix, a.out, a.meta, not a.no_mix, a.seed)

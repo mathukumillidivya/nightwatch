@@ -1,0 +1,17 @@
+name: list-evtx-assets
+on: {workflow_dispatch: {}}
+permissions: {contents: write}
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    env: {GH_TOKEN: "${{ github.token }}"}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          gh release list -R NextronSystems/evtx-baseline --limit 10 > results/evtx_assets.txt
+          for t in $(gh release list -R NextronSystems/evtx-baseline --limit 3 --json tagName --jq '.[].tagName'); do
+            echo "== $t" >> results/evtx_assets.txt
+            gh release view "$t" -R NextronSystems/evtx-baseline --json assets --jq '.assets[] | "\(.name) \(.size)"' >> results/evtx_assets.txt
+          done
+          git config user.name "Divya Sri"; git config user.email "hellosweety789@gmail.com"
+          git add results/evtx_assets.txt; git commit -m "List the evtx-baseline release assets"; git pull --rebase; git push
