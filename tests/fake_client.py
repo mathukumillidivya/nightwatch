@@ -6,10 +6,12 @@ which the tests use to check what each agent was sent.
 """
 from __future__ import annotations
 
+import inspect
 import json
 import re
 
 from anthropic import AsyncAnthropic
+from anthropic.resources.messages import AsyncMessages
 from anthropic.types import Message, TextBlock, ToolUseBlock, Usage
 
 LINE = re.compile(r"\[(E\d{3}|X\d{4})\] \+\d+s \S+ (\S+) (\d+) [^:]*?: (.*)")
@@ -57,6 +59,10 @@ class FakeClaude:
         return "\n".join(parts)
 
     async def create(self, **kw):
+        allowed = set(inspect.signature(AsyncMessages.create).parameters) - {"self"}
+        unknown = set(kw) - allowed
+        if unknown:  # the real SDK would raise; so must the fake
+            raise TypeError(f"AsyncMessages.create() got unexpected keyword arguments {sorted(unknown)}")
         self.requests.append(kw)
         tools = [t["name"] for t in kw.get("tools") or []]
         text = self._text(kw)

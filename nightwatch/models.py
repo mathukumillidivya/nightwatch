@@ -74,6 +74,10 @@ class Claude(AnthropicLlm):
                                 "input_schema": schema}]
             kwargs["tool_choice"] = {"type": "tool", "name": SUBMIT}
         kwargs["max_tokens"] = self.max_tokens
+        # The current SDK no longer takes sampling settings as arguments; the API still honours them for this model.
+        sampling = {k: kwargs.pop(k) for k in ("temperature", "top_p", "top_k") if k in kwargs}
+        if sampling:
+            kwargs["extra_body"] = {**(kwargs.get("extra_body") or {}), **sampling}
         return kwargs
 
     async def generate_content_async(self, llm_request: LlmRequest, stream: bool = False) -> AsyncGenerator[LlmResponse, None]:
