@@ -6,7 +6,8 @@ on:
     inputs:
       images: {description: "evtx-baseline release assets to use (gh --pattern globs, space separated)", default: "win10-client* win2022-ad*"}
       per_image: {default: "6"}
-      steps: {description: "any of: benign redteam quotes", default: "benign redteam quotes"}
+      steps: {description: "any of: benign redteam quotes v2", default: "v2"}
+      fresh_images: {description: "evtx-baseline assets for the fresh ordinary windows (v2 test)", default: "win11-client.tgz win2022-evtx.tgz"}
       budget_benign: {description: "US$ per system on the benign set", default: "0.7"}
       budget_redteam: {description: "US$ per system on the red-team set", default: "0.6"}
       budget_quotes: {default: "0.6"}
@@ -64,11 +65,29 @@ jobs:
         run: |
           set -o pipefail
           python scripts/quote_support.py --run nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single --budget ${{ inputs.budget_quotes }} --out results/quote_support.json 2>&1 | tee results/quote_support.log
+      - name: "v2: fresh ordinary windows from two machines not used before"
+        if: contains(inputs.steps, 'v2')
+        run: |
+          mkdir -p evtx_fresh_dl evtx_fresh
+          for a in ${{ inputs.fresh_images }}; do gh release download -R NextronSystems/evtx-baseline --pattern "$a" -D evtx_fresh_dl; done
+          for f in evtx_fresh_dl/*; do n=$(basename "$f"); n=${n%%.*}; mkdir -p "evtx_fresh/$n"; tar xf "$f" -C "evtx_fresh/$n"; done
+          find evtx_fresh -name '*.evtx' | wc -l
+          python scripts/build_benign.py --evtx evtx_fresh --prefix BF --out data/benign_fresh.jsonl --meta data/benign_fresh_meta.json --no-mix --seed 23 --per-image 5
+      - name: "v2: run v1 and v2 on the fresh windows, v2 on the mixed alerts and 24 held-out attacks"
+        if: contains(inputs.steps, 'v2')
+        run: |
+          CAP="--project-cap ${{ inputs.project_cap }} --concurrency 4"
+          python scripts/run.py --system nightwatch --cases data/benign_fresh.jsonl --run-id benign-fresh-nightwatch --budget 0.45 $CAP
+          python scripts/run.py --system nightwatch_v2 --cases data/benign_fresh.jsonl --run-id benign-fresh-nightwatch_v2 --budget 0.45 $CAP
+          python scripts/run.py --system nightwatch_v2 --cases data/benign.jsonl --ids MX-01,MX-02,MX-03,MX-04,MX-05,MX-06,MX-07,MX-08 --run-id mixed-nightwatch_v2 --budget 0.4 $CAP
+          python scripts/run.py --system nightwatch_v2 --ids "$(cat data/v2_attack_sample.txt)" --run-id test24-nightwatch_v2 --budget 1.0 $CAP
+          python scripts/quote_support.py --run nightwatch_v2=results/runs/test24-nightwatch_v2 --budget 0.15 --out results/quote_support_v2.json
+          python scripts/compare_v2.py
       - name: Save
         if: always()
         run: |
           git config user.name "Divya Sri"
           git config user.email "hellosweety789@gmail.com"
-          git add results/ data/benign.jsonl data/benign_meta.json 2>/dev/null || git add results/
+          git add results/ data/benign*.jsonl data/benign*_meta.json 2>/dev/null || git add results/
           git commit -m "Extra evaluations: ${{ inputs.steps }}" || exit 0
           for i in 1 2 3 4 5; do git pull --rebase && git push && break; sleep $((RANDOM % 20 + 5)); done
