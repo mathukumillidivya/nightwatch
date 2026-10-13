@@ -1,0 +1,46 @@
+evtx-baseline v0.8.5	Latest	v0.8.5	2026-09-14T13:29:35Z
+evtx-baseline v0.8.4		v0.8.4	2026-03-11T13:26:33Z
+evtx-baseline v0.8.3		v0.8.3	2025-12-17T12:59:02Z
+evtx-baseline v0.8.2		v0.8.2	2025-10-06T10:32:31Z
+evtx-baseline v0.8.1		v0.8.1	2025-05-16T08:25:46Z
+evtx-baseline v0.8		v0.8	2023-11-21T07:45:24Z
+evtx-baseline v0.7		v0.7	2022-09-20T11:20:54Z
+evtx-baseline v0.6		v0.6	2022-04-20T09:11:15Z
+evtx-baseline v0.5		v0.5	2022-04-07T08:04:16Z
+evtx-baseline v0.4		v0.4	2022-04-04T13:58:43Z
+== v0.8.5
+all-evtx.tgz 621219978
+evtx-sigma-checker 7068365
+evtx-sigma-checker-darwin 6962688
+evtx-sigma-checker-win 8155136
+win10-client.tgz 70844052
+win11-client-2023.tgz 169460461
+win11-client.tgz 133144670
+win2022-0-20348-azure.tgz 143223928
+win2022-ad.tgz 65991035
+win2022-evtx.tgz 27433731
+win7-x86.tgz 11109250
+== v0.8.4
+all-evtx.tgz 621219978
+evtx-sigma-checker 5892763
+evtx-sigma-checker-darwin 5822336
+evtx-sigma-checker-win 7130624
+win10-client.tgz 70844052
+win11-client-2023.tgz 169460461
+win11-client.tgz 133144670
+win2022-0-20348-azure.tgz 143223928
+win2022-ad.tgz 65991035
+win2022-evtx.tgz 27433731
+win7-x86.tgz 11109250
+== v0.8.3
+all-evtx.tgz 621219978
+evtx-sigma-checker 5742958
+evtx-sigma-checker-darwin 5667616
+evtx-sigma-checker-win 7007232
+win10-client.tgz 70844052
+win11-client-2023.tgz 169460461
+win11-client.tgz 133144670
+win2022-0-20348-azure.tgz 143223928
+win2022-ad.tgz 65991035
+win2022-evtx.tgz 27433731
+win7-x86.tgz 11109250
