@@ -1,0 +1,147 @@
+{
+ "fresh_ordinary": {
+  "v1": {
+   "windows": 10,
+   "errors": 0,
+   "false_alarms": {
+    "count": 9,
+    "of": 10,
+    "rate": 0.9
+   },
+   "outcomes": {
+    "adversary_activity": 10
+   },
+   "leads_only": 0
+  },
+  "v2": {
+   "windows": 10,
+   "errors": 0,
+   "false_alarms": {
+    "count": 3,
+    "of": 10,
+    "rate": 0.3
+   },
+   "outcomes": {
+    "nothing_to_report": 6,
+    "insufficient_evidence": 1,
+    "adversary_activity": 3
+   },
+   "leads_only": 0
+  }
+ },
+ "original_ordinary_v1": {
+  "windows": 12,
+  "errors": 0,
+  "false_alarms": {
+   "count": 11,
+   "of": 12,
+   "rate": 0.917
+  },
+  "outcomes": {
+   "adversary_activity": 12
+  },
+  "leads_only": 0
+ },
+ "mixed": {
+  "v1": {
+   "alerts": 8,
+   "attack_named_first": {
+    "count": 4,
+    "of": 8,
+    "rate": 0.5
+   },
+   "nothing_reported": 0
+  },
+  "v2": {
+   "alerts": 8,
+   "attack_named_first": {
+    "count": 6,
+    "of": 8,
+    "rate": 0.75
+   },
+   "nothing_reported": 1
+  }
+ },
+ "attacks": {
+  "v1": {
+   "recordings": 24,
+   "errors": 2,
+   "first_technique_right": {
+    "count": 10,
+    "of": 24,
+    "rate": 0.417
+   },
+   "right_family": {
+    "count": 12,
+    "of": 24,
+    "rate": 0.5
+   },
+   "nothing_reported": 0,
+   "cost": 0.7669
+  },
+  "v2": {
+   "recordings": 24,
+   "errors": 0,
+   "first_technique_right": {
+    "count": 12,
+    "of": 24,
+    "rate": 0.5
+   },
+   "right_family": {
+    "count": 12,
+    "of": 24,
+    "rate": 0.5
+   },
+   "nothing_reported": 1,
+   "cost": 0.8656
+  }
+ },
+ "quote_support": {
+  "v1": {
+   "findings": 60,
+   "supports": {
+    "count": 25,
+    "of": 60,
+    "rate": 0.417
+   },
+   "partial": {
+    "count": 26,
+    "of": 60,
+    "rate": 0.433
+   },
+   "does_not_support": {
+    "count": 9,
+    "of": 60,
+    "rate": 0.15
+   }
+  },
+  "v2": {
+   "findings": 42,
+   "supports": {
+    "count": 23,
+    "of": 42,
+    "rate": 0.548
+   },
+   "partial": {
+    "count": 19,
+    "of": 42,
+    "rate": 0.452
+   },
+   "does_not_support": {
+    "count": 0,
+    "of": 42,
+    "rate": 0.0
+   }
+  }
+ },
+ "v2_misses_that_v1_got": [
+  "NW-037",
+  "NW-069"
+ ],
+ "v2_gains": [
+  "NW-028",
+  "NW-036",
+  "NW-053",
+  "NW-071"
+ ]
+}

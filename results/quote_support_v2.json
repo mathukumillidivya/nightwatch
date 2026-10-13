@@ -1,0 +1,152 @@
+{
+  "judge_model": "claude-haiku-4-5-20251001",
+  "systems": {
+    "nightwatch_v2": {
+      "all": {
+        "findings": 42,
+        "supports": {
+          "count": 23,
+          "of": 42,
+          "rate": 0.5476
+        },
+        "partial": {
+          "count": 19,
+          "of": 42,
+          "rate": 0.4524
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 42,
+          "rate": 0.0
+        },
+        "all_quotes_verified": {
+          "count": 42,
+          "of": 42,
+          "rate": 1.0
+        }
+      },
+      "right_technique": {
+        "findings": 14,
+        "supports": {
+          "count": 11,
+          "of": 14,
+          "rate": 0.7857
+        },
+        "partial": {
+          "count": 3,
+          "of": 14,
+          "rate": 0.2143
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 14,
+          "rate": 0.0
+        },
+        "all_quotes_verified": {
+          "count": 14,
+          "of": 14,
+          "rate": 1.0
+        }
+      },
+      "wrong_technique": {
+        "findings": 28,
+        "supports": {
+          "count": 12,
+          "of": 28,
+          "rate": 0.4286
+        },
+        "partial": {
+          "count": 16,
+          "of": 28,
+          "rate": 0.5714
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 28,
+          "rate": 0.0
+        },
+        "all_quotes_verified": {
+          "count": 28,
+          "of": 28,
+          "rate": 1.0
+        }
+      },
+      "first_finding": {
+        "findings": 23,
+        "supports": {
+          "count": 19,
+          "of": 23,
+          "rate": 0.8261
+        },
+        "partial": {
+          "count": 4,
+          "of": 23,
+          "rate": 0.1739
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 23,
+          "rate": 0.0
+        },
+        "all_quotes_verified": {
+          "count": 23,
+          "of": 23,
+          "rate": 1.0
+        }
+      },
+      "alerts": 23,
+      "cost_usd": 0.0675,
+      "examples_wrong_but_verified": [
+        {
+          "case_id": "NW-012",
+          "technique": "T1003.004",
+          "support": "partial",
+          "events_show": "Notepad.exe accessed LSA registry keys and WSMAN registry keys, which is consistent with credential access attempts but does not show actual credential dumping or extraction of LSA secrets."
+        },
+        {
+          "case_id": "NW-040",
+          "technique": "T1546.003",
+          "support": "partial",
+          "events_show": "WmiPrvSE.exe spawned GruntHTTP2.exe and the process later attempted a privileged operation using SeTakeOwnershipPrivilege, but the events do not show that WMI event subscription was configured or that the spawn was triggered by a WMI event subscription rather than direct execution."
+        },
+        {
+          "case_id": "NW-040",
+          "technique": "T1071.001",
+          "support": "partial",
+          "events_show": "GruntHTTP.exe made a network connection to 172.18.39.6:52419, which is consistent with C2 communication but does not specifically demonstrate use of web protocols (HTTP/S) or show the content/headers of the traffic to confirm application layer protocol abuse."
+        },
+        {
+          "case_id": "NW-071",
+          "technique": "T1553.005",
+          "support": "partial",
+          "events_show": "mshta.exe created registry keys in Internet Settings ZoneMap and Desktop NameSpace, which are consistent with security control modifications but do not definitively show that these changes disabled security controls or established persistence."
+        },
+        {
+          "case_id": "NW-071",
+          "technique": "T1003.004",
+          "support": "partial",
+          "events_show": "PowerShell accessed the LSA registry key and invoked privileged services with SeTcbPrivilege and SeCreateGlobalPrivilege, which is consistent with credential access attempts but does not show actual credential dumping or extraction."
+        },
+        {
+          "case_id": "NW-029",
+          "technique": "T1556.001",
+          "support": "partial",
+          "events_show": "PowerShell set a registry value RestrictSendingNTLMTraffic to 0, which disables NTLM traffic restrictions, but the cited event shows only one of three claimed registry modifications and does not demonstrate patching of domain controller authentication processes or credential backdoor creation."
+        },
+        {
+          "case_id": "NW-029",
+          "technique": "T1620",
+          "support": "partial",
+          "events_show": "PowerShell executed Add-Type with CSharp compilation and a numeric array was passed to Compare-Object, which is consistent with in-memory code compilation but does not demonstrate reflective code loading, process injection, or full access to multiple processes."
+        },
+        {
+          "case_id": "NW-075",
+          "technique": "T1685.005",
+          "support": "partial",
+          "events_show": "The System event log was cleared, the BITS service was changed to auto-start, and local group membership was enumerated, but these events do not demonstrate they are part of a coordinated attack sequence\u2014log clearing, service configuration, and group enumeration are consistent with normal administration or different techniques."
+        }
+      ]
+    }
+  },
+  "note": "Every quote here already exists word for word in its event. 'supports' means a second model (the same family as the systems) found the cited events show the technique; treat it as a screen."
+}

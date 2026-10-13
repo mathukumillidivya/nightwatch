@@ -1,0 +1,52 @@
+{
+ "BF-01": {
+  "kind": "benign",
+  "image": "win11-client",
+  "first_event": 32000
+ },
+ "BF-02": {
+  "kind": "benign",
+  "image": "win11-client",
+  "first_event": 168000
+ },
+ "BF-03": {
+  "kind": "benign",
+  "image": "win11-client",
+  "first_event": 592000
+ },
+ "BF-04": {
+  "kind": "benign",
+  "image": "win11-client",
+  "first_event": 1596000
+ },
+ "BF-05": {
+  "kind": "benign",
+  "image": "win11-client",
+  "first_event": 1696000
+ },
+ "BF-06": {
+  "kind": "benign",
+  "image": "win2022-evtx",
+  "first_event": 76000
+ },
+ "BF-07": {
+  "kind": "benign",
+  "image": "win2022-evtx",
+  "first_event": 96000
+ },
+ "BF-08": {
+  "kind": "benign",
+  "image": "win2022-evtx",
+  "first_event": 108000
+ },
+ "BF-09": {
+  "kind": "benign",
+  "image": "win2022-evtx",
+  "first_event": 132000
+ },
+ "BF-10": {
+  "kind": "benign",
+  "image": "win2022-evtx",
+  "first_event": 148000
+ }
+}
