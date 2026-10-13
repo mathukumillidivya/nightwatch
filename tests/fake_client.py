@@ -31,7 +31,8 @@ def first_field(rest: str) -> tuple[str, str]:
 class FakeClaude:
     """messages.create(**kwargs) -> anthropic Message"""
 
-    def __init__(self, bad_quote_first: bool = True, obey_injection: bool = False):
+    def __init__(self, bad_quote_first: bool = True, obey_injection: bool = False, stringify: bool = False):
+        self.stringify = stringify  # send nested lists as JSON strings, as Claude occasionally does
         self.requests: list[dict] = []
         self.bad_quote_first = bad_quote_first
         self.obey_injection = obey_injection
@@ -91,7 +92,8 @@ class FakeClaude:
                              "keywords": ["lsass", "credential dumping", "mimikatz"]},
                             {"behavior": "a new scheduled task was created", "event_ids": ids[2:4] or ids[:1],
                              "keywords": ["schtasks", "scheduled task"]}]
-                content = tool("set_model_response", {"assessment": "Credential theft on WORKSTATION5.", "hypotheses": hyps})
+                content = tool("set_model_response", {"assessment": "Credential theft on WORKSTATION5.",
+                                                      "hypotheses": json.dumps(hyps) if self.stringify else hyps})
         elif "ATT&CK mapper" in system:
             task = text[len(system):]
             if "technique_lookup" in tools and n_assistant == 0 and "scheduled task" in task:
@@ -103,7 +105,8 @@ class FakeClaude:
                 if self.bad_quote_first and "rejected by the code check" not in task and tid == "T1053.005":
                     ev = [{"event_id": ev[0]["event_id"], "field": ev[0]["field"], "quote": "text that is not in the logs"}]
                 name = "submit_result" if "submit_result" in tools else "set_model_response"
-                content = tool(name, {"technique_id": tid, "reasoning": "Fits the evidence.", "evidence": ev})
+                content = tool(name, {"technique_id": tid, "reasoning": "Fits the evidence.",
+                                      "evidence": json.dumps(ev) if self.stringify else ev})
         elif "incident responder" in system:
             ids = [e[0] for e in evs[:3]]
             content = tool("submit_result", {"headline": "Credential dumping on WORKSTATION5", "severity": "high",

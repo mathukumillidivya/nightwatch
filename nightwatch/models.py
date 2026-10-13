@@ -60,6 +60,19 @@ def _schema(llm_request: LlmRequest) -> dict | None:
     return None
 
 
+def unstring(args: dict) -> dict:
+    """Claude occasionally sends a nested list or object as a JSON string; decode those before validation."""
+    out = {}
+    for k, v in args.items():
+        if isinstance(v, str) and v.strip()[:1] in ("[", "{"):
+            try:
+                v = json.loads(v)
+            except json.JSONDecodeError:
+                pass
+        out[k] = v
+    return out
+
+
 class Claude(AnthropicLlm):
     """Claude with schema-forced output for tool-less agents."""
 
@@ -92,7 +105,7 @@ class Claude(AnthropicLlm):
             parts = (response.content.parts if response.content else None) or []
             for i, part in enumerate(parts):
                 if part.function_call and part.function_call.name == SUBMIT:
-                    parts[i] = types.Part(text=json.dumps(part.function_call.args or {}))
+                    parts[i] = types.Part(text=json.dumps(unstring(part.function_call.args or {})))
             yield response
 
 

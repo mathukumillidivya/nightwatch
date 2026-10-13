@@ -43,7 +43,7 @@ from google.genai import types
 from pydantic import BaseModel, Field
 
 from . import attack, guard, logs, verify
-from .models import Claude, add_usage, usage_of
+from .models import Claude, add_usage, unstring, usage_of
 
 MAX_HYPOTHESES = 3
 HUNTER_SEARCHES = 3
@@ -233,6 +233,13 @@ def _usage_callback(callback_context, llm_response):
     return None
 
 
+def _fix_args(tool, args, tool_context):
+    """Same repair as the forced-output path: decode nested lists Claude sent as JSON strings."""
+    if tool.name == "set_model_response":
+        args.update(unstring(args))
+    return None
+
+
 def _with_rule(text: str):
     """The untrusted-data rule is part of every prompt unless the guardrails are switched off (red-team ablation)."""
     def build(ctx: ReadonlyContext) -> str:
@@ -243,7 +250,7 @@ def _with_rule(text: str):
 def _agents(model: Claude) -> dict[str, LlmAgent]:
     def common(max_tokens: int, cache: bool = False):
         return dict(model=model.variant(max_tokens=max_tokens, cache=cache), after_model_callback=_usage_callback,
-                    generate_content_config=types.GenerateContentConfig(temperature=0))
+                    before_tool_callback=_fix_args, generate_content_config=types.GenerateContentConfig(temperature=0))
     return {
         "hunter": LlmAgent(name="hunter", instruction=_with_rule(HUNTER), tools=[search_events], output_schema=Hunt,
                            **common(1200, cache=True)),
@@ -414,14 +421,20 @@ async def investigate(case: dict, system: str, model: Claude, guarded: bool = Tr
     t0 = time.time()
     trace = []
     limits = RunConfig(max_llm_calls=MAX_MODEL_CALLS)  # a hard stop on runaway loops, whatever the agents do
-    async for e in runner.run_async(user_id="soc", session_id=sid, new_message=msg, run_config=limits):
-        s = summarize_event(e, t0)
-        if s:
-            trace.append(s)
-            if on_step:
-                r = on_step(s)
-                if asyncio.iscoroutine(r):
-                    await r
+    try:
+        async for e in runner.run_async(user_id="soc", session_id=sid, new_message=msg, run_config=limits):
+            s = summarize_event(e, t0)
+            if s:
+                trace.append(s)
+                if on_step:
+                    r = on_step(s)
+                    if asyncio.iscoroutine(r):
+                        await r
+    except Exception as e:  # keep what was spent, so the ledger stays exact
+        state = (await sessions.get_session(app_name=app.name, user_id="soc", session_id=sid)).state
+        e.usage = total_usage(state)
+        e.trace = trace
+        raise
     state = (await sessions.get_session(app_name=app.name, user_id="soc", session_id=sid)).state
     seconds = round(time.time() - t0, 1)
     usage = total_usage(state)

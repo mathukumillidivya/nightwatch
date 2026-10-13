@@ -91,7 +91,7 @@ async def main():
                 res = await investigate(case, args.system, model, guarded=not args.unguarded, want_report=args.report)
                 err = None
             except Exception as e:  # keep going; a failed case is an error, not an answer
-                res, err = {}, f"{type(e).__name__}: {e}"[:500]
+                res, err = {"usage": getattr(e, "usage", {}), "trace": getattr(e, "trace", [])}, f"{type(e).__name__}: {e}"[:500]
                 if "credit balance" in str(e).lower():
                     total["stopped"] = True
                     total["cost"] = float("inf")

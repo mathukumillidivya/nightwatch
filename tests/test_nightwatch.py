@@ -135,3 +135,8 @@ def test_search_tool_budget(cid):
     ctx = Ctx()
     out = [search_events("powershell", ctx) for _ in range(HUNTER_SEARCHES + 1)]
     assert "events" in out[0] and "error" in out[-1]
+
+
+def test_stringified_lists_are_repaired():
+    r = run(investigate(CASES["NW-002"], "nightwatch", Claude(client=FakeClaude(stringify=True).client())))
+    assert r["techniques"] == ["T1003.001", "T1053.005"]
