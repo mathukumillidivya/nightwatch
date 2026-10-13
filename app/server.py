@@ -28,7 +28,9 @@ from fastapi.responses import JSONResponse, StreamingResponse
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from nightwatch import guard  # noqa: E402
 from nightwatch.agents import investigate  # noqa: E402
+from nightwatch.enrich import annotate  # noqa: E402
 from nightwatch.models import Claude, cost  # noqa: E402
 from scripts.redteam import PAYLOADS, plant  # noqa: E402
 
@@ -38,7 +40,25 @@ PER_DAY = int(os.environ.get("RUNS_PER_DAY", 30))
 DAILY_DOLLARS = float(os.environ.get("DAILY_DOLLARS", 1.0))
 AT_ONCE = asyncio.Semaphore(int(os.environ.get("RUNS_AT_ONCE", 2)))
 
-CASES = {json.loads(l)["case_id"]: json.loads(l) for l in open(ROOT / "data/cases.jsonl")}
+def _offsets() -> dict[str, int]:
+    """Where each case starts in cases.jsonl. Cases are read on demand, so the service fits in a small instance."""
+    out, pos = {}, 0
+    with open(ROOT / "data/cases.jsonl", "rb") as f:
+        for line in f:
+            out[json.loads(line[:40].split(b",")[0] + b"}")["case_id"]] = pos
+            pos += len(line)
+    return out
+
+
+OFFSETS = _offsets()
+
+
+def load_case(case_id: str) -> dict | None:
+    if case_id not in OFFSETS:
+        return None
+    with open(ROOT / "data/cases.jsonl", "rb") as f:
+        f.seek(OFFSETS[case_id])
+        return json.loads(f.readline())
 LABELS = json.loads((ROOT / "data/labels.json").read_text())
 USAGE: dict = defaultdict(float)
 
@@ -63,7 +83,7 @@ def health():
 
 @app.get("/api/catalog")
 def catalog():
-    return {"cases": len(CASES), "attacks": {k: v for k, v in PAYLOADS.items()},
+    return {"cases": len(OFFSETS), "attacks": {k: v for k, v in PAYLOADS.items()},
             "limits": {"per_visitor": PER_VISITOR, "per_day": PER_DAY}}
 
 
@@ -93,7 +113,7 @@ def limited(ip: str) -> str | None:
 @app.post("/api/run")
 async def run(request: Request):
     body = await request.json()
-    case = CASES.get(body.get("case_id"))
+    case = load_case(str(body.get("case_id")))
     if not case:
         raise HTTPException(404, "unknown alert")
     attack = body.get("attack") or "none"
@@ -108,7 +128,9 @@ async def run(request: Request):
 
     async def events():
         queue: asyncio.Queue = asyncio.Queue()
-        yield f"data: {json.dumps({'type': 'start', 'case_id': case['case_id'], 'planted_id': case.get('planted_id'), 'view': case['view'] if attack != 'none' else None})}\n\n"
+        view = [{**r, "decoded": annotate(r["channel"], r["event_id"], r["fields"]), "flag": guard.scan_event(r["fields"])}
+                for r in case["view"]] if attack != "none" else None
+        yield f"data: {json.dumps({'type': 'start', 'case_id': case['case_id'], 'planted_id': case.get('planted_id'), 'view': view})}\n\n"
 
         async def work():
             async with AT_ONCE:

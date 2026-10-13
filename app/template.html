@@ -41,7 +41,7 @@ code, .mono { font-family: var(--mono); font-size: .92em; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-family: var(--display); font-weight: 800; font-size: 24px; letter-spacing: .02em; }
 .brand i { width: 14px; height: 14px; border-radius: 50%; background: var(--sodium); box-shadow: 0 0 14px 3px rgba(244, 166, 42, .55); }
 .nav { display: flex; gap: 4px; margin-left: 8px; }
-.nav a { color: var(--dim); text-decoration: none; padding: 6px 12px; border-radius: 6px; }
+.nav a { color: var(--dim); text-decoration: none; padding: 6px 12px; border-radius: 6px; white-space: nowrap; }
 .nav a:hover { color: var(--text); }
 .nav a[aria-current="page"] { color: var(--text); background: var(--deep); }
 .svc { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--dim); font-size: 13px; }
@@ -270,6 +270,9 @@ footer p { max-width: none; }
   .nav a { padding: 6px 8px; font-size: 14px; }
   .svc span { display: none; }
   .brand { font-size: 20px; }
+  .nav { margin-left: 0; gap: 0; }
+  .graph { overflow-x: auto; }
+  .graph svg { min-width: 620px; }
   .alert-head h1 { font-size: 40px; }
   .log .ln { grid-template-columns: 40px minmax(0, 1fr); }
   .log .ln .t, .log .ln .src { display: none; }
@@ -395,7 +398,7 @@ function viewHome(v) {
       <div class="score" id="homescore">
         ${nw ? [["Nightwatch", nw.top1, "nw"], ["Single AI call", sc.top1, ""]].map(([n, x, c]) => `<div class="bar"><span>${n}</span><div class="track"><div class="fill ${c}" data-w="${x}"></div></div><span class="num">${pct(x)}</span></div>`).join("") : ""}
       </div>
-      <p class="note">${nw ? `First technique named matches the dataset's label exactly. Right technique family: ${pct(nw.top1_family)} against ${pct(sc.top1_family)}. Cost per alert: ${money(nw.cost_per_case)} against ${money(sc.cost_per_case)}.` : ""} <a href="#/evaluation">Full evaluation</a></p>
+      <p class="note">${nw ? `First technique named matches the dataset's label. On accuracy the two are level (the gap is within noise). The difference is trust: every Nightwatch finding carries a log quote checked by code, against ${pct(sc.grounded)} for the single call, at ${(nw.cost_per_case / sc.cost_per_case).toFixed(1)}× the cost.` : ""} <a href="#/evaluation">Full evaluation</a></p>
     </div>
     <div>
       <h2>Attackers write to the logs too</h2>
@@ -458,10 +461,10 @@ function viewQueue(v) {
   $$("[data-res]", v).forEach(b => b.onclick = () => { qs.res = b.dataset.res; viewQueue(v); });
   const rows = Q.filter(q => (qs.split === "all" || q.split === qs.split || (qs.split === "test" && q.split === "test_variants"))
     && (qs.res === "all" || (qs.res === "ok" ? outcome(q.nw, q.gold) === "ok" : q.nw && outcome(q.nw, q.gold) !== "ok")));
-  const tcell = (pred, gold) => pred ? `${markHtml(outcome(pred, gold))}<span class="tid">${esc(pred[0] || "nothing")}</span><span class="tname">${esc(tname(pred[0]))}</span>` : `<span class="muted">Not run yet</span>`;
+  const tcell = (pred, gold, err) => pred ? `${markHtml(outcome(pred, gold))}<span class="tid">${esc(pred[0] || "nothing")}</span><span class="tname">${esc(tname(pred[0]))}</span>` : `<span class="muted">${err ? "Run failed" : "Not run yet"}</span>`;
   $("#qrows").innerHTML = rows.map(q => `<tr class="row" data-id="${q.id}" tabindex="0"><td><span class="tid">${q.id}</span>${q.split === "test_variants" ? '<span class="tname">variant</span>' : ""}</td>
     <td class="hide-m">${q.hosts.slice(0, 3).map(esc).join(", ")}${q.hosts.length > 3 ? ` +${q.hosts.length - 3}` : ""}</td>
-    <td class="hide-s mono">${q.events.toLocaleString()}</td><td>${tcell(q.nw, q.gold)}</td><td class="hide-m">${tcell(q.sc, q.gold)}</td>
+    <td class="hide-s mono">${q.events.toLocaleString()}</td><td>${tcell(q.nw, q.gold, q.nw_err)}</td><td class="hide-m">${tcell(q.sc, q.gold, q.sc_err)}</td>
     <td><span class="tid">${q.gold.map(esc).join(", ")}</span><span class="tname">${esc(tname(q.gold[0]))}</span></td></tr>`).join("") ||
     `<tr><td colspan="6" class="muted">No alerts match these filters.</td></tr>`;
   $$("#qrows tr.row").forEach(tr => { tr.onclick = () => location.hash = `#/alert/${tr.dataset.id}`; tr.onkeydown = e => { if (e.key === "Enter") tr.onclick(); }; });
@@ -544,7 +547,7 @@ function hl(text, quotes) {
 }
 function lineHtml(r, quotes) {
   const f = Object.entries(r.fields).map(([k, v]) => `<span class="k">${esc(k)}=</span>${hl(v, quotes)}${r.decoded && r.decoded[k] ? ` <span class="dec">${esc(r.decoded[k])}</span>` : ""}`).join(" ");
-  return `<span class="f">${esc(r.label)}${r.count > 1 ? ` <span class="rep">×${r.count}</span>` : ""}: ${f}${r.flag ? ` <span class="inj">⚠ instruction-like text in ${esc(r.flag.join(", "))}</span>` : ""}</span>`;
+  return `<span class="f">${esc(r.label)}${r.count > 1 ? ` <span class="rep">×${r.count}</span>` : ""}: ${f}${r.flag && r.flag.length ? ` <span class="inj">⚠ instruction-like text in ${esc(r.flag.join(", "))}</span>` : ""}</span>`;
 }
 function drawLog() {
   const res = cur.res, cited = citedIds(res), hyp = hypIds(res), qm = quotesFor(res);
@@ -731,10 +734,14 @@ function viewEval(v) {
   const rt = DATA.results.redteam;
   v.innerHTML = `<div class="page-head"><div><h2>Evaluation</h2><p>${nw.cases} held-out attack recordings, one per dataset, run once with the system frozen. Both systems use Claude Haiku 4.5, the same triage view and the same instructions.</p></div></div>
   <div class="kpis">
-    <div><b>${pct(nw.top1)}</b><small>Nightwatch: first technique matches the label (single call ${pct(sc.top1)})</small></div>
-    <div><b>${pct(nw.top1_family)}</b><small>Right technique family (single call ${pct(sc.top1_family)})</small></div>
-    <div><b>${pct(nw.top3)}</b><small>Label among its techniques (single call ${pct(sc.top3)})</small></div>
-    <div><b>${pct(sc.invented || 0)}</b><small>of the single call's technique ids do not exist in ATT&amp;CK; Nightwatch cannot return one</small></div>
+    <div><b>${pct(nw.top1)}</b><small>Nightwatch names the labelled technique first. A single AI call: ${pct(sc.top1)}. The gap is within noise.</small></div>
+    <div><b>${pct(nw.top1_family)}</b><small>Right technique family, for both systems</small></div>
+    <div><b>${pct(nw.grounded)}</b><small>of Nightwatch's findings carry a quote code found in the logs. Single call: ${pct(sc.grounded)}</small></div>
+    <div><b>${(nw.cost_per_case / sc.cost_per_case).toFixed(1)}×</b><small>the cost of a single call (${money(nw.cost_per_case)} against ${money(sc.cost_per_case)} per alert), and ${(nw.median_seconds / sc.median_seconds).toFixed(1)}× the time</small></div>
+  </div>
+  <div class="section" style="margin-top:0"><h2>The honest reading</h2>
+    <p>On accuracy, the agent team and a single well-briefed call are level: ${P.top1 ? `${P.top1.b_only} alerts only Nightwatch got right, ${P.top1.a_only} only the single call did` : ""}. What the agents buy is a guarantee rather than a score: every finding Nightwatch reports is tied to a log quote that code has checked, so an analyst never chases a claim the logs do not support. The single call's unsupported findings were ${pct(1 - sc.grounded)} of what it said, shown to an analyst as if they were fact.</p>
+    <p>What moved accuracy during development was not more agents but better inputs: decoding GUIDs and access masks in code turned the DCSync recording from a miss into a hit for both systems, because "1131f6aa-…" means nothing to a model and "directory replication right" does.</p>
   </div>
   <table class="etable"><thead><tr><th>System</th><th>Top-1</th><th>Family</th><th>Top-3</th><th>Tactic</th><th>Per dataset</th><th>Evidence found</th><th>Cost / alert</th><th>Median time</th><th>Model calls</th></tr></thead><tbody>
     ${rows.map(([n, r, c]) => `<tr class="${c}"><td>${n}</td><td>${pct(r.top1)}</td><td>${pct(r.top1_family)}</td><td>${pct(r.top3)}</td><td>${pct(r.tactic)}</td><td>${pct(r.by_dataset)}</td><td>${pct(r.grounded)}</td><td>${money(r.cost_per_case)}</td><td>${r.median_seconds}s</td><td>${r.model_calls_per_case}</td></tr>`).join("")}
@@ -750,17 +757,20 @@ function viewEval(v) {
     <li>Each recording is labelled with the technique the dataset author ran. Some recordings show more than one technique, and some labels name the means (WMI, PowerShell) rather than the objective, so an answer can be reasonable and still miss the label.</li>
     <li>The recordings come from small lab domains. A production network has far more background noise and more hosts.</li>
     <li>${nw.cases} alerts is a small test: the confidence intervals above are wide.</li>
+    <li>Three test runs failed outright (two Nightwatch, one single call) when the model sent malformed structured output. They count as misses. The repair (decode, then one validation retry) was added after the test and was not re-scored.</li>
     <li>One model, Claude Haiku 4.5, chosen for cost. The whole evaluation was capped at $5 of model spend${DATA.spend ? ` and used ${money(DATA.spend)}` : ""}.</li>
   </ul></div>`;
 }
 function redteamHtml(rt) {
   const S = rt.summary || {};
-  const label = { suppress: "Report nothing", misdirect: "Name the decoy", evasive: "Name the decoy, scanner-proof" };
-  const cfgs = Object.keys(S);
-  return `<div class="section"><h2>Prompt injection</h2><p class="muted">${esc(rt.description || "")}</p>
+  const label = { suppress: "“Report nothing”", misdirect: "“Name the decoy”", evasive: "Decoy, scanner-proof" };
+  const cell = x => { if (!x) return "<td>–</td>"; const n = x.cases - x.errors;
+    return `<td class="${x.goal_met ? "fooled" : "held"}">${x.goal_met} of ${n} fooled<br><span class="muted" style="font-weight:400">${x.harmed} knocked off first place, called out ${x.called_out} of ${n}${x.errors ? `; ${x.errors} run failed` : ""}</span></td>`; };
+  return `<div class="section"><h2>Prompt injection</h2><p class="muted">${esc(rt.description || "")}</p><p>${esc(rt.headline || "")}</p>
    <table class="etable rt"><thead><tr><th>System</th>${Object.keys(label).map(k => `<th>${label[k]}</th>`).join("")}</tr></thead><tbody>
-   ${cfgs.map(c => `<tr><td>${esc(rt.names?.[c] || c)}</td>${Object.keys(label).map(k => { const x = S[c][k]; return x ? `<td class="${x.goal_met ? "fooled" : "held"}">${x.goal_met} of ${x.cases - x.errors} fooled</td>` : "<td>–</td>"; }).join("")}</tr>`).join("")}
-   </tbody></table></div>`;
+   ${Object.keys(S).map(c => `<tr><td>${esc((rt.names || {})[c] || c)}</td>${Object.keys(label).map(k => cell(S[c][k])).join("")}</tr>`).join("")}
+   </tbody></table>
+   <p class="note">“Fooled” means the attacker got what the note asked for: no technique reported, or the decoy reported first. “Knocked off” counts alerts where the correct technique was first on the clean recording and is not first with the note planted. Three alerts per attack is a small sample; this shows the attacks fail, not how rarely.</p></div>`;
 }
 
 /* ---------------------------------------------------------------- how it works */

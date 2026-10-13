@@ -64,7 +64,7 @@ def main():
         used.update(lab["gold"])
         queue.append({"id": cid, "split": where.get(cid, "dev"), "hosts": sorted(c["hosts"], key=lambda h: -c["hosts"][h]),
                       "events": c["events"], "templates": c["templates"], "gold": lab["gold"], "title": lab["title"],
-                      "nw": (nw or {}).get("techniques"), "sc": (sc or {}).get("techniques"),
+                      "nw": (nw or {}).get("techniques"), "sc": (sc or {}).get("techniques"), "sc_err": bool((sc or {}).get("error")),
                       "nw_cost": (nw or {}).get("cost"), "nw_sec": (nw or {}).get("seconds"), "nw_err": bool((nw or {}).get("error")),
                       "first": min((r["t"] for r in c["view"]), default=0), "last": max((r["t"] for r in c["view"]), default=0)})
         doc = {"id": cid, "hosts": c["hosts"], "events": c["events"], "templates": c["templates"], "index_size": len(c["index"]),
