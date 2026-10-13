@@ -1,0 +1,72 @@
+name: extra-evals
+# The evaluations added after the held-out test: benign and mixed alerts (false alarms), prompt injection on six
+# more recordings, and whether cited quotes support the technique. The held-out results are not touched.
+on:
+  workflow_dispatch:
+    inputs:
+      images: {description: "evtx-baseline release assets to use (gh --pattern globs, space separated)", default: "win10-client* win2022-ad*"}
+      per_image: {default: "6"}
+      steps: {description: "any of: benign redteam quotes", default: "benign redteam quotes"}
+      budget_benign: {description: "US$ per system on the benign set", default: "0.7"}
+      budget_redteam: {description: "US$ per system on the red-team set", default: "0.6"}
+      budget_quotes: {default: "0.6"}
+      project_cap: {description: "refuse to start once the ledger reaches this", default: "8.5"}
+permissions:
+  contents: write
+concurrency: {group: spend, cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt evtx anthropic
+      - run: test -n "$ANTHROPIC_API_KEY" || { echo "ANTHROPIC_API_KEY secret is not set"; exit 1; }
+      - name: Download benign recordings (NextronSystems/evtx-baseline, Apache-2.0)
+        if: contains(inputs.steps, 'benign')
+        run: |
+          gh release list -R NextronSystems/evtx-baseline --limit 5
+          gh release view -R NextronSystems/evtx-baseline --json tagName,assets --jq '.tagName, (.assets[] | "\(.name) \(.size)")'
+          mkdir -p evtx_dl evtx
+          for pat in ${{ inputs.images }}; do gh release download -R NextronSystems/evtx-baseline --pattern "$pat" -D evtx_dl; done
+          ls -la evtx_dl
+          for f in evtx_dl/*; do
+            n=$(basename "$f"); n=${n%%.*}; mkdir -p "evtx/$n"
+            case "$f" in *.zip) unzip -q "$f" -d "evtx/$n" ;; *.7z) 7z x -o"evtx/$n" "$f" >/dev/null ;; *) tar xf "$f" -C "evtx/$n" ;; esac
+          done
+          find evtx -name '*.evtx' | head -20; find evtx -name '*.evtx' | wc -l
+      - name: Build benign and mixed alerts
+        if: contains(inputs.steps, 'benign')
+        run: python scripts/build_benign.py --evtx evtx --per-image ${{ inputs.per_image }}
+      - name: Run both systems on benign and mixed alerts
+        if: contains(inputs.steps, 'benign')
+        run: |
+          python scripts/run.py --system nightwatch --cases data/benign.jsonl --run-id benign-nightwatch --budget ${{ inputs.budget_benign }} --project-cap ${{ inputs.project_cap }} --concurrency 4
+          python scripts/run.py --system single_call --cases data/benign.jsonl --run-id benign-single --budget ${{ inputs.budget_benign }} --project-cap ${{ inputs.project_cap }} --concurrency 4
+          python scripts/score_benign.py --run nightwatch=results/runs/benign-nightwatch single_call=results/runs/benign-single \
+            --clean nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single --out results/benign.json
+      - name: Prompt injection on six more recordings (guardrails on)
+        if: contains(inputs.steps, 'redteam')
+        run: |
+          python scripts/run.py --system nightwatch --cases data/redteam_wide.jsonl --run-id rt-wide-nightwatch-guarded --budget ${{ inputs.budget_redteam }} --project-cap ${{ inputs.project_cap }} --concurrency 4
+          python scripts/run.py --system single_call --cases data/redteam_wide.jsonl --run-id rt-wide-single-guarded --budget ${{ inputs.budget_redteam }} --project-cap ${{ inputs.project_cap }} --concurrency 4
+          for s in nightwatch single; do
+            python scripts/score_redteam.py --clean results/runs/test-$s --attacked results/runs/rt-wide-$s-guarded --planted data/redteam_wide.jsonl --out results/runs/rt-wide-$s-guarded/redteam_score.json
+          done
+      - name: Do the quotes support the technique?
+        if: contains(inputs.steps, 'quotes')
+        run: python scripts/quote_support.py --run nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single --budget ${{ inputs.budget_quotes }} --out results/quote_support.json
+      - name: Save
+        if: always()
+        run: |
+          git config user.name "Divya Sri"
+          git config user.email "hellosweety789@gmail.com"
+          git add results/ data/benign.jsonl data/benign_meta.json 2>/dev/null || git add results/
+          git commit -m "Extra evaluations: ${{ inputs.steps }}" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase && git push && break; sleep $((RANDOM % 20 + 5)); done

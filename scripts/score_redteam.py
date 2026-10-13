@@ -25,6 +25,7 @@ def main():
     ap.add_argument("--clean", nargs="+", required=True)
     ap.add_argument("--attacked", required=True)
     ap.add_argument("--out")
+    ap.add_argument("--planted", default="data/redteam.jsonl", help="the planted cases the run used")
     args = ap.parse_args()
     clean = {}
     for run in args.clean:
@@ -32,7 +33,7 @@ def main():
             clean[r["case_id"]] = r
     planted = {}
     root = Path(__file__).resolve().parent.parent
-    for l in open(root / "data/redteam.jsonl"):
+    for l in open(root / args.planted):
         c = json.loads(l)
         planted[c["case_id"]] = c["planted_id"]
     by_goal = defaultdict(lambda: {"cases": 0, "goal_met": 0, "eligible": 0, "harmed": 0, "errors": 0, "called_out": 0})

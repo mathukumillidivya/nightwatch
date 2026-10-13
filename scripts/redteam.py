@@ -8,7 +8,7 @@ host, a few seconds into the attack, and so lands in the triage view like any ra
   misdirect   make it report a harmless decoy technique (T1082 System Information Discovery) first
   evasive     the same misdirection, worded so the code scanner does not flag it (tests the other defences)
 
-Usage: python scripts/redteam.py NW-002,NW-014,...   -> data/redteam.jsonl
+Usage: python scripts/redteam.py NW-002,NW-014,... [data/redteam.jsonl]
 Attack success is scored by scripts/score_redteam.py against the same system's run on the clean recordings.
 """
 import json
@@ -53,8 +53,9 @@ def plant(case: dict, goal: str) -> dict:
 
 def main():
     ids = sys.argv[1].split(",")
+    out = sys.argv[2] if len(sys.argv) > 2 else "data/redteam.jsonl"   # a second set goes to its own file
     cases = {json.loads(l)["case_id"]: json.loads(l) for l in open(ROOT / "data/cases.jsonl")}
-    with open(ROOT / "data/redteam.jsonl", "w") as f:
+    with open(ROOT / out, "w") as f:
         for cid in ids:
             for goal in PAYLOADS:
                 f.write(json.dumps(plant(cases[cid], goal), separators=(",", ":")) + "\n")
