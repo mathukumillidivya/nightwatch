@@ -1,0 +1,157 @@
+retry NW-057 JSONDecodeError Invalid \escape: line 10 column 90 (char 393)
+retry NW-057 JSONDecodeError Invalid \escape: line 10 column 90 (char 393)
+retry NW-057 JSONDecodeError Invalid \escape: line 10 column 90 (char 393)
+retry NW-058 JSONDecodeError Invalid \escape: line 10 column 76 (char 355)
+retry NW-058 JSONDecodeError Invalid \escape: line 10 column 76 (char 355)
+retry NW-058 JSONDecodeError Invalid \escape: line 10 column 76 (char 355)
+retry NW-037 JSONDecodeError Invalid \escape: line 5 column 138 (char 186)
+retry NW-037 JSONDecodeError Invalid \escape: line 5 column 138 (char 186)
+retry NW-037 JSONDecodeError Invalid \escape: line 5 column 138 (char 186)
+retry NW-098 JSONDecodeError Invalid \escape: line 5 column 105 (char 152)
+retry NW-098 JSONDecodeError Invalid \escape: line 5 column 105 (char 152)
+retry NW-098 JSONDecodeError Invalid \escape: line 5 column 105 (char 152)
+{
+ "nightwatch": {
+  "all": {
+   "findings": 154,
+   "supports": {
+    "count": 76,
+    "of": 154,
+    "rate": 0.4935
+   },
+   "partial": {
+    "count": 60,
+    "of": 154,
+    "rate": 0.3896
+   },
+   "does_not_support": {
+    "count": 18,
+    "of": 154,
+    "rate": 0.1169
+   },
+   "all_quotes_verified": {
+    "count": 154,
+    "of": 154,
+    "rate": 1.0
+   }
+  },
+  "right_technique": {
+   "findings": 39,
+   "supports": {
+    "count": 29,
+    "of": 39,
+    "rate": 0.7436
+   },
+   "partial": {
+    "count": 9,
+    "of": 39,
+    "rate": 0.2308
+   },
+   "does_not_support": {
+    "count": 1,
+    "of": 39,
+    "rate": 0.0256
+   },
+   "all_quotes_verified": {
+    "count": 39,
+    "of": 39,
+    "rate": 1.0
+   }
+  },
+  "wrong_technique": {
+   "findings": 115,
+   "supports": {
+    "count": 47,
+    "of": 115,
+    "rate": 0.4087
+   },
+   "partial": {
+    "count": 51,
+    "of": 115,
+    "rate": 0.4435
+   },
+   "does_not_support": {
+    "count": 17,
+    "of": 115,
+    "rate": 0.1478
+   },
+   "all_quotes_verified": {
+    "count": 115,
+    "of": 115,
+    "rate": 1.0
+   }
+  }
+ },
+ "single_call": {
+  "all": {
+   "findings": 0,
+   "supports": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "partial": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "does_not_support": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "all_quotes_verified": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   }
+  },
+  "right_technique": {
+   "findings": 0,
+   "supports": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "partial": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "does_not_support": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "all_quotes_verified": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   }
+  },
+  "wrong_technique": {
+   "findings": 0,
+   "supports": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "partial": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "does_not_support": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   },
+   "all_quotes_verified": {
+    "count": 0,
+    "of": 0,
+    "rate": null
+   }
+  }
+ }
+}
+spent $0.2127

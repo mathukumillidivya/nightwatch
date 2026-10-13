@@ -1,0 +1,249 @@
+{
+  "judge_model": "claude-haiku-4-5-20251001",
+  "systems": {
+    "nightwatch": {
+      "all": {
+        "findings": 154,
+        "supports": {
+          "count": 76,
+          "of": 154,
+          "rate": 0.4935
+        },
+        "partial": {
+          "count": 60,
+          "of": 154,
+          "rate": 0.3896
+        },
+        "does_not_support": {
+          "count": 18,
+          "of": 154,
+          "rate": 0.1169
+        },
+        "all_quotes_verified": {
+          "count": 154,
+          "of": 154,
+          "rate": 1.0
+        }
+      },
+      "right_technique": {
+        "findings": 39,
+        "supports": {
+          "count": 29,
+          "of": 39,
+          "rate": 0.7436
+        },
+        "partial": {
+          "count": 9,
+          "of": 39,
+          "rate": 0.2308
+        },
+        "does_not_support": {
+          "count": 1,
+          "of": 39,
+          "rate": 0.0256
+        },
+        "all_quotes_verified": {
+          "count": 39,
+          "of": 39,
+          "rate": 1.0
+        }
+      },
+      "wrong_technique": {
+        "findings": 115,
+        "supports": {
+          "count": 47,
+          "of": 115,
+          "rate": 0.4087
+        },
+        "partial": {
+          "count": 51,
+          "of": 115,
+          "rate": 0.4435
+        },
+        "does_not_support": {
+          "count": 17,
+          "of": 115,
+          "rate": 0.1478
+        },
+        "all_quotes_verified": {
+          "count": 115,
+          "of": 115,
+          "rate": 1.0
+        }
+      },
+      "first_finding": {
+        "findings": 58,
+        "supports": {
+          "count": 40,
+          "of": 58,
+          "rate": 0.6897
+        },
+        "partial": {
+          "count": 13,
+          "of": 58,
+          "rate": 0.2241
+        },
+        "does_not_support": {
+          "count": 5,
+          "of": 58,
+          "rate": 0.0862
+        },
+        "all_quotes_verified": {
+          "count": 58,
+          "of": 58,
+          "rate": 1.0
+        }
+      },
+      "alerts": 58,
+      "cost_usd": 0.2127,
+      "examples_wrong_but_verified": [
+        {
+          "case_id": "NW-040",
+          "technique": "T1134.005",
+          "support": "does_not_support",
+          "events_show": "GruntHTTP2.exe used SeTakeOwnershipPrivilege to access named objects, but this shows privilege use for object access, not SID-History injection which requires modifying Active Directory SID-History attributes."
+        },
+        {
+          "case_id": "NW-040",
+          "technique": "T1053.005",
+          "support": "partial",
+          "events_show": "A scheduled task was updated and CompatTelRunner.exe was spawned by svchost.exe, which is consistent with scheduled task execution but does not show malicious modification or reconnaissance activity\u2014this is normal Windows telemetry behavior."
+        },
+        {
+          "case_id": "NW-040",
+          "technique": "T1071.001",
+          "support": "does_not_support",
+          "events_show": "GruntHTTP2.exe was spawned by WmiPrvSE.exe, but the cited event does not show any outbound HTTP connections, DNS queries, or command and control communications."
+        },
+        {
+          "case_id": "NW-032",
+          "technique": "T1071.001",
+          "support": "partial",
+          "events_show": "PowerShell established an outbound connection to 10.10.10.5:80 and manipulated HTTP headers via a custom object, which is consistent with C2 beaconing but could also represent legitimate HTTP client activity."
+        },
+        {
+          "case_id": "NW-051",
+          "technique": "T1134.003",
+          "support": "partial",
+          "events_show": "A logon event with LogonType 9 (network logon) occurred for user wardog using Negotiate authentication, which is consistent with token impersonation but does not specifically show token creation or the /netonly flag being used."
+        },
+        {
+          "case_id": "NW-087",
+          "technique": "T1071.001",
+          "support": "does_not_support",
+          "events_show": "No event data was provided; the cited event X0725 does not exist in the full events list."
+        },
+        {
+          "case_id": "NW-080",
+          "technique": "T1012",
+          "support": "partial",
+          "events_show": "SharpView.exe requested handles to registry keys including LSA, .NETFramework, and Winlogon, which are consistent with system configuration enumeration but could also result from normal application startup or legitimate administrative queries."
+        },
+        {
+          "case_id": "NW-080",
+          "technique": "T1057",
+          "support": "does_not_support",
+          "events_show": "Explorer.EXE accessed cmd.exe with limited access (0x1000), but the cited events do not include the PowerShell process access mentioned in the analyst's claim, and a single process access does not demonstrate process enumeration or reconnaissance."
+        }
+      ]
+    },
+    "single_call": {
+      "all": {
+        "findings": 0,
+        "supports": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "partial": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "all_quotes_verified": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        }
+      },
+      "right_technique": {
+        "findings": 0,
+        "supports": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "partial": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "all_quotes_verified": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        }
+      },
+      "wrong_technique": {
+        "findings": 0,
+        "supports": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "partial": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "all_quotes_verified": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        }
+      },
+      "first_finding": {
+        "findings": 0,
+        "supports": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "partial": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "does_not_support": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        },
+        "all_quotes_verified": {
+          "count": 0,
+          "of": 0,
+          "rate": null
+        }
+      },
+      "alerts": 0,
+      "cost_usd": 0,
+      "examples_wrong_but_verified": []
+    }
+  },
+  "note": "Every quote here already exists word for word in its event. 'supports' means a second model (the same family as the systems) found the cited events show the technique; treat it as a screen."
+}
