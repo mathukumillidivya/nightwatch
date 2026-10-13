@@ -122,8 +122,10 @@ view hints at something you cannot see in full: the command that started a proce
 did next, activity on the domain controller.
 
 Return up to {MAX_HYPOTHESES} hypotheses, each a distinct adversary behavior, most important first. Keep each
-behavior to one sentence naming the process or account, the action and the target. Cite at most five events.
-Background noise is not a hypothesis. Give a few ATT&CK-style keywords for each so it can be looked up."""
+behavior to one sentence naming the process or account, the action and the target. "A tool was loaded or run"
+(mimikatz, PowerView, an encoded launcher) is not a behavior: say what the logs show the tool doing, and if they
+show nothing more, rank it last. Cite at most five events. Background noise is not a hypothesis. Give a few
+ATT&CK-style keywords for each so it can be looked up."""
 
 MAPPER = f"""{TASK}
 
@@ -140,8 +142,9 @@ BASELINE = f"""{TASK}
 
 Read the triage view: the most unusual event templates in the recording, rare across the fleet, each collapsed
 with a count. Identify up to {MAX_HYPOTHESES} adversary techniques as MITRE ATT&CK Enterprise technique ids
-(ATT&CK v19), most important first. Prefer the most specific sub-technique the evidence supports. Keep each
-behavior to one sentence. For each, cite one to three short exact quotes (under 80 characters) copied from the
+(ATT&CK v19), most important first. Prefer the most specific sub-technique the evidence supports. "A tool was
+loaded or run" (mimikatz, PowerView, an encoded launcher) is not the answer by itself: name what the logs show the
+tool doing. Keep each behavior to one sentence. For each, cite one to three short exact quotes (under 80 characters) copied from the
 log fields shown."""
 
 REPORTER = """You are the incident responder writing the ticket for this alert. Use only the verified findings and
