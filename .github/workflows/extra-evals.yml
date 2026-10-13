@@ -61,7 +61,9 @@ jobs:
           done
       - name: Do the quotes support the technique?
         if: contains(inputs.steps, 'quotes')
-        run: python scripts/quote_support.py --run nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single --budget ${{ inputs.budget_quotes }} --out results/quote_support.json
+        run: |
+          set -o pipefail
+          python scripts/quote_support.py --run nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single --budget ${{ inputs.budget_quotes }} --out results/quote_support.json 2>&1 | tee results/quote_support.log
       - name: Save
         if: always()
         run: |

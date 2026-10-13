@@ -103,7 +103,10 @@ class Judge:
             tools=[TOOL], tool_choice={"type": "tool", "name": "submit_review"},
             messages=[{"role": "user", "content": text}], extra_body={"temperature": 0})
         u = r.usage
-        out = next(b.input for b in r.content if b.type == "tool_use")["findings"]
+        out = next(b.input for b in r.content if b.type == "tool_use").get("findings", [])
+        if isinstance(out, str):  # the model sometimes returns the nested array as a JSON string
+            out = json.loads(out)
+        out = [x for x in out if isinstance(x, dict)]
         return out, {"input": u.input_tokens, "output": u.output_tokens,
                      "cache_read": getattr(u, "cache_read_input_tokens", 0) or 0, "cache_write": getattr(u, "cache_creation_input_tokens", 0) or 0}
 
@@ -168,7 +171,7 @@ def main():
             else:
                 continue
             spent += cost(usage)
-            by_i = {j.get("index"): j for j in judged}
+            by_i = {j.get("index"): j for j in judged if isinstance(j, dict)}
             new = []
             for i, f in enumerate(findings):
                 j = by_i.get(i) or {"support": "missing", "events_show": ""}
