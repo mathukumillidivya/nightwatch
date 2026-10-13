@@ -1,6 +1,6 @@
 """Turn a raw Windows event recording (thousands of Sysmon, Security and PowerShell events) into what an analyst reads.
 
-A recording holds about 1,000 to 60,000 events, almost all of them normal background activity. The model never
+A recording holds up to about 80,000 events (3,700 is typical), almost all of them normal background activity. The model never
 sees the raw stream. Code does the reduction:
 
 1. Every event is reduced to the fields that matter for its type and rendered as one line.

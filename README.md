@@ -6,8 +6,8 @@ Every finding is quoted from the logs and checked by code.**
 **Live console:** https://nightwatch-app.onrender.com. It holds all 105 alerts with their recorded investigations. You can
 replay any run, run the agents live, and plant a prompt injection in the logs to see whether it changes the verdict.
 
-A security analyst's day is alerts: a host did something odd, now work out what. One of these recordings holds 1,000
-to 60,000 Windows events, almost all of them normal. Nightwatch:
+A security analyst's day is alerts: a host did something odd, now work out what. One of these recordings holds up to
+80,000 Windows events (3,700 is typical), almost all of them normal. Nightwatch:
 
 1. reduces them in code to the 50 rarest event templates;
 2. has a hunter agent propose what the attacker did;
