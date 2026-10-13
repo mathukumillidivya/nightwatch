@@ -1,0 +1,93 @@
+{
+ "test-single": {
+  "cases": 64,
+  "errors": 1,
+  "top1": 0.3906,
+  "top1_family": 0.4844,
+  "top3": 0.4688,
+  "tactic": 0.6562,
+  "answered": 0.9844,
+  "by_dataset": 0.3906,
+  "invented": 0.0,
+  "grounded": 0.9471,
+  "cost_per_case": 0.00957,
+  "cost_total": 0.6122,
+  "median_seconds": 6.8,
+  "model_calls_per_case": 0.98
+ },
+ "test-single+verify": {
+  "cases": 64,
+  "errors": 1,
+  "top1": 0.3906,
+  "top1_family": 0.4844,
+  "top3": 0.4688,
+  "tactic": 0.625,
+  "answered": 0.9688,
+  "by_dataset": 0.3906,
+  "invented": 0.0,
+  "grounded": 0.9471,
+  "cost_per_case": 0.00957,
+  "cost_total": 0.6122,
+  "median_seconds": 6.8,
+  "model_calls_per_case": 0.98
+ },
+ "test-nightwatch": {
+  "cases": 64,
+  "errors": 2,
+  "top1": 0.4219,
+  "top1_family": 0.4844,
+  "top3": 0.5156,
+  "tactic": 0.6094,
+  "answered": 0.9688,
+  "by_dataset": 0.4219,
+  "invented": 0.0,
+  "grounded": 1.0,
+  "dropped_by_code": 11,
+  "sent_back": 15,
+  "cost_per_case": 0.03154,
+  "cost_total": 2.0187,
+  "median_seconds": 14.9,
+  "model_calls_per_case": 5.64
+ },
+ "paired": {
+  "top1": {
+   "metric": "top1",
+   "cases": 64,
+   "a": 0.3906,
+   "b": 0.4219,
+   "diff": 0.0312,
+   "ci95": [
+    -0.0938,
+    0.1562
+   ],
+   "b_only": 10,
+   "a_only": 8
+  },
+  "top1_family": {
+   "metric": "top1_family",
+   "cases": 64,
+   "a": 0.4844,
+   "b": 0.4844,
+   "diff": 0.0,
+   "ci95": [
+    -0.125,
+    0.125
+   ],
+   "b_only": 9,
+   "a_only": 9
+  },
+  "top3": {
+   "metric": "top3",
+   "cases": 64,
+   "a": 0.4688,
+   "b": 0.5156,
+   "diff": 0.0469,
+   "ci95": [
+    -0.0781,
+    0.1719
+   ],
+   "b_only": 10,
+   "a_only": 7
+  }
+ }
+}
