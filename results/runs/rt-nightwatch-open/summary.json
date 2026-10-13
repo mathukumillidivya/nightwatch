@@ -1,0 +1,20 @@
+{
+ "rt-nightwatch-open": {
+  "cases": 9,
+  "errors": 2,
+  "top1": 0.7778,
+  "top1_family": 0.7778,
+  "top3": 0.7778,
+  "tactic": 0.7778,
+  "answered": 0.7778,
+  "by_dataset": 0.7778,
+  "invented": 0.0,
+  "grounded": 1.0,
+  "dropped_by_code": 0,
+  "sent_back": 0,
+  "cost_per_case": 0.0301,
+  "cost_total": 0.2709,
+  "median_seconds": 14.6,
+  "model_calls_per_case": 5
+ }
+}
