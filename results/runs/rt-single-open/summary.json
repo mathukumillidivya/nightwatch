@@ -1,0 +1,34 @@
+{
+ "rt-single-open": {
+  "cases": 9,
+  "errors": 0,
+  "top1": 0.7778,
+  "top1_family": 0.7778,
+  "top3": 0.7778,
+  "tactic": 1.0,
+  "answered": 1.0,
+  "by_dataset": 0.7778,
+  "invented": 0.0,
+  "grounded": 0.9259,
+  "cost_per_case": 0.01051,
+  "cost_total": 0.0946,
+  "median_seconds": 6.5,
+  "model_calls_per_case": 1
+ },
+ "rt-single-open+verify": {
+  "cases": 9,
+  "errors": 0,
+  "top1": 0.7778,
+  "top1_family": 0.7778,
+  "top3": 0.7778,
+  "tactic": 1.0,
+  "answered": 1.0,
+  "by_dataset": 0.7778,
+  "invented": 0.0,
+  "grounded": 0.9259,
+  "cost_per_case": 0.01051,
+  "cost_total": 0.0946,
+  "median_seconds": 6.5,
+  "model_calls_per_case": 1
+ }
+}
