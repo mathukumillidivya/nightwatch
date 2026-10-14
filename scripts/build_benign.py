@@ -34,6 +34,9 @@ FLEET = ROOT / "data/fleet_templates.json.gz"
 SOURCES = ROOT / "data/benign_mix_sources.json.gz"
 # held-out attacks Nightwatch got right on the clean recording, one per behaviour family, none used in the red team
 MIX = ["NW-057", "NW-069", "NW-088", "NW-059", "NW-009", "NW-037", "NW-075", "NW-005"]
+# 16 more for the larger mixed set (data/mixed24.jsonl): the other held-out attacks the original system got right
+MIX2 = ["NW-091", "NW-094", "NW-020", "NW-067", "NW-031", "NW-013", "NW-004", "NW-068",
+        "NW-104", "NW-044", "NW-050", "NW-014", "NW-058", "NW-090", "NW-006", "NW-082"]
 WINDOW = 4000          # events per benign window; the OTRF recordings have a median of about 3,700
 PER_IMAGE = 6
 
@@ -45,7 +48,7 @@ def prepare(parsed_path: str):
     labels = json.loads((ROOT / "data/labels.json").read_text())
     by_file = {Path(p).parent.name + "/" + Path(p).stem: v for p, v in parsed.items()}
     src = {}
-    for cid in MIX:
+    for cid in MIX + MIX2:
         lab = labels[cid]
         p = by_file[f"{lab['dataset']}/{lab['recording']}"]
         src[cid] = {"events": p["events"], "hosts": p["hosts"],
@@ -132,7 +135,7 @@ def merge(benign: dict, attack: dict) -> dict:
 
 
 def build(folder: str, per_image: int = PER_IMAGE, prefix: str = "BN", out: str = "data/benign.jsonl",
-          meta_out: str = "data/benign_meta.json", mix: bool = True, seed: int = 11):
+          meta_out: str = "data/benign_meta.json", mix: bool = True, seed: int = 11, mix_list: list | None = None):
     fleet = json.loads(gzip.decompress(FLEET.read_bytes()))
     df, n = Counter(fleet["templates"]), fleet["recordings"]
     sources = json.loads(gzip.decompress(SOURCES.read_bytes()))
@@ -153,17 +156,18 @@ def build(folder: str, per_image: int = PER_IMAGE, prefix: str = "BN", out: str 
         cid = f"{prefix}-{i:02d}"
         cases.append({"case_id": cid, "dataset": f"benign:{image}", **logs.condense(p, df, n)})
         meta[cid] = {"kind": "benign", "image": image, "first_event": s}
-    for i, cid in enumerate(MIX if mix else []):
+    mix_list = mix_list or MIX
+    for i, cid in enumerate(mix_list if mix else []):
         image, s, p = windows[i % len(windows)]
         mixed = merge(p, sources[cid])
-        mid = f"MX-{i + 1:02d}"
+        mid = f"{'MY' if len(mix_list) > len(MIX) else 'MX'}-{i + 1:02d}"
         cases.append({"case_id": mid, "dataset": f"mixed:{image}", "source_case": cid, **logs.condense(mixed, df, n)})
         meta[mid] = {"kind": "mixed", "image": image, "first_event": s, "attack": cid}
     with open(ROOT / out, "w") as f:
         for c in cases:
             f.write(json.dumps(c, separators=(",", ":"), default=sorted) + "\n")
     (ROOT / meta_out).write_text(json.dumps(meta, indent=1))
-    print(f"{sum(1 for c in cases if c['case_id'].startswith(prefix))} benign and {len(MIX) if mix else 0} mixed alerts -> {out}")
+    print(f"{sum(1 for c in cases if c['case_id'].startswith(prefix))} benign and {len(mix_list) if mix else 0} mixed alerts -> {out}")
 
 
 if __name__ == "__main__":
@@ -177,5 +181,9 @@ if __name__ == "__main__":
     ap.add_argument("--meta", default="data/benign_meta.json")
     ap.add_argument("--no-mix", action="store_true")
     ap.add_argument("--seed", type=int, default=11)
+    ap.add_argument("--mix24", action="store_true", help="mix all 24 attacks (MIX + MIX2), each into its own window")
     a = ap.parse_args()
-    prepare(a.parsed) if a.prepare else build(a.evtx, a.per_image, a.prefix, a.out, a.meta, not a.no_mix, a.seed)
+    if a.prepare:
+        prepare(a.parsed)
+    else:
+        build(a.evtx, a.per_image, a.prefix, a.out, a.meta, not a.no_mix, a.seed, (MIX + MIX2) if a.mix24 else None)

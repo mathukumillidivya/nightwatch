@@ -122,6 +122,22 @@ def main():
                                 "attacks_v2": {"first_technique_right": rate(sum(first_right(r) for r in rr["attacks_v2"].values()), len(rr["attacks_v2"])),
                                                "right_family": rate(sum(family_right(r) for r in rr["attacks_v2"].values()), len(rr["attacks_v2"])),
                                                "nothing_reported": sum(1 for r in rr["attacks_v2"].values() if not r.get("techniques"))}}
+    m1, m2 = load("mixed24-nightwatch"), load("mixed24-nightwatch_v21")
+    if m1 and m2:
+        meta = json.loads((ROOT / "data/mixed24_meta.json").read_text())
+        clean = load("test-nightwatch")
+        def blk(rows):
+            ok = [r for r in rows.values() if not r.get("error")]
+            return {"alerts": len(rows), "errors": len(rows) - len(ok),
+                    "attack_named_first": rate(sum(first_right(r) for r in ok), len(rows)),
+                    "right_family": rate(sum(family_right(r) for r in ok), len(rows)),
+                    "nothing_reported": sum(1 for r in ok if not r.get("techniques")),
+                    "cost": round(sum(r.get("cost") or 0 for r in rows.values()), 4)}
+        out["mixed24"] = {"v1": blk(m1), "v2_1": blk(m2),
+                          "both_right": sum(first_right(m1[k]) and first_right(m2[k]) for k in m1 if k in m2),
+                          "only_v1": sorted(k for k in m1 if k in m2 and first_right(m1[k]) and not first_right(m2[k])),
+                          "only_v2_1": sorted(k for k in m1 if k in m2 and first_right(m2[k]) and not first_right(m1[k])),
+                          "attacks": {k: v["attack"] for k, v in meta.items() if v.get("kind") == "mixed"}}
     (ROOT / "results/nightwatch_v2.json").write_text(json.dumps(out, indent=1))
     print(json.dumps(out, indent=1))
 
