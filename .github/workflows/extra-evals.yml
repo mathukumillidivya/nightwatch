@@ -7,6 +7,7 @@ on:
       images: {description: "evtx-baseline release assets to use (gh --pattern globs, space separated)", default: "win10-client* win2022-ad*"}
       per_image: {default: "6"}
       steps: {description: "any of: benign redteam quotes v2", default: "v2"}
+      v21_only_wide: {description: "v21: run only the six wider 'report nothing' recordings", default: "false"}
       fresh_images: {description: "evtx-baseline assets for the fresh ordinary windows (v2 test)", default: "win11-client.tgz win2022-evtx.tgz"}
       budget_benign: {description: "US$ per system on the benign set", default: "0.7"}
       budget_redteam: {description: "US$ per system on the red-team set", default: "0.6"}
@@ -30,7 +31,7 @@ jobs:
       - run: pip install -r requirements.txt evtx anthropic
       - run: test -n "$ANTHROPIC_API_KEY" || { echo "ANTHROPIC_API_KEY secret is not set"; exit 1; }
       - name: Download benign recordings (NextronSystems/evtx-baseline, Apache-2.0)
-        if: contains(inputs.steps, 'benign')
+        if: contains(format(' {0} ', inputs.steps), ' benign ')
         run: |
           gh release list -R NextronSystems/evtx-baseline --limit 5
           gh release view -R NextronSystems/evtx-baseline --json tagName,assets --jq '.tagName, (.assets[] | "\(.name) \(.size)")'
@@ -43,17 +44,17 @@ jobs:
           done
           find evtx -name '*.evtx' | head -20; find evtx -name '*.evtx' | wc -l
       - name: Build benign and mixed alerts
-        if: contains(inputs.steps, 'benign')
+        if: contains(format(' {0} ', inputs.steps), ' benign ')
         run: python scripts/build_benign.py --evtx evtx --per-image ${{ inputs.per_image }}
       - name: Run both systems on benign and mixed alerts
-        if: contains(inputs.steps, 'benign')
+        if: contains(format(' {0} ', inputs.steps), ' benign ')
         run: |
           python scripts/run.py --system nightwatch --cases data/benign.jsonl --run-id benign-nightwatch --budget ${{ inputs.budget_benign }} --project-cap ${{ inputs.project_cap }} --concurrency 4
           python scripts/run.py --system single_call --cases data/benign.jsonl --run-id benign-single --budget ${{ inputs.budget_benign }} --project-cap ${{ inputs.project_cap }} --concurrency 4
           python scripts/score_benign.py --run nightwatch=results/runs/benign-nightwatch single_call=results/runs/benign-single \
             --clean nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single --out results/benign.json
       - name: Prompt injection on six more recordings (guardrails on)
-        if: contains(inputs.steps, 'redteam')
+        if: contains(format(' {0} ', inputs.steps), ' redteam ')
         run: |
           python scripts/run.py --system nightwatch --cases data/redteam_wide.jsonl --run-id rt-wide-nightwatch-guarded --budget ${{ inputs.budget_redteam }} --project-cap ${{ inputs.project_cap }} --concurrency 4
           python scripts/run.py --system single_call --cases data/redteam_wide.jsonl --run-id rt-wide-single-guarded --budget ${{ inputs.budget_redteam }} --project-cap ${{ inputs.project_cap }} --concurrency 4
@@ -61,12 +62,12 @@ jobs:
             python scripts/score_redteam.py --clean results/runs/test-$s --attacked results/runs/rt-wide-$s-guarded --planted data/redteam_wide.jsonl --out results/runs/rt-wide-$s-guarded/redteam_score.json
           done
       - name: Do the quotes support the technique?
-        if: contains(inputs.steps, 'quotes')
+        if: contains(format(' {0} ', inputs.steps), ' quotes ')
         run: |
           set -o pipefail
           python scripts/quote_support.py --run nightwatch=results/runs/test-nightwatch single_call=results/runs/test-single --budget ${{ inputs.budget_quotes }} --out results/quote_support.json 2>&1 | tee results/quote_support.log
       - name: "v2: fresh ordinary windows from two machines not used before"
-        if: contains(inputs.steps, 'v2')
+        if: contains(format(' {0} ', inputs.steps), ' v2 ')
         run: |
           mkdir -p evtx_fresh_dl evtx_fresh
           for a in ${{ inputs.fresh_images }}; do gh release download -R NextronSystems/evtx-baseline --pattern "$a" -D evtx_fresh_dl; done
@@ -74,7 +75,7 @@ jobs:
           find evtx_fresh -name '*.evtx' | wc -l
           python scripts/build_benign.py --evtx evtx_fresh --prefix BF --out data/benign_fresh.jsonl --meta data/benign_fresh_meta.json --no-mix --seed 23 --per-image 5
       - name: "v2: run v1 and v2 on the fresh windows, v2 on the mixed alerts and 24 held-out attacks"
-        if: contains(inputs.steps, 'v2')
+        if: contains(format(' {0} ', inputs.steps), ' v2 ')
         run: |
           CAP="--project-cap ${{ inputs.project_cap }} --concurrency 4"
           python scripts/run.py --system nightwatch --cases data/benign_fresh.jsonl --run-id benign-fresh-nightwatch --budget 0.45 $CAP
@@ -84,13 +85,15 @@ jobs:
           python scripts/quote_support.py --run nightwatch_v2=results/runs/test24-nightwatch_v2 --budget 0.15 --out results/quote_support_v2.json
           python scripts/compare_v2.py
       - name: "v2.1: authorization never comes from the logs"
-        if: contains(inputs.steps, 'v21')
+        if: contains(format(' {0} ', inputs.steps), ' v21 ')
         run: |
           CAP="--project-cap ${{ inputs.project_cap }} --concurrency 4"
+          if [ "${{ inputs.v21_only_wide }}" != "true" ]; then
           python scripts/run.py --system nightwatch_v21 --cases data/benign_fresh.jsonl --run-id benign-fresh-nightwatch_v21 --budget 0.35 $CAP
           python scripts/run.py --system nightwatch_v21 --cases data/benign.jsonl --ids MX-01,MX-02,MX-03,MX-04,MX-05,MX-06,MX-07,MX-08 --run-id mixed-nightwatch_v21 --budget 0.3 $CAP
           python scripts/run.py --system nightwatch_v21 --ids NW-086 --run-id nw086-nightwatch_v21 --budget 0.1 $CAP
           python scripts/run.py --system nightwatch_v21 --cases data/redteam.jsonl --ids NW-104-suppress,NW-044-suppress,NW-050-suppress --run-id rt-suppress-nightwatch_v21 --budget 0.15 $CAP
+          fi
           python scripts/run.py --system nightwatch_v21 --cases data/redteam_wide.jsonl --ids NW-014-suppress,NW-058-suppress,NW-027-suppress,NW-090-suppress,NW-082-suppress,NW-006-suppress --run-id rt-wide-suppress-nightwatch_v21 --budget 0.25 $CAP
           python scripts/compare_v2.py
       - name: Save

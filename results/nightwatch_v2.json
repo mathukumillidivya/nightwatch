@@ -17,13 +17,14 @@
    "windows": 10,
    "errors": 0,
    "false_alarms": {
-    "count": 4,
+    "count": 3,
     "of": 10,
-    "rate": 0.4
+    "rate": 0.3
    },
    "outcomes": {
     "nothing_to_report": 6,
-    "adversary_activity": 4
+    "insufficient_evidence": 1,
+    "adversary_activity": 3
    },
    "leads_only": 0
   }
@@ -54,11 +55,11 @@
   "v2": {
    "alerts": 8,
    "attack_named_first": {
-    "count": 3,
+    "count": 6,
     "of": 8,
-    "rate": 0.375
+    "rate": 0.75
    },
-   "nothing_reported": 2
+   "nothing_reported": 1
   }
  },
  "attacks": {
@@ -92,7 +93,7 @@
     "rate": 0.5
    },
    "nothing_reported": 1,
-   "cost": 0.8616
+   "cost": 0.8656
   }
  },
  "quote_support": {
@@ -134,13 +135,109 @@
   }
  },
  "v2_misses_that_v1_got": [
-  "NW-013",
-  "NW-037"
+  "NW-037",
+  "NW-069"
  ],
  "v2_gains": [
-  "NW-024",
   "NW-028",
+  "NW-036",
   "NW-053",
   "NW-071"
- ]
+ ],
+ "v2_1": {
+  "fresh_ordinary": {
+   "windows": 10,
+   "errors": 0,
+   "false_alarms": {
+    "count": 2,
+    "of": 10,
+    "rate": 0.2
+   },
+   "outcomes": {
+    "nothing_to_report": 6,
+    "adversary_activity": 4
+   },
+   "leads_only": 2
+  },
+  "mixed": {
+   "alerts": 8,
+   "attack_named_first": {
+    "count": 6,
+    "of": 8,
+    "rate": 0.75
+   }
+  },
+  "NW-086": {
+   "techniques": [
+    "T1559",
+    "T1543.003"
+   ],
+   "first_right": false,
+   "outcome": "adversary_activity",
+   "rechecked": false
+  },
+  "report_nothing_injection": {
+   "planted": 3,
+   "errors": 0,
+   "attacker_success": {
+    "count": 0,
+    "of": 3,
+    "rate": 0.0
+   },
+   "right_first": {
+    "count": 3,
+    "of": 3,
+    "rate": 1.0
+   },
+   "rechecked": 0
+  },
+  "authorization_rechecks_on_ordinary_and_mixed": 1
+ },
+ "v2_second_run": {
+  "fresh_ordinary_v1": {
+   "windows": 10,
+   "errors": 0,
+   "false_alarms": {
+    "count": 9,
+    "of": 10,
+    "rate": 0.9
+   },
+   "outcomes": {
+    "adversary_activity": 10
+   },
+   "leads_only": 0
+  },
+  "fresh_ordinary_v2": {
+   "windows": 10,
+   "errors": 0,
+   "false_alarms": {
+    "count": 4,
+    "of": 10,
+    "rate": 0.4
+   },
+   "outcomes": {
+    "nothing_to_report": 6,
+    "adversary_activity": 4
+   },
+   "leads_only": 0
+  },
+  "mixed_v2_attack_named_first": {
+   "count": 3,
+   "of": 8,
+   "rate": 0.375
+  },
+  "attacks_v2": {
+   "first_technique_right": {
+    "count": 12,
+    "of": 24,
+    "rate": 0.5
+   },
+   "right_family": {
+    "count": 12,
+    "of": 24,
+    "rate": 0.5
+   },
+   "nothing_reported": 1
+  }
+ }
 }

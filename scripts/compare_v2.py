@@ -106,6 +106,15 @@ def main():
     v21["authorization_rechecks_on_ordinary_and_mixed"] = rechecks
     if any(v for k, v in v21.items() if k != "authorization_rechecks_on_ordinary_and_mixed"):
         out["v2_1"] = v21
+    # A second, unplanned run of v1 and v2 (a workflow condition matched "v21" as "v2"); kept as a replication.
+    rr = {"fresh_v1": load("benign-fresh-nightwatch-rerun2"), "fresh_v2": load("benign-fresh-nightwatch_v2-rerun2"),
+          "mixed_v2": load("mixed-nightwatch_v2-rerun2"), "attacks_v2": load("test24-nightwatch_v2-rerun2")}
+    if all(rr.values()):
+        out["v2_second_run"] = {"fresh_ordinary_v1": benign_block(rr["fresh_v1"]), "fresh_ordinary_v2": benign_block(rr["fresh_v2"]),
+                                "mixed_v2_attack_named_first": rate(sum(first_right(r) for r in rr["mixed_v2"].values()), len(rr["mixed_v2"])),
+                                "attacks_v2": {"first_technique_right": rate(sum(first_right(r) for r in rr["attacks_v2"].values()), len(rr["attacks_v2"])),
+                                               "right_family": rate(sum(family_right(r) for r in rr["attacks_v2"].values()), len(rr["attacks_v2"])),
+                                               "nothing_reported": sum(1 for r in rr["attacks_v2"].values() if not r.get("techniques"))}}
     (ROOT / "results/nightwatch_v2.json").write_text(json.dumps(out, indent=1))
     print(json.dumps(out, indent=1))
 

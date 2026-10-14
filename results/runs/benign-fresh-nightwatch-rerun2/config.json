@@ -1,0 +1,17 @@
+{
+  "system": "nightwatch",
+  "split": "dev",
+  "cases": 10,
+  "ids": "",
+  "limit": 0,
+  "concurrency": 4,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 0.45,
+  "project_cap": 10.5,
+  "run_id": "benign-fresh-nightwatch",
+  "completed": 10,
+  "stopped_at_budget": false,
+  "cost": 0.3026
+}

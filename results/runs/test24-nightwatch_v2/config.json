@@ -9,9 +9,9 @@
   "unguarded": false,
   "report": false,
   "budget": 1.0,
-  "project_cap": 10.5,
+  "project_cap": 9.5,
   "run_id": "test24-nightwatch_v2",
   "completed": 24,
   "stopped_at_budget": false,
-  "cost": 0.8616
+  "cost": 0.8656
 }
