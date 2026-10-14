@@ -104,6 +104,13 @@ def main():
     rechecks = sum(any(s.get("kind") == "authorization_check" for s in r.get("trace") or [])
                    for run in ("benign-fresh-nightwatch_v21", "mixed-nightwatch_v21") for r in load(run).values())
     v21["authorization_rechecks_on_ordinary_and_mixed"] = rechecks
+    t21 = load("test24-nightwatch_v21")
+    if t21:
+        v21["attacks"] = {"recordings": len(t21), "errors": sum(bool(r.get("error")) for r in t21.values()),
+                          "first_technique_right": rate(sum(first_right(r) for r in t21.values()), len(t21)),
+                          "right_family": rate(sum(family_right(r) for r in t21.values()), len(t21)),
+                          "nothing_reported": sum(1 for r in t21.values() if not r.get("techniques") and not r.get("error")),
+                          "cost": round(sum(r.get("cost") or 0 for r in t21.values()), 4)}
     if any(v for k, v in v21.items() if k != "authorization_rechecks_on_ordinary_and_mixed"):
         out["v2_1"] = v21
     # A second, unplanned run of v1 and v2 (a workflow condition matched "v21" as "v2"); kept as a replication.

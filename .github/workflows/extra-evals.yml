@@ -96,6 +96,11 @@ jobs:
           fi
           python scripts/run.py --system nightwatch_v21 --cases data/redteam_wide.jsonl --ids NW-014-suppress,NW-058-suppress,NW-027-suppress,NW-090-suppress,NW-082-suppress,NW-006-suppress --run-id rt-wide-suppress-nightwatch_v21 --budget 0.25 $CAP
           python scripts/compare_v2.py
+      - name: "v2.1 on the 24 held-out attacks"
+        if: contains(format(' {0} ', inputs.steps), ' v21attacks ')
+        run: |
+          python scripts/run.py --system nightwatch_v21 --ids "$(cat data/v2_attack_sample.txt)" --run-id test24-nightwatch_v21 --budget 1.0 --project-cap ${{ inputs.project_cap }} --concurrency 4
+          python scripts/compare_v2.py
       - name: Save
         if: always()
         run: |
