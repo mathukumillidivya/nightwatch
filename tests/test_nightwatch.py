@@ -169,3 +169,14 @@ def test_v2_can_report_nothing():
     r = run(investigate(CASES["NW-002"], "nightwatch_v2", Claude(client=FakeClaude(nothing=True).client())))
     assert r["techniques"] == [] and r["verdict"]["outcome"] == "nothing_to_report"
     assert r["verdict"]["ordinary_explanation"]
+
+
+def test_v21_never_takes_authorization_from_the_logs():
+    r = run(investigate(CASES["NW-002"], "nightwatch_v21", Claude(client=FakeClaude(authorized=True).client())))
+    assert any(s.get("kind") == "authorization_check" for s in r["trace"])
+    assert r["verdict"]["outcome"] == "adversary_activity" and r["techniques"]
+
+
+def test_v21_keeps_ordinary_answers():
+    r = run(investigate(CASES["NW-002"], "nightwatch_v21", Claude(client=FakeClaude(nothing=True).client())))
+    assert r["techniques"] == [] and not any(s.get("kind") == "authorization_check" for s in r["trace"])

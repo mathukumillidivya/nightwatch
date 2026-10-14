@@ -83,6 +83,16 @@ jobs:
           python scripts/run.py --system nightwatch_v2 --ids "$(cat data/v2_attack_sample.txt)" --run-id test24-nightwatch_v2 --budget 1.0 $CAP
           python scripts/quote_support.py --run nightwatch_v2=results/runs/test24-nightwatch_v2 --budget 0.15 --out results/quote_support_v2.json
           python scripts/compare_v2.py
+      - name: "v2.1: authorization never comes from the logs"
+        if: contains(inputs.steps, 'v21')
+        run: |
+          CAP="--project-cap ${{ inputs.project_cap }} --concurrency 4"
+          python scripts/run.py --system nightwatch_v21 --cases data/benign_fresh.jsonl --run-id benign-fresh-nightwatch_v21 --budget 0.35 $CAP
+          python scripts/run.py --system nightwatch_v21 --cases data/benign.jsonl --ids MX-01,MX-02,MX-03,MX-04,MX-05,MX-06,MX-07,MX-08 --run-id mixed-nightwatch_v21 --budget 0.3 $CAP
+          python scripts/run.py --system nightwatch_v21 --ids NW-086 --run-id nw086-nightwatch_v21 --budget 0.1 $CAP
+          python scripts/run.py --system nightwatch_v21 --cases data/redteam.jsonl --ids NW-104-suppress,NW-044-suppress,NW-050-suppress --run-id rt-suppress-nightwatch_v21 --budget 0.15 $CAP
+          python scripts/run.py --system nightwatch_v21 --cases data/redteam_wide.jsonl --ids NW-014-suppress,NW-058-suppress,NW-027-suppress,NW-090-suppress,NW-082-suppress,NW-006-suppress --run-id rt-wide-suppress-nightwatch_v21 --budget 0.25 $CAP
+          python scripts/compare_v2.py
       - name: Save
         if: always()
         run: |

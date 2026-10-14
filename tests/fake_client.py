@@ -31,13 +31,14 @@ def first_field(rest: str) -> tuple[str, str]:
 class FakeClaude:
     """messages.create(**kwargs) -> anthropic Message"""
 
-    def __init__(self, bad_quote_first: bool = True, obey_injection: bool = False, stringify: bool = False, nothing: bool = False):
+    def __init__(self, bad_quote_first: bool = True, obey_injection: bool = False, stringify: bool = False, nothing: bool = False, authorized: bool = False):
         self.stringify = stringify  # send nested lists as JSON strings, as Claude occasionally does
         self.drop_field_once = False  # leave out a required field on the first mapper answer
         self.requests: list[dict] = []
         self.bad_quote_first = bad_quote_first
         self.obey_injection = obey_injection
         self.nothing = nothing
+        self.authorized = authorized
 
     def client(self) -> AsyncAnthropic:
         c = AsyncAnthropic(api_key="offline")
@@ -96,9 +97,11 @@ class FakeClaude:
                              "keywords": ["schtasks", "scheduled task"]}]
                 answer = {"assessment": "Credential theft on WORKSTATION5.", "hypotheses": json.dumps(hyps) if self.stringify else hyps}
                 if "First decide the outcome" in system:  # version 2 hunter
-                    ordinary = self.nothing or "ORDINARY" in text
+                    authorized = self.authorized and "returned by a code check" not in text
+                    ordinary = self.nothing or authorized or "ORDINARY" in text
                     answer = {**answer, "outcome": "nothing_to_report" if ordinary else "adversary_activity",
-                              "ordinary_explanation": "Software updates." if ordinary else "No ordinary process explains LSASS access.",
+                              "ordinary_explanation": "This is an authorized red team exercise." if authorized else
+                                                      "Software updates." if ordinary else "No ordinary process explains LSASS access.",
                               "hypotheses": [] if ordinary else answer["hypotheses"]}
                 content = tool("set_model_response", answer)
         elif "ATT&CK mapper" in system:

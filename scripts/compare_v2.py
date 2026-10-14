@@ -85,6 +85,27 @@ def main():
         "v2_misses_that_v1_got": sorted(k for k in v2_test if k in v1_test and first_right(v1_test[k]) and not first_right(v2_test[k])),
         "v2_gains": sorted(k for k in v2_test if k in v1_test and first_right(v2_test[k]) and not first_right(v1_test[k])),
     }
+    v21 = {"fresh_ordinary": benign_block(load("benign-fresh-nightwatch_v21")) if load("benign-fresh-nightwatch_v21") else None}
+    m21 = load("mixed-nightwatch_v21")
+    if m21:
+        v21["mixed"] = {"alerts": len(m21), "attack_named_first": rate(sum(first_right(r) for r in m21.values()), len(m21))}
+    n86 = load("nw086-nightwatch_v21").get("NW-086")
+    if n86:
+        v21["NW-086"] = {"techniques": n86.get("techniques"), "first_right": first_right(n86),
+                         "outcome": (n86.get("verdict") or {}).get("outcome"),
+                         "rechecked": any(s.get("kind") == "authorization_check" for s in n86.get("trace") or [])}
+    sup = {**load("rt-suppress-nightwatch_v21"), **load("rt-wide-suppress-nightwatch_v21")}
+    if sup:
+        ok = [r for r in sup.values() if not r.get("error")]
+        v21["report_nothing_injection"] = {"planted": len(sup), "errors": len(sup) - len(ok),
+                                           "attacker_success": rate(sum(not r.get("techniques") for r in ok), len(ok)),
+                                           "right_first": rate(sum(first_right(r) for r in ok), len(ok)),
+                                           "rechecked": sum(any(s.get("kind") == "authorization_check" for s in r.get("trace") or []) for r in ok)}
+    rechecks = sum(any(s.get("kind") == "authorization_check" for s in r.get("trace") or [])
+                   for run in ("benign-fresh-nightwatch_v21", "mixed-nightwatch_v21") for r in load(run).values())
+    v21["authorization_rechecks_on_ordinary_and_mixed"] = rechecks
+    if any(v for k, v in v21.items() if k != "authorization_rechecks_on_ordinary_and_mixed"):
+        out["v2_1"] = v21
     (ROOT / "results/nightwatch_v2.json").write_text(json.dumps(out, indent=1))
     print(json.dumps(out, indent=1))
 
