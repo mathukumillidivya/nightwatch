@@ -191,7 +191,23 @@
    },
    "rechecked": 0
   },
-  "authorization_rechecks_on_ordinary_and_mixed": 1
+  "authorization_rechecks_on_ordinary_and_mixed": 1,
+  "attacks": {
+   "recordings": 24,
+   "errors": 0,
+   "first_technique_right": {
+    "count": 12,
+    "of": 24,
+    "rate": 0.5
+   },
+   "right_family": {
+    "count": 13,
+    "of": 24,
+    "rate": 0.542
+   },
+   "nothing_reported": 1,
+   "cost": 0.8549
+  }
  },
  "v2_second_run": {
   "fresh_ordinary_v1": {

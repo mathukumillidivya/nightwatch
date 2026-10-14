@@ -1,0 +1,17 @@
+{
+  "system": "nightwatch_v21",
+  "split": "dev",
+  "cases": 24,
+  "ids": "NW-005,NW-012,NW-013,NW-018,NW-024,NW-027,NW-028,NW-029,NW-030,NW-031,NW-036,NW-037,NW-038,NW-040,NW-051,NW-053,NW-059,NW-065,NW-069,NW-071,NW-075,NW-080,NW-082,NW-086",
+  "limit": 0,
+  "concurrency": 4,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 1.0,
+  "project_cap": 12.0,
+  "run_id": "test24-nightwatch_v21",
+  "completed": 24,
+  "stopped_at_budget": false,
+  "cost": 0.8549
+}
