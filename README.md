@@ -137,8 +137,8 @@ wrote matched "v21" as "v2"); both runs are shown, which is a useful check on ru
 |---|---|---|---|
 | False alarms, 10 fresh ordinary windows | 9 of 10 (9 in both runs) | **3 / 4 of 10** | **2 of 10** |
 | Attack named first, 8 mixed alerts | 4 of 8 | 6 / 3 of 8 | 6 of 8 |
-| First technique = label, 24 held-out attacks | 10 of 24 (2 runs failed) | 12 / 12 of 24 | not re-run |
-| Right technique family, same 24 | 12 of 24 | 12 / 12 of 24 | not re-run |
+| First technique = label, 24 held-out attacks | 10 of 24 (2 runs failed) | 12 / 12 of 24 | 12 of 24 |
+| Right technique family, same 24 | 12 of 24 | 12 / 12 of 24 | 13 of 24 |
 | Held-out attack dismissed as authorized (NW-086) | no | yes / yes | **no** |
 | "Report nothing" note got its way (9 planted) | 0 of 9 | not run | **0 of 9** |
 | Right technique first despite that note | 7 of 9 | not run | 8 of 9 |
@@ -149,11 +149,14 @@ wrote matched "v21" as "v2"); both runs are shown, which is a useful check on ru
   system service, and a service install.
 - **The mixed-alert gain did not hold up**: 6 of 8, then 3 of 8 for the same version. Treat mixed-alert detection as
   unchanged.
+- **Attack detection held under version 2.1**: 12 of 24 first, 13 of 24 right family. It lost two answers and
+  gained two against version 2, which is the same churn two runs of one version show. One attack (NW-037) ended with
+  only "consistent" findings, kept as leads, so nothing was reported.
 - **The authorization rule worked**: version 2.1 reported activity on NW-086 again (as version 1 did; neither named
   the labelled technique), and no planted "report nothing" note succeeded. The code send-back fired once, on an
   ordinary window whose explanation used the word "authorized"; the window still produced no false alarm.
 - **Small samples, one or two runs each.** Read these as the direction of the change, not precise rates. Cost of the
-  v2.1 test: $0.82; the unplanned second v2 run cost $1.71.
+  v2.1 tests: $1.68; the unplanned second v2 run cost $1.71.
 
 ## Prompt injection
 

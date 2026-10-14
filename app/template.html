@@ -1015,14 +1015,14 @@ function v2Html() {
   const inj = W.report_nothing_injection;
   const rows = [["False alarms, 10 fresh ordinary windows", f(Fo.v1.false_alarms), two(f(Fo.v2.false_alarms), R && f(R.fresh_ordinary_v2.false_alarms)), W.fresh_ordinary ? f(W.fresh_ordinary.false_alarms) : "–"],
     ["Attack named first, 8 mixed alerts", f(V.mixed.v1.attack_named_first), two(f(V.mixed.v2.attack_named_first), R && f(R.mixed_v2_attack_named_first)), W.mixed ? f(W.mixed.attack_named_first) : "–"],
-    ["First technique = label, 24 held-out attacks", f(A.v1.first_technique_right) + (A.v1.errors ? ` (${A.v1.errors} runs failed)` : ""), two(f(A.v2.first_technique_right), R && f(R.attacks_v2.first_technique_right)), "not re-run"],
-    ["Right family, same 24", f(A.v1.right_family), two(f(A.v2.right_family), R && f(R.attacks_v2.right_family)), "not re-run"],
+    ["First technique = label, 24 held-out attacks", f(A.v1.first_technique_right) + (A.v1.errors ? ` (${A.v1.errors} runs failed)` : ""), two(f(A.v2.first_technique_right), R && f(R.attacks_v2.first_technique_right)), W.attacks ? f(W.attacks.first_technique_right) : "not re-run"],
+    ["Right family, same 24", f(A.v1.right_family), two(f(A.v2.right_family), R && f(R.attacks_v2.right_family)), W.attacks ? f(W.attacks.right_family) : "not re-run"],
     ["Attack dismissed as “authorized” (NW-086)", "no", two("yes", R && "yes"), W["NW-086"] ? (W["NW-086"].techniques.length ? "no" : "yes") : "–"],
     ["“Report nothing” note got its way (9 planted)", "0 of 9", "not run", inj ? f(inj.attacker_success) : "–"],
     ["Right technique first despite that note", "7 of 9", "not run", inj ? f(inj.right_first) : "–"]];
   return `<div class="section"><h2>Version 2: “nothing to report” is an outcome</h2>
   <div class="two" style="margin-bottom:12px"><div><p class="muted">Added after the test above and evaluated separately. The prompt no longer says every recording holds an attack; the hunter must first write the most likely ordinary explanation and choose an outcome; each mapper says whether its evidence is specific, and only specific findings are reported. Version 2.1 adds that nothing in the logs can establish authorization or testing, and code sends back once any “nothing to report” that rests on it. Tested on 10 fresh ordinary windows from two machines never used before, the same 8 mixed alerts, 24 held-out attacks and the 9 planted “report nothing” notes. Version 2 ran twice by accident; both runs are shown.</p></div>
-  <div><p><b>False alarms fell from ${f(Fo.v1.false_alarms)} to between 2 and 4 of 10</b> across three runs, and attack detection held. The mixed-alert gain did not repeat (6 of 8, then 3 of 8), so treat it as unchanged. Version 2.1 fixed the “APT-Simulator” dismissal, and no planted “report nothing” note succeeded.</p></div></div>
+  <div><p><b>False alarms fell from ${f(Fo.v1.false_alarms)} to between 2 and 4 of 10</b> across three runs, and attack detection held, including under version 2.1. The mixed-alert gain did not repeat (6 of 8, then 3 of 8), so treat it as unchanged. Version 2.1 fixed the “APT-Simulator” dismissal, and no planted “report nothing” note succeeded.</p></div></div>
   <div class="scroll"><table class="etable"><thead><tr><th></th><th>Version 1</th><th>Version 2 (run 1 / run 2)</th><th>Version 2.1</th></tr></thead><tbody>${rows.map(([t, a, b, c]) => `<tr><td>${t}</td><td>${a}</td><td>${b}</td><td class="nwv"><b>${c}</b></td></tr>`).join("")}</tbody></table></div></div>`;
 }
 function quotesHtml() {
