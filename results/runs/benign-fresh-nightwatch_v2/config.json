@@ -9,9 +9,9 @@
   "unguarded": false,
   "report": false,
   "budget": 0.45,
-  "project_cap": 9.5,
+  "project_cap": 10.5,
   "run_id": "benign-fresh-nightwatch_v2",
   "completed": 10,
   "stopped_at_budget": false,
-  "cost": 0.2317
+  "cost": 0.2567
 }

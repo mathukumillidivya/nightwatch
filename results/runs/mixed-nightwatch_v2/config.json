@@ -9,9 +9,9 @@
   "unguarded": false,
   "report": false,
   "budget": 0.4,
-  "project_cap": 9.5,
+  "project_cap": 10.5,
   "run_id": "mixed-nightwatch_v2",
   "completed": 8,
   "stopped_at_budget": false,
-  "cost": 0.228
+  "cost": 0.2209
 }

@@ -1,5 +1,5 @@
 {
- "total": 8.3469,
+ "total": 10.6002,
  "runs": [
   {
    "run_id": "dev-probe-nightwatch",
@@ -150,6 +150,54 @@
    "model": "claude-haiku-4-5-20251001",
    "cost": 0.0675,
    "cases": 23
+  },
+  {
+   "run_id": "benign-fresh-nightwatch",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.3026,
+   "cases": 10
+  },
+  {
+   "run_id": "benign-fresh-nightwatch_v2",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.2567,
+   "cases": 10
+  },
+  {
+   "run_id": "mixed-nightwatch_v2",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.2209,
+   "cases": 8
+  },
+  {
+   "run_id": "test24-nightwatch_v2",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.8616,
+   "cases": 24
+  },
+  {
+   "run_id": "benign-fresh-nightwatch_v21",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.2574,
+   "cases": 10
+  },
+  {
+   "run_id": "mixed-nightwatch_v21",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.2154,
+   "cases": 8
+  },
+  {
+   "run_id": "nw086-nightwatch_v21",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.0323,
+   "cases": 1
+  },
+  {
+   "run_id": "rt-suppress-nightwatch_v21",
+   "model": "claude-haiku-4-5-20251001",
+   "cost": 0.1064,
+   "cases": 3
   }
  ]
 }

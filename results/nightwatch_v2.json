@@ -17,14 +17,13 @@
    "windows": 10,
    "errors": 0,
    "false_alarms": {
-    "count": 3,
+    "count": 4,
     "of": 10,
-    "rate": 0.3
+    "rate": 0.4
    },
    "outcomes": {
     "nothing_to_report": 6,
-    "insufficient_evidence": 1,
-    "adversary_activity": 3
+    "adversary_activity": 4
    },
    "leads_only": 0
   }
@@ -55,11 +54,11 @@
   "v2": {
    "alerts": 8,
    "attack_named_first": {
-    "count": 6,
+    "count": 3,
     "of": 8,
-    "rate": 0.75
+    "rate": 0.375
    },
-   "nothing_reported": 1
+   "nothing_reported": 2
   }
  },
  "attacks": {
@@ -93,7 +92,7 @@
     "rate": 0.5
    },
    "nothing_reported": 1,
-   "cost": 0.8656
+   "cost": 0.8616
   }
  },
  "quote_support": {
@@ -135,12 +134,12 @@
   }
  },
  "v2_misses_that_v1_got": [
-  "NW-037",
-  "NW-069"
+  "NW-013",
+  "NW-037"
  ],
  "v2_gains": [
+  "NW-024",
   "NW-028",
-  "NW-036",
   "NW-053",
   "NW-071"
  ]

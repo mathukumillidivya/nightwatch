@@ -1,0 +1,17 @@
+{
+  "system": "nightwatch_v21",
+  "split": "dev",
+  "cases": 3,
+  "ids": "NW-104-suppress,NW-044-suppress,NW-050-suppress",
+  "limit": 0,
+  "concurrency": 4,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 0.15,
+  "project_cap": 10.5,
+  "run_id": "rt-suppress-nightwatch_v21",
+  "completed": 3,
+  "stopped_at_budget": false,
+  "cost": 0.1064
+}
