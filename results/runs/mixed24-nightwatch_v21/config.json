@@ -1,0 +1,17 @@
+{
+  "system": "nightwatch_v21",
+  "split": "dev",
+  "cases": 24,
+  "ids": "MY-01,MY-02,MY-03,MY-04,MY-05,MY-06,MY-07,MY-08,MY-09,MY-10,MY-11,MY-12,MY-13,MY-14,MY-15,MY-16,MY-17,MY-18,MY-19,MY-20,MY-21,MY-22,MY-23,MY-24",
+  "limit": 0,
+  "concurrency": 4,
+  "model": "claude-haiku-4-5-20251001",
+  "unguarded": false,
+  "report": false,
+  "budget": 1.2,
+  "project_cap": 15.0,
+  "run_id": "mixed24-nightwatch_v21",
+  "completed": 4,
+  "stopped_at_budget": true,
+  "cost": 0.0475
+}

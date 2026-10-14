@@ -1,0 +1,266 @@
+{
+ "BY-01": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 12000
+ },
+ "BY-02": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 44000
+ },
+ "BY-03": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 112000
+ },
+ "BY-04": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 140000
+ },
+ "BY-05": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 144000
+ },
+ "BY-06": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 148000
+ },
+ "BY-07": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 236000
+ },
+ "BY-08": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 400000
+ },
+ "BY-09": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 480000
+ },
+ "BY-10": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 548000
+ },
+ "BY-11": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 700000
+ },
+ "BY-12": {
+  "kind": "benign",
+  "image": "win10-client",
+  "first_event": 728000
+ },
+ "BY-13": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 16000
+ },
+ "BY-14": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 28000
+ },
+ "BY-15": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 68000
+ },
+ "BY-16": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 104000
+ },
+ "BY-17": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 116000
+ },
+ "BY-18": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 208000
+ },
+ "BY-19": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 228000
+ },
+ "BY-20": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 268000
+ },
+ "BY-21": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 272000
+ },
+ "BY-22": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 336000
+ },
+ "BY-23": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 372000
+ },
+ "BY-24": {
+  "kind": "benign",
+  "image": "win2022-ad",
+  "first_event": 376000
+ },
+ "MY-01": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 12000,
+  "attack": "NW-057"
+ },
+ "MY-02": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 44000,
+  "attack": "NW-069"
+ },
+ "MY-03": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 112000,
+  "attack": "NW-088"
+ },
+ "MY-04": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 140000,
+  "attack": "NW-059"
+ },
+ "MY-05": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 144000,
+  "attack": "NW-009"
+ },
+ "MY-06": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 148000,
+  "attack": "NW-037"
+ },
+ "MY-07": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 236000,
+  "attack": "NW-075"
+ },
+ "MY-08": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 400000,
+  "attack": "NW-005"
+ },
+ "MY-09": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 480000,
+  "attack": "NW-091"
+ },
+ "MY-10": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 548000,
+  "attack": "NW-094"
+ },
+ "MY-11": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 700000,
+  "attack": "NW-020"
+ },
+ "MY-12": {
+  "kind": "mixed",
+  "image": "win10-client",
+  "first_event": 728000,
+  "attack": "NW-067"
+ },
+ "MY-13": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 16000,
+  "attack": "NW-031"
+ },
+ "MY-14": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 28000,
+  "attack": "NW-013"
+ },
+ "MY-15": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 68000,
+  "attack": "NW-004"
+ },
+ "MY-16": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 104000,
+  "attack": "NW-068"
+ },
+ "MY-17": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 116000,
+  "attack": "NW-104"
+ },
+ "MY-18": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 208000,
+  "attack": "NW-044"
+ },
+ "MY-19": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 228000,
+  "attack": "NW-050"
+ },
+ "MY-20": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 268000,
+  "attack": "NW-014"
+ },
+ "MY-21": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 272000,
+  "attack": "NW-058"
+ },
+ "MY-22": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 336000,
+  "attack": "NW-090"
+ },
+ "MY-23": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 372000,
+  "attack": "NW-006"
+ },
+ "MY-24": {
+  "kind": "mixed",
+  "image": "win2022-ad",
+  "first_event": 376000,
+  "attack": "NW-082"
+ }
+}
